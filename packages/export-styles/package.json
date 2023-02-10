@@ -1,0 +1,48 @@
+{
+  "name": "figma-export-styles",
+  "version": "0.0.1",
+  "description": "Figma plugin exports shared styles to code",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "prettier": "prettier --write . --ignore-path .gitignore",
+    "prettier:ci": "prettier --check . --ignore-path .gitignore",
+    "tsc": "npm run tsc:main && npm run tsc:ui && npm run tsc:tests",
+    "tsc:main": "tsc --noEmit -p plugin-src",
+    "tsc:ui": "tsc --noEmit -p ui-src",
+    "tsc:tests": "tsc --noEmit -p plugin-src/__tests__",
+    "tsc:watch": "concurrently -n widget,iframe,tests \"npm run tsc:main -- --watch --preserveWatchOutput\" \"npm run tsc:ui -- --watch --preserveWatchOutput\" \"npm run tsc:tests -- --watch --preserveWatchOutput\"",
+    "build": "npm run build:ui && npm run build:main -- --minify",
+    "build:main": "esbuild plugin-src/code.ts --bundle --outfile=dist/code.js --target=es6",
+    "build:ui": "npx vite build --minify esbuild --emptyOutDir=false",
+    "build:watch": "concurrently -n widget,iframe \"npm run build:main -- --watch\" \"npm run build:ui -- --watch\"",
+    "dev": "concurrently -n tsc,build,vite 'npm:tsc:watch' 'npm:build:watch' 'vite'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jpmorganchase/Figma-Plugins-and-Widgets.git"
+  },
+  "keywords": [
+    "figma-plugin"
+  ],
+  "author": "JPMC",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/jpmorganchase/Figma-Plugins-and-Widgets/issues"
+  },
+  "homepage": "https://github.com/jpmorganchase/Figma-Plugins-and-Widgets#readme",
+  "dependencies": {
+    "@salt-ds/core": "^1.0.0",
+    "@salt-ds/icons": "^1.0.0",
+    "@salt-ds/lab": "^1.0.0-alpha.0",
+    "@salt-ds/theme": "^1.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "jest": {
+    "projects": [
+      "plugin-src/jest.config.js",
+      "ui-src/jest.config.js"
+    ]
+  }
+}

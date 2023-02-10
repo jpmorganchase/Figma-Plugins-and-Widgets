@@ -1,0 +1,13 @@
+{
+  "name": "Export Color Styles",
+  "id": "1137492054289032975",
+  "api": "1.0.0",
+  "editorType": ["figma"],
+  "permissions": [],
+  "main": "dist/code.js",
+  "ui": "dist/index.html",
+  "menu": [
+    { "name": "Export CSS Variable", "command": "export-css-var" },
+    { "name": "Export JSON", "command": "export-json" }
+  ]
+}
