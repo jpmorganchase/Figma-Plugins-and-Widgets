@@ -5,8 +5,6 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "prettier": "prettier --write . --ignore-path .gitignore",
-    "prettier:ci": "prettier --check . --ignore-path .gitignore",
     "tsc": "npm run tsc:main && npm run tsc:ui && npm run tsc:tests",
     "tsc:main": "tsc --noEmit -p plugin-src",
     "tsc:ui": "tsc --noEmit -p ui-src",

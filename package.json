@@ -12,7 +12,9 @@
   "scripts": {
     "build": "turbo run build",
     "test": "turbo run test",
-    "tsc": "turbo run tsc"
+    "tsc": "turbo run tsc",
+    "prettier": "prettier --write . --ignore-path .gitignore",
+    "prettier:ci": "prettier --check . --ignore-path .gitignore"
   },
   "devDependencies": {
     "@figma/plugin-typings": "^1.58.0",
