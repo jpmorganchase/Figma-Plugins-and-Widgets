@@ -1,0 +1,5 @@
+.simple-view.simple-view {
+  flex-grow: 1;
+  /* Vertical align */
+  --flexLayout-justify: center;
+}

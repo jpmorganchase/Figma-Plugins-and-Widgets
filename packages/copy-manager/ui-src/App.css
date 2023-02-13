@@ -1,0 +1,27 @@
+#root,
+.appRoot {
+  height: 100%;
+}
+
+body {
+  background: var(--figma-color-bg);
+  font-family: "Open Sans";
+  margin: 0;
+  overflow: hidden;
+}
+
+.figma-light {
+  color-scheme: light;
+}
+
+.figma-dark {
+  color-scheme: dark;
+}
+
+.appRoot.appRoot {
+  background: var(--salt-container-primary-background);
+}
+
+.language-formField {
+  --saltFormField-width: 160px;
+}

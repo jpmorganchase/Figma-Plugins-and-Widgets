@@ -1,0 +1,16 @@
+{
+  "name": "Copy Manager",
+  "id": "1168924695037222326",
+  "api": "1.0.0",
+  "editorType": ["figma"],
+  "permissions": [],
+  "main": "dist/code.js",
+  "ui": "dist/index.html",
+  "relaunchButtons": [
+    {
+      "command": "review-revision",
+      "name": "Review copy revisions",
+      "multipleSelection": true
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "lib": ["ESNext"],
+    "strict": true,
+    "typeRoots": ["../../../node_modules/@figma"],
+    "moduleResolution": "Node",
+    "skipLibCheck": true
+  },
+  "include": ["./", "../shared-src"],
+  "exclude": ["__tests__"]
+}

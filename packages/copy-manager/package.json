@@ -1,7 +1,7 @@
 {
-  "name": "figma-export-styles",
+  "name": "figma-copy-manager",
   "version": "0.0.1",
-  "description": "Figma plugin exports shared styles to code",
+  "description": "Copy Manager Figma Plugin",
   "main": "dist/code.js",
   "scripts": {
     "test": "jest",
@@ -34,8 +34,12 @@
     "@salt-ds/icons": "^1.0.0",
     "@salt-ds/lab": "^1.0.0-alpha.0",
     "@salt-ds/theme": "^1.0.0",
+    "papaparse": "^5.3.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/papaparse": "^5.3.7"
   },
   "jest": {
     "projects": [

@@ -1,0 +1,36 @@
+.advanced-view {
+  padding: var(--salt-size-unit);
+  flex-grow: 1;
+  min-height: 0;
+}
+
+.advanced-view .tableWrapper {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.advanced-view table,
+.advanced-view th,
+.advanced-view td {
+  border: 1px solid var(--salt-separable-tertiary-borderColor);
+  border-collapse: collapse;
+}
+
+.advanced-view table {
+  width: 100%;
+}
+
+.advanced-view th.checkbox-col,
+.advanced-view td.checkbox-col {
+  width: 18px;
+}
+
+.advanced-view .tableCheckbox.saltCheckbox {
+  --checkbox-label-marginTop: 0;
+  width: 14px;
+}
+
+.advanced-view th.button-col,
+.advanced-view td.button-col {
+  width: 31px;
+}
