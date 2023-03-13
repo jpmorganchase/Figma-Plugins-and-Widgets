@@ -24,6 +24,28 @@ export function setNestedKey(obj: any, path: string[], value: any): any {
   }
 }
 
+const KEY_MAP = new Map([["border", "borderColor"]]);
+
+/** Design side has different naming convention than code, need to modify the path to fit. */
+export const fixPathForSalt = (path: string[]) => {
+  return path.reduce(
+    (prev, current, index, fullArray) => {
+      const key = current.toLowerCase();
+
+      const mappedKey = KEY_MAP.get(key) || key;
+
+      // Ignore default when at last position
+      if (mappedKey === "default" && fullArray.length - 1 === index) {
+        return prev;
+      } else {
+        return [...prev, mappedKey];
+      }
+    },
+    // prefix salt as top level namespace if not existed
+    path[0] === "salt" ? [] : ["salt"]
+  );
+};
+
 export const updateTheme = (
   theme: ThemeObject,
   newToken: TokenType,
@@ -31,7 +53,11 @@ export const updateTheme = (
 ): ThemeObject => {
   let newTheme = { ...theme };
 
-  newTheme = setNestedKey(newTheme, path, newToken);
+  const newPath = fixPathForSalt(path);
+
+  console.log({ newPath });
+
+  newTheme = setNestedKey(newTheme, newPath, newToken);
 
   return newTheme;
 };
