@@ -1,0 +1,6 @@
+#corner {
+  position: absolute;
+  right: 1px;
+  bottom: 2px;
+  cursor: nwse-resize;
+}
