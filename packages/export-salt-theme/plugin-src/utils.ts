@@ -26,13 +26,23 @@ export function setNestedKey(obj: any, path: string[], value: any): any {
 
 const KEY_MAP = new Map([["border", "borderColor"]]);
 
+/**
+ * https://stackoverflow.com/a/2970667
+ **/
+function camelize(str: string) {
+  return str.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function (match, index) {
+    if (+match === 0) return ""; // or if (/\s+/.test(match)) for white spaces
+    return index === 0 ? match.toLowerCase() : match.toUpperCase();
+  });
+}
+
 /** Design side has different naming convention than code, need to modify the path to fit. */
 export const fixPathForSalt = (path: string[]) => {
   return path.reduce(
     (prev, current, index, fullArray) => {
       const key = current.toLowerCase();
 
-      const mappedKey = KEY_MAP.get(key) || key;
+      const mappedKey = camelize(KEY_MAP.get(key) || key);
 
       // Ignore default when at last position
       if (mappedKey === "default" && fullArray.length - 1 === index) {
@@ -55,7 +65,7 @@ export const updateTheme = (
 
   const newPath = fixPathForSalt(path);
 
-  console.log({ newPath });
+  // console.log({ newPath });
 
   newTheme = setNestedKey(newTheme, newPath, newToken);
 
