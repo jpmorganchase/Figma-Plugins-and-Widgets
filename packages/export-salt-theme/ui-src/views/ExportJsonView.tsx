@@ -1,8 +1,9 @@
 import { Button, StackLayout } from "@salt-ds/core";
+import { compressToEncodedURIComponent } from "lz-string";
 import React, { useEffect, useRef, useState } from "react";
 import { PostToFigmaMessage } from "../../shared-src";
+import { AvocadoIcon } from "../components/icons/AvocadoIcon";
 import { FigmaToUIMessageEvent } from "../types";
-import { compressToEncodedURIComponent } from "lz-string";
 
 function compressObject(object: object): string {
   const compressed = compressToEncodedURIComponent(JSON.stringify(object));
@@ -15,7 +16,7 @@ export const ExportJsonView = () => {
 
   const [text, setText] = useState("");
 
-  const onExport = () => {
+  const onGenerateJson = () => {
     parent.postMessage(
       {
         pluginMessage: {
@@ -25,6 +26,11 @@ export const ExportJsonView = () => {
       "*"
     );
   };
+
+  // Generate JSON on load
+  useEffect(() => {
+    onGenerateJson();
+  }, []);
 
   const onCopy = () => {
     textareaRef.current?.select();
@@ -66,7 +72,7 @@ export const ExportJsonView = () => {
 
   return (
     <StackLayout gap={1}>
-      <Button onClick={onExport}>Export</Button>
+      <Button onClick={onGenerateJson}>Refresh</Button>
       <textarea
         value={text}
         onChange={(e) => setText(e.currentTarget.value)}
@@ -76,7 +82,9 @@ export const ExportJsonView = () => {
       <Button onClick={onCopy} ref={copyButtonRef}>
         Copy
       </Button>
-      <Button onClick={onGoSandpack}>Preview</Button>
+      <Button onClick={onGoSandpack}>
+        Preview <AvocadoIcon />
+      </Button>
     </StackLayout>
   );
 };
