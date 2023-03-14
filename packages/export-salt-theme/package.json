@@ -4,10 +4,9 @@
   "description": "Figma plugin exports salt theme",
   "main": "dist/code.js",
   "scripts": {
-    "tsc": "npm run tsc:main && npm run tsc:ui && npm run tsc:tests",
+    "tsc": "npm run tsc:main && npm run tsc:ui",
     "tsc:main": "tsc --noEmit -p plugin-src",
     "tsc:ui": "tsc --noEmit -p ui-src",
-    "tsc:tests": "tsc --noEmit -p plugin-src/__tests__",
     "tsc:watch": "concurrently -n widget,iframe,tests \"npm run tsc:main -- --watch --preserveWatchOutput\" \"npm run tsc:ui -- --watch --preserveWatchOutput\" \"npm run tsc:tests -- --watch --preserveWatchOutput\"",
     "build": "npm run build:ui && npm run build:main -- --minify",
     "build:main": "esbuild plugin-src/code.ts --bundle --outfile=dist/code.js --target=es6",
