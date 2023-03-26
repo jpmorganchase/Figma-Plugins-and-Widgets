@@ -84,6 +84,18 @@ export const ConfigView = () => {
     );
   };
 
+  const createTable = () => {
+    parent.postMessage(
+      {
+        pluginMessage: {
+          type: "generate-table",
+          config: tableConfig,
+        } satisfies PostToFigmaMessage,
+      },
+      "*"
+    );
+  };
+
   const hasCellValuesSet =
     tableConfig.headerCell !== null && tableConfig.bodyCell !== null;
 
@@ -155,6 +167,7 @@ export const ConfigView = () => {
             variant="cta"
             disabled={!hasCellValuesSet}
             focusableWhenDisabled
+            onClick={createTable}
           >
             Create
           </Button>

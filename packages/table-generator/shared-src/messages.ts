@@ -63,8 +63,7 @@ export type SetTableBodyCellToFigmaMessage = {
 
 export type GenerateTableToFigmaMessage = {
   type: "generate-table";
-  row: number;
-  column: number;
+  config: TableConfig;
 };
 
 export type PostToFigmaMessage =

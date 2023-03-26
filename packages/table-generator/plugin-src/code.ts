@@ -1,7 +1,9 @@
 import { ParseResult } from "papaparse";
 import { PostToFigmaMessage, PostToUIMessage } from "../shared-src";
+import { loadLocalComponent } from "./utils/component";
 import { getComponentFromSelection } from "./utils/guard";
 import { PLUGIN_RELAUNCH_KEY_EDIT_TABLE } from "./utils/pluginData";
+import { generateTable } from "./utils/table";
 
 let notifyHandler: NotificationHandler | null;
 
@@ -27,44 +29,60 @@ if (figma.command) {
 }
 
 figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
-  switch (msg.type) {
-    case "ui-finish-loading": {
-      break;
-    }
-    case "resize-window": {
-      const { width, height } = msg;
-      figma.ui.resize(Math.max(width, MIN_WIDTH), Math.max(height, MIN_HEIGHT));
-      break;
-    }
-    case "set-table-header-cell": {
-      const comp = getComponentFromSelection(notify);
-      if (comp) {
-        figma.ui.postMessage({
-          type: "update-header-cell",
-          cell: {
-            name: comp.name,
-            key: comp.key,
-          },
-        } satisfies PostToUIMessage);
+  try {
+    switch (msg.type) {
+      case "ui-finish-loading": {
+        loadLocalComponent();
+        break;
       }
-      break;
-    }
-    case "set-table-body-cell": {
-      const comp = getComponentFromSelection(notify);
-      if (comp) {
-        figma.ui.postMessage({
-          type: "update-body-cell",
-          cell: {
-            name: comp.name,
-            key: comp.key,
-          },
-        } satisfies PostToUIMessage);
+      case "resize-window": {
+        const { width, height } = msg;
+        figma.ui.resize(
+          Math.max(width, MIN_WIDTH),
+          Math.max(height, MIN_HEIGHT)
+        );
+        break;
       }
-      break;
+      case "set-table-header-cell": {
+        const comp = getComponentFromSelection(notify);
+        if (comp) {
+          figma.ui.postMessage({
+            type: "update-header-cell",
+            cell: {
+              name: comp.name,
+              key: comp.key,
+            },
+          } satisfies PostToUIMessage);
+        }
+        break;
+      }
+      case "set-table-body-cell": {
+        const comp = getComponentFromSelection(notify);
+        if (comp) {
+          figma.ui.postMessage({
+            type: "update-body-cell",
+            cell: {
+              name: comp.name,
+              key: comp.key,
+            },
+          } satisfies PostToUIMessage);
+        }
+        break;
+      }
+      case "generate-table": {
+        const { config } = msg;
+        const table = await generateTable(config);
+        if (table) {
+          notify("Table created");
+        }
+        break;
+      }
+      default: {
+        console.error("Unimplemented onmessage type:", (msg as any).type);
+      }
     }
-    default: {
-      console.error("Unimplemented onmessage type:", msg.type);
-    }
+  } catch (e) {
+    notify(e as any, { error: true });
   }
 };
 
