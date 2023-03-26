@@ -1,0 +1,11 @@
+.config-view {
+  margin-inline: calc(var(--salt-size-unit) * 2);
+  padding-block: calc(var(--salt-size-unit) * 2);
+  height: 100%;
+}
+
+.cell-set-card.saltCard {
+  --saltCard-padding: calc(var(--salt-size-unit) * 2);
+
+  text-align: center;
+}
