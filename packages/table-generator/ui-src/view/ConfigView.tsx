@@ -32,7 +32,7 @@ export const ConfigView = (props: { onToggleView: () => void }) => {
     }) => {
       if (event.data.pluginMessage) {
         const { pluginMessage } = event.data;
-        console.log("handleWindowMessage pluginMessage", pluginMessage);
+
         switch (pluginMessage.type) {
           case "update-header-cell": {
             setTableConfig((prev) => ({

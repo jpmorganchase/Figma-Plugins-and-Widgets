@@ -1,9 +1,13 @@
 import { ParseResult } from "papaparse";
 import { PostToFigmaMessage, PostToUIMessage } from "../shared-src";
 import { getComponentDisplayName, loadLocalComponent } from "./utils/component";
-import { getComponentFromSelection } from "./utils/guard";
+import {
+  getComponentFromSelection,
+  getValidTableFromSelection,
+} from "./utils/guard";
 import { PLUGIN_RELAUNCH_KEY_EDIT_TABLE } from "./utils/pluginData";
-import { generateTable } from "./utils/table";
+import { generateTable } from "./utils/generate-table";
+import { readDataForUiTable } from "./utils/data-interface";
 
 let notifyHandler: NotificationHandler | null;
 
@@ -76,6 +80,16 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
           notify("Table created");
         }
         break;
+      }
+      case "read-table-data": {
+        const table = getValidTableFromSelection(notify);
+        if (table) {
+          const data = readDataForUiTable(table);
+          figma.ui.postMessage({
+            type: "read-table-data-result",
+            data,
+          } satisfies PostToUIMessage);
+        }
       }
       default: {
         console.error("Unimplemented onmessage type:", (msg as any).type);

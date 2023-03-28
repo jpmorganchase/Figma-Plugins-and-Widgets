@@ -17,6 +17,11 @@ export const DEFAULT_TABLE_CONFIG: TableConfig = {
   bodyCell: null,
 };
 
+export type TableState = {
+  headerValues: string[];
+  cellValues: string[][];
+};
+
 export type SelectionChangedToUIMessage = {
   type: "selection-changed";
 };
@@ -36,11 +41,17 @@ export type FullConfigUpdatedToUIMessage = {
   config: TableConfig;
 };
 
+export type ReadTableDataResultToUIMessage = {
+  type: "read-table-data-result";
+  data: TableState;
+};
+
 export type PostToUIMessage =
   | SelectionChangedToUIMessage
   | FullConfigUpdatedToUIMessage
   | UpdateHeaderCellToUIMessage
-  | UpdateBodyCellToUIMessage;
+  | UpdateBodyCellToUIMessage
+  | ReadTableDataResultToUIMessage;
 
 // This is useful to run some code when react is finished to get new information from Figma
 export type UiFinishLoadingToFigmaMessage = {
@@ -66,9 +77,14 @@ export type GenerateTableToFigmaMessage = {
   config: TableConfig;
 };
 
+export type ReadTableDataToFigmaMessage = {
+  type: "read-table-data";
+};
+
 export type PostToFigmaMessage =
   | UiFinishLoadingToFigmaMessage
   | ResizeWindowToFigmaMessage
   | SetTableHeaderCellToFigmaMessage
   | SetTableBodyCellToFigmaMessage
-  | GenerateTableToFigmaMessage;
+  | GenerateTableToFigmaMessage
+  | ReadTableDataToFigmaMessage;

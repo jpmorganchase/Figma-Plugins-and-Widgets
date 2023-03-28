@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Button,
   FlexItem,
@@ -7,80 +7,118 @@ import {
   StackLayout,
   Tooltip,
 } from "@salt-ds/core";
-import { GridHeaderValueProps, Grid, GridColumn } from "@salt-ds/data-grid";
+import {
+  GridHeaderValueProps,
+  Grid,
+  GridColumn,
+  CellEditor,
+  TextCellEditor,
+} from "@salt-ds/data-grid";
 import { FavoriteIcon } from "@salt-ds/icons";
 import { Input } from "@salt-ds/lab";
 
 import "./DataView.css";
-
-const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-const getColName = (n: number) => {
-  const s: string[] = [];
-  s.push(abc[n % abc.length]);
-
-  while (n > abc.length - 1) {
-    n = Math.floor(n / abc.length) - 1;
-    s.push(abc[n % abc.length]);
-  }
-
-  s.reverse();
-  return s.join("");
-};
-const dummyColumnNames = [...new Array(5).keys()].map((i) => getColName(i));
-
-function randomString(length: number = 20) {
-  const abc = "abcdefghijklmnopqrstuvwxyz";
-  const name: string[] = [];
-  for (let i = 0; i < length; ++i) {
-    name.push(abc[Math.floor(Math.random() * abc.length)]);
-  }
-  return name.join("");
-}
-const dummyData = [...new Array(10).keys()].map((i) => {
-  const row: any = {
-    id: `row${i}`,
-  };
-  dummyColumnNames.forEach((c) => {
-    row[c] = randomString(5);
-  });
-  return row;
-});
+import { PostToFigmaMessage, PostToUIMessage } from "../../shared-src";
 
 const CustomEditableHeader = (props: GridHeaderValueProps<any>) => {
   const { column } = props;
   return (
     <div>
-      <FavoriteIcon />
       <Input defaultValue={column.info.props.name} />
     </div>
   );
 };
 
 export const DataView = (props: { onToggleView: () => void }) => {
-  const updateData = () => {
-    console.log("Update data");
+  const [headerValues, setHeaderValues] = useState<string[]>([]);
+  const [bodyValues, setBodyValues] = useState<string[][]>([]);
+
+  // const [tableData, setTableData] = useState<ColumnData[]>([]);
+
+  useEffect(() => {
+    parent.postMessage(
+      {
+        pluginMessage: {
+          type: "read-table-data",
+        } satisfies PostToFigmaMessage,
+      },
+      "*"
+    );
+  }, []);
+
+  const handleWindowMessage = useCallback(
+    (event: {
+      data: {
+        pluginMessage: PostToUIMessage;
+      };
+    }) => {
+      if (event.data.pluginMessage) {
+        const { pluginMessage } = event.data;
+
+        switch (pluginMessage.type) {
+          case "read-table-data-result": {
+            const { data } = pluginMessage;
+            const { cellValues, headerValues } = data;
+
+            setHeaderValues(headerValues);
+            setBodyValues(cellValues);
+            break;
+          }
+          default:
+        }
+      }
+    },
+    []
+  );
+
+  useEffect(() => {
+    window.addEventListener("message", handleWindowMessage);
+    return () => {
+      window.removeEventListener("message", handleWindowMessage);
+    };
+  }, [handleWindowMessage]);
+
+  const updateDataInFigma = () => {
+    console.log("Update data dummy");
   };
+
+  const onBodyDataChange = useCallback(
+    (row: string[], rowIndex: number, value: string) => {
+      console.log({ row, rowIndex, value });
+      // setTableData((x) => {
+      //   x = [...x];
+      //   x[rowIndex] = { ...x[rowIndex], name: value };
+      //   return x;
+      // });
+    },
+    []
+  );
+
   const hasValidGridSelected = false;
   return (
     <StackLayout className="data-view" align="stretch" gap={0}>
       <H2>Data</H2>
       <FlexItem grow={1} shrink={1} style={{ overflow: "auto" }}>
         <Grid
-          rowData={dummyData}
+          rowData={bodyValues}
           style={{
             height: "100%",
-            // width: "var(--grid-total-width)",
           }}
         >
-          {dummyColumnNames.map((name) => (
+          {headerValues.map((header, colIndex) => (
             <GridColumn
-              key={name}
-              name={name}
-              id={name}
+              key={header}
+              name={header}
+              id={header}
               defaultWidth={100}
-              getValue={(x) => x[name]}
+              getValue={(x) => x[colIndex]}
               headerValueComponent={CustomEditableHeader}
-            />
+              onChange={onBodyDataChange}
+            >
+              <CellEditor>
+                <TextCellEditor />
+              </CellEditor>
+            </GridColumn>
           ))}
         </Grid>
       </FlexItem>
@@ -96,7 +134,7 @@ export const DataView = (props: { onToggleView: () => void }) => {
             variant="cta"
             disabled={!hasValidGridSelected}
             focusableWhenDisabled
-            onClick={updateData}
+            onClick={updateDataInFigma}
           >
             Update
           </Button>

@@ -21,3 +21,22 @@ export const getComponentFromSelection = (
     return null;
   }
 };
+
+export const getValidTableFromSelection = (
+  notify?: (message: string, options?: NotificationOptions) => void
+): null | FrameNode => {
+  if (figma.currentPage.selection.length !== 1) {
+    notify?.("Select one layer");
+    return null;
+  }
+
+  const selected = figma.currentPage.selection[0];
+  if (selected.type === "FRAME") {
+    // TODO: add plugin data validation
+
+    return selected;
+  } else {
+    notify?.("Select a table created by the plugin");
+    return null;
+  }
+};
