@@ -1,6 +1,6 @@
 import { ParseResult } from "papaparse";
 import { PostToFigmaMessage, PostToUIMessage } from "../shared-src";
-import { loadLocalComponent } from "./utils/component";
+import { getComponentDisplayName, loadLocalComponent } from "./utils/component";
 import { getComponentFromSelection } from "./utils/guard";
 import { PLUGIN_RELAUNCH_KEY_EDIT_TABLE } from "./utils/pluginData";
 import { generateTable } from "./utils/table";
@@ -49,7 +49,7 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
           figma.ui.postMessage({
             type: "update-header-cell",
             cell: {
-              name: comp.name,
+              name: getComponentDisplayName(comp),
               key: comp.key,
             },
           } satisfies PostToUIMessage);
@@ -62,7 +62,7 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
           figma.ui.postMessage({
             type: "update-body-cell",
             cell: {
-              name: comp.name,
+              name: getComponentDisplayName(comp),
               key: comp.key,
             },
           } satisfies PostToUIMessage);

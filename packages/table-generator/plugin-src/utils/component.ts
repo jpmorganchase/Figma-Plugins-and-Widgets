@@ -16,3 +16,14 @@ export const getComponentByKey = async (key: string) => {
     return await figma.importComponentByKeyAsync(key);
   }
 };
+
+export const getComponentDisplayName = (node: ComponentNode): string => {
+  if (node.variantProperties) {
+    if (node.parent && node.parent.type === "COMPONENT_SET") {
+      return node.parent.name;
+    }
+  }
+
+  // Fall back to node name
+  return node.name;
+};

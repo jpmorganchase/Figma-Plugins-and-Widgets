@@ -110,7 +110,7 @@ export const ConfigView = () => {
               className="cell-set-card"
               onClick={onHeaderCellCardClick}
             >
-              <Text styleAs="h4">
+              <Text styleAs="h4" maxRows={1}>
                 {tableConfig.headerCell?.name || "Click to set"}
               </Text>
               <Label variant="secondary">Header Cell</Label>
@@ -122,7 +122,7 @@ export const ConfigView = () => {
               className="cell-set-card"
               onClick={onBodyCellCardClick}
             >
-              <Text styleAs="h4">
+              <Text styleAs="h4" maxRows={1}>
                 {tableConfig.bodyCell?.name || "Click to set"}
               </Text>
               <Label variant="secondary">Body Cell</Label>
