@@ -20,7 +20,7 @@ import {
 
 import "./ConfigView.css";
 
-export const ConfigView = () => {
+export const ConfigView = (props: { onToggleView: () => void }) => {
   const [tableConfig, setTableConfig] =
     useState<TableConfig>(DEFAULT_TABLE_CONFIG);
 
@@ -159,6 +159,20 @@ export const ConfigView = () => {
         </FlexLayout>
       </StackLayout>
       <FlexLayout justify="space-between">
+        <Tooltip
+          content="Set header and body cells before continue"
+          disabled={hasCellValuesSet}
+        >
+          <Button
+            variant="primary"
+            disabled={!hasCellValuesSet}
+            focusableWhenDisabled
+            onClick={props.onToggleView}
+          >
+            Configure Data
+          </Button>
+        </Tooltip>
+
         <Tooltip
           content="Set header and body cells before continue"
           disabled={hasCellValuesSet}

@@ -31,6 +31,7 @@
   "homepage": "https://github.com/jpmorganchase/Figma-Plugins-and-Widgets#readme",
   "dependencies": {
     "@salt-ds/core": "^1.2.0",
+    "@salt-ds/data-grid": "^1.0.3",
     "@salt-ds/icons": "^1.1.0",
     "@salt-ds/lab": "^1.0.0-alpha.2",
     "@salt-ds/theme": "^1.0.0",
