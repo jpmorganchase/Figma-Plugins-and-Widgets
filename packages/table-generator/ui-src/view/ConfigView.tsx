@@ -20,7 +20,7 @@ import {
 
 import "./ConfigView.css";
 
-export const ConfigView = (props: { onToggleView: () => void }) => {
+export const ConfigView = (props: { onToggleView?: () => void }) => {
   const [tableConfig, setTableConfig] =
     useState<TableConfig>(DEFAULT_TABLE_CONFIG);
 

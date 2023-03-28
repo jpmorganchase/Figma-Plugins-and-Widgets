@@ -1,5 +1,6 @@
 import { TableConfig } from "../../shared-src";
 import { getComponentByKey } from "./component";
+import { writeConfigToPluginData } from "./pluginData";
 
 export const generateTable = async (
   config: TableConfig,
@@ -48,7 +49,8 @@ export const generateTableWrapper = (
   frame.layoutMode = "HORIZONTAL";
   frame.counterAxisSizingMode = "AUTO";
 
-  // TODO: Write config to plugin data
+  writeConfigToPluginData(frame, config);
+
   // TODO: Relaunch button
 
   moveToViewport(frame);

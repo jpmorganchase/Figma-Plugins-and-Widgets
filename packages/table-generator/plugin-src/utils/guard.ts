@@ -1,3 +1,5 @@
+import { readConfigFromPluginData } from "./pluginData";
+
 export const getComponentFromSelection = (
   notify?: (message: string, options?: NotificationOptions) => void
 ): null | ComponentNode => {
@@ -31,12 +33,15 @@ export const getValidTableFromSelection = (
   }
 
   const selected = figma.currentPage.selection[0];
-  if (selected.type === "FRAME") {
-    // TODO: add plugin data validation
 
-    return selected;
-  } else {
-    notify?.("Select a table created by the plugin");
-    return null;
+  if (selected.type === "FRAME") {
+    const pluginData = readConfigFromPluginData(selected);
+
+    if (pluginData) {
+      return selected;
+    }
   }
+
+  notify?.("Select a table created by the plugin");
+  return null;
 };

@@ -29,7 +29,7 @@ const CustomEditableHeader = (props: GridHeaderValueProps<any>) => {
   );
 };
 
-export const DataView = (props: { onToggleView: () => void }) => {
+export const DataView = (props: { onToggleView?: () => void }) => {
   const [headerValues, setHeaderValues] = useState<string[]>([]);
   const [bodyValues, setBodyValues] = useState<string[][]>([]);
 
@@ -107,7 +107,7 @@ export const DataView = (props: { onToggleView: () => void }) => {
         >
           {headerValues.map((header, colIndex) => (
             <GridColumn
-              key={header}
+              key={header + colIndex}
               name={header}
               id={header}
               defaultWidth={100}

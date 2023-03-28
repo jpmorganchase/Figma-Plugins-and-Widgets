@@ -5,7 +5,10 @@ import {
   getComponentFromSelection,
   getValidTableFromSelection,
 } from "./utils/guard";
-import { PLUGIN_RELAUNCH_KEY_EDIT_TABLE } from "./utils/pluginData";
+import {
+  PLUGIN_RELAUNCH_KEY_EDIT_TABLE,
+  readConfigFromPluginData,
+} from "./utils/pluginData";
 import { generateTable } from "./utils/generate-table";
 import { readDataForUiTable } from "./utils/data-interface";
 
@@ -31,6 +34,10 @@ if (figma.command) {
       notify(`Unknown figma command: ${figma.command}`, { error: true });
   }
 }
+
+figma.on("selectionchange", () => {
+  detectGridSelection();
+});
 
 figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
   try {
@@ -103,4 +110,24 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
 function notify(message: string, options?: NotificationOptions) {
   notifyHandler?.cancel();
   notifyHandler = figma.notify(message, options);
+}
+
+function detectGridSelection() {
+  const validatedTable = getValidTableFromSelection();
+  if (validatedTable) {
+    // TODO: clean up readConfigFromPluginData was already called in `getValidTableFromSelection`
+    const tableConfig = readConfigFromPluginData(validatedTable);
+    if (tableConfig) {
+      figma.ui.postMessage({
+        type: "full-config-updated",
+        config: tableConfig,
+      } satisfies PostToUIMessage);
+
+      const data = readDataForUiTable(validatedTable);
+      figma.ui.postMessage({
+        type: "read-table-data-result",
+        data,
+      } satisfies PostToUIMessage);
+    }
+  }
 }
