@@ -1,71 +1,26 @@
 import {
   Button,
+  Card,
+  FlexItem,
   FlexLayout,
   H2,
-  StackLayout,
-  Card,
   Label,
-  FlexItem,
+  StackLayout,
   Text,
   Tooltip,
 } from "@salt-ds/core";
 import { FormField, Input } from "@salt-ds/lab";
-import React, { useCallback, useEffect, useState } from "react";
-import {
-  DEFAULT_TABLE_CONFIG,
-  PostToFigmaMessage,
-  PostToUIMessage,
-  TableConfig,
-} from "../../shared-src";
+import React from "react";
+import { PostToFigmaMessage } from "../../shared-src";
+import { ViewSharedProps } from "./types";
 
 import "./ConfigView.css";
 
-export const ConfigView = (props: { onToggleView?: () => void }) => {
-  const [tableConfig, setTableConfig] =
-    useState<TableConfig>(DEFAULT_TABLE_CONFIG);
-
-  const handleWindowMessage = useCallback(
-    (event: {
-      data: {
-        pluginMessage: PostToUIMessage;
-      };
-    }) => {
-      if (event.data.pluginMessage) {
-        const { pluginMessage } = event.data;
-
-        switch (pluginMessage.type) {
-          case "full-config-updated": {
-            setTableConfig(pluginMessage.config);
-            break;
-          }
-          case "update-header-cell": {
-            setTableConfig((prev) => ({
-              ...prev,
-              headerCell: pluginMessage.cell,
-            }));
-            break;
-          }
-          case "update-body-cell": {
-            setTableConfig((prev) => ({
-              ...prev,
-              bodyCell: pluginMessage.cell,
-            }));
-            break;
-          }
-          default:
-        }
-      }
-    },
-    []
-  );
-
-  useEffect(() => {
-    window.addEventListener("message", handleWindowMessage);
-    return () => {
-      window.removeEventListener("message", handleWindowMessage);
-    };
-  }, [handleWindowMessage]);
-
+export const ConfigView = ({
+  onToggleView,
+  setTableConfig,
+  tableConfig,
+}: ViewSharedProps) => {
   const onHeaderCellCardClick = () => {
     parent.postMessage(
       {
@@ -171,7 +126,7 @@ export const ConfigView = (props: { onToggleView?: () => void }) => {
             variant="primary"
             disabled={!hasCellValuesSet}
             focusableWhenDisabled
-            onClick={props.onToggleView}
+            onClick={onToggleView}
           >
             Configure Data
           </Button>

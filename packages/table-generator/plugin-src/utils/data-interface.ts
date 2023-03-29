@@ -1,4 +1,4 @@
-import { TableState } from "../../shared-src";
+import { TableData } from "../../shared-src";
 
 const PREFERRED_TEXT_NODE_NAMES = ["Cell", "Value", "Label"];
 
@@ -74,15 +74,15 @@ export const readTextFromColumn = (column: FrameNode): string[] => {
   });
 };
 
-export const readDataForUiTable = (columnsGroup: FrameNode): TableState => {
+export const readDataForUiTable = (gridFrame: FrameNode): TableData => {
   const headerValues: string[] = [];
   const cellValues: string[][] = [];
   for (
     let columnIndex = 0;
-    columnIndex < columnsGroup.children.length;
+    columnIndex < gridFrame.children.length;
     columnIndex++
   ) {
-    const column = columnsGroup.children[columnIndex];
+    const column = gridFrame.children[columnIndex];
     if (column.type === "FRAME") {
       const columnData = readTextFromColumn(column);
       if (columnData.length > 0) {
@@ -123,3 +123,83 @@ export const readDataForUiTable = (columnsGroup: FrameNode): TableState => {
     cellValues,
   };
 };
+
+export const writeDataFromUiTable = async (
+  tableFrame: FrameNode,
+  data: TableData
+) => {
+  const { cellValues, headerValues } = data;
+  for (
+    let columnIndex = 0;
+    columnIndex < tableFrame.children.length;
+    columnIndex++
+  ) {
+    const column = tableFrame.children[columnIndex];
+    if (column.type === "FRAME") {
+      if (cellValues[columnIndex].length + 1 !== column.children.length) {
+        throw new Error(
+          "Number of cell doesn't match UI on column " + columnIndex
+        );
+      } else {
+        for (let rowIndex = 0; rowIndex < column.children.length; rowIndex++) {
+          const cell = column.children[rowIndex];
+          if (isChildrenMixin(cell)) {
+            if (rowIndex === 0) {
+              // header
+              const textNode = getPreferredChildTextNode(cell);
+              if (textNode) {
+                await syncTextInTextNode(headerValues[columnIndex], textNode);
+              } else {
+                throw new Error(
+                  `Can't find visible text layer within col ${columnIndex} header cell`
+                );
+              }
+            } else {
+              // body
+              const textNode = getPreferredChildTextNode(cell);
+              if (textNode) {
+                await syncTextInTextNode(
+                  cellValues[columnIndex][rowIndex - 1],
+                  textNode
+                );
+              } else {
+                throw new Error(
+                  `Can't find visible text layer within col ${columnIndex} row ${rowIndex}`
+                );
+              }
+            }
+          } else {
+            throw new Error(
+              `Invalid cell type at col ${columnIndex} row ${rowIndex}`
+            );
+          }
+        }
+      }
+    }
+  }
+};
+
+export const syncTextInTextNode = async (text: string, textNode: TextNode) => {
+  // console.log("checkAndUpdateTextInTextNode", { text, textNode });
+  if (textNode.characters === text) {
+    return;
+  }
+  await loadAllFonts(textNode);
+  textNode.characters = text;
+};
+
+export async function loadAllFonts(textNode: TextNode) {
+  if (!textNode.characters.length) {
+    // When there is no existing text, font will be none-mixed
+    await figma.loadFontAsync(textNode.fontName as FontName);
+  } else {
+    const fontNames = textNode.getRangeAllFontNames(
+      0,
+      textNode.characters.length
+    );
+    for (let index = 0; index < fontNames.length; index++) {
+      const fontName = fontNames[index];
+      await figma.loadFontAsync(fontName);
+    }
+  }
+}

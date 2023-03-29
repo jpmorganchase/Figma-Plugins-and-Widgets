@@ -1,6 +1,10 @@
-import { ParseResult } from "papaparse";
 import { PostToFigmaMessage, PostToUIMessage } from "../shared-src";
 import { getComponentDisplayName, loadLocalComponent } from "./utils/component";
+import {
+  readDataForUiTable,
+  writeDataFromUiTable,
+} from "./utils/data-interface";
+import { generateTable } from "./utils/generate-table";
 import {
   getComponentFromSelection,
   getValidTableFromSelection,
@@ -9,8 +13,6 @@ import {
   PLUGIN_RELAUNCH_KEY_EDIT_TABLE,
   readConfigFromPluginData,
 } from "./utils/pluginData";
-import { generateTable } from "./utils/generate-table";
-import { readDataForUiTable } from "./utils/data-interface";
 
 let notifyHandler: NotificationHandler | null;
 
@@ -100,12 +102,20 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
         }
         break;
       }
+      case "set-table-data": {
+        const table = getValidTableFromSelection(notify);
+        if (table) {
+          await writeDataFromUiTable(table, msg.data);
+        }
+
+        break;
+      }
       default: {
         console.error("Unimplemented onmessage type:", (msg as any).type);
       }
     }
   } catch (e) {
-    notify(e as any, { error: true });
+    notify((e as any).message, { error: true });
   }
 };
 
@@ -119,17 +129,22 @@ function detectGridSelection() {
   if (validatedTable) {
     // TODO: clean up readConfigFromPluginData was already called in `getValidTableFromSelection`
     const tableConfig = readConfigFromPluginData(validatedTable);
-    if (tableConfig) {
-      figma.ui.postMessage({
-        type: "full-config-updated",
-        config: tableConfig,
-      } satisfies PostToUIMessage);
+    figma.ui.postMessage({
+      type: "full-config-updated",
+      config: tableConfig,
+    } satisfies PostToUIMessage);
 
+    if (tableConfig) {
       const data = readDataForUiTable(validatedTable);
       figma.ui.postMessage({
         type: "read-table-data-result",
         data,
       } satisfies PostToUIMessage);
     }
+  } else {
+    figma.ui.postMessage({
+      type: "full-config-updated",
+      config: null,
+    } satisfies PostToUIMessage);
   }
 }

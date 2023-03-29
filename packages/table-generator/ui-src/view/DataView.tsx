@@ -1,4 +1,3 @@
-import React, { useCallback, useEffect, useState } from "react";
 import {
   Button,
   FlexItem,
@@ -8,17 +7,18 @@ import {
   Tooltip,
 } from "@salt-ds/core";
 import {
-  GridHeaderValueProps,
+  CellEditor,
   Grid,
   GridColumn,
-  CellEditor,
+  GridHeaderValueProps,
   TextCellEditor,
 } from "@salt-ds/data-grid";
-import { FavoriteIcon } from "@salt-ds/icons";
 import { Input } from "@salt-ds/lab";
+import React, { useCallback, useEffect, useState } from "react";
+import { PostToFigmaMessage, PostToUIMessage } from "../../shared-src";
+import { ViewSharedProps } from "./types";
 
 import "./DataView.css";
-import { PostToFigmaMessage, PostToUIMessage } from "../../shared-src";
 
 const CustomEditableHeader = (props: GridHeaderValueProps<any>) => {
   const { column } = props;
@@ -29,11 +29,12 @@ const CustomEditableHeader = (props: GridHeaderValueProps<any>) => {
   );
 };
 
-export const DataView = (props: { onToggleView?: () => void }) => {
+export const DataView = ({
+  onToggleView,
+  validTableSelected,
+}: ViewSharedProps) => {
   const [headerValues, setHeaderValues] = useState<string[]>([]);
   const [bodyValues, setBodyValues] = useState<string[][]>([]);
-
-  // const [tableData, setTableData] = useState<ColumnData[]>([]);
 
   useEffect(() => {
     parent.postMessage(
@@ -80,22 +81,32 @@ export const DataView = (props: { onToggleView?: () => void }) => {
   }, [handleWindowMessage]);
 
   const updateDataInFigma = () => {
-    console.log("Update data dummy");
+    parent.postMessage(
+      {
+        pluginMessage: {
+          type: "set-table-data",
+          data: {
+            headerValues,
+            cellValues: bodyValues,
+          },
+        } satisfies PostToFigmaMessage,
+      },
+      "*"
+    );
   };
 
   const onBodyDataChange = useCallback(
-    (row: string[], rowIndex: number, value: string) => {
-      console.log({ row, rowIndex, value });
-      // setTableData((x) => {
-      //   x = [...x];
-      //   x[rowIndex] = { ...x[rowIndex], name: value };
-      //   return x;
-      // });
+    (colIndex: number, newData: string[]) => {
+      console.log({ colIndex, newData });
+      setBodyValues((x) => {
+        let newBody = [...x];
+        newBody[colIndex] = newData;
+        return newBody;
+      });
     },
     []
   );
 
-  const hasValidGridSelected = false;
   return (
     <StackLayout className="data-view" align="stretch" gap={0}>
       <H2>Data</H2>
@@ -115,8 +126,16 @@ export const DataView = (props: { onToggleView?: () => void }) => {
                 id={id}
                 defaultWidth={100}
                 getValue={(x) => x[colIndex]}
-                headerValueComponent={CustomEditableHeader}
-                onChange={onBodyDataChange}
+                // Don't allow editable header until salt grid supports it properly
+                // headerValueComponent={CustomEditableHeader}
+                onChange={(row: string[], rowIndex, newValue) => {
+                  const newData = [
+                    ...row.slice(0, rowIndex),
+                    newValue,
+                    ...row.slice(rowIndex + 1),
+                  ];
+                  onBodyDataChange(colIndex, newData);
+                }}
               >
                 <CellEditor>
                   <TextCellEditor />
@@ -127,16 +146,16 @@ export const DataView = (props: { onToggleView?: () => void }) => {
         </Grid>
       </FlexItem>
       <FlexLayout justify="space-between" className="button-bar">
-        <Button variant="primary" onClick={props.onToggleView}>
+        <Button variant="primary" onClick={onToggleView}>
           Back
         </Button>
         <Tooltip
           content="Select a grid created by the plugin to update data"
-          disabled={hasValidGridSelected}
+          disabled={validTableSelected}
         >
           <Button
             variant="cta"
-            disabled={!hasValidGridSelected}
+            disabled={!validTableSelected}
             focusableWhenDisabled
             onClick={updateDataInFigma}
           >

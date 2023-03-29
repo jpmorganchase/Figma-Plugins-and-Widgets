@@ -17,7 +17,7 @@ export const DEFAULT_TABLE_CONFIG: TableConfig = {
   bodyCell: null,
 };
 
-export type TableState = {
+export type TableData = {
   headerValues: string[];
   cellValues: string[][];
 };
@@ -38,12 +38,12 @@ export type UpdateBodyCellToUIMessage = {
 
 export type FullConfigUpdatedToUIMessage = {
   type: "full-config-updated";
-  config: TableConfig;
+  config: TableConfig | null;
 };
 
 export type ReadTableDataResultToUIMessage = {
   type: "read-table-data-result";
-  data: TableState;
+  data: TableData;
 };
 
 export type PostToUIMessage =
@@ -81,10 +81,16 @@ export type ReadTableDataToFigmaMessage = {
   type: "read-table-data";
 };
 
+export type SetTableDataToFigmaMessage = {
+  type: "set-table-data";
+  data: TableData;
+};
+
 export type PostToFigmaMessage =
   | UiFinishLoadingToFigmaMessage
   | ResizeWindowToFigmaMessage
   | SetTableHeaderCellToFigmaMessage
   | SetTableBodyCellToFigmaMessage
   | GenerateTableToFigmaMessage
-  | ReadTableDataToFigmaMessage;
+  | ReadTableDataToFigmaMessage
+  | SetTableDataToFigmaMessage;
