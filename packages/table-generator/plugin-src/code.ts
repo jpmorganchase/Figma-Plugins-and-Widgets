@@ -44,6 +44,7 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
     switch (msg.type) {
       case "ui-finish-loading": {
         loadLocalComponent();
+        detectGridSelection();
         break;
       }
       case "resize-window": {
@@ -97,6 +98,7 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
             data,
           } satisfies PostToUIMessage);
         }
+        break;
       }
       default: {
         console.error("Unimplemented onmessage type:", (msg as any).type);

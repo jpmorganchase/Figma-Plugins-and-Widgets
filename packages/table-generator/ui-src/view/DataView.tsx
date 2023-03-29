@@ -57,6 +57,7 @@ export const DataView = (props: { onToggleView?: () => void }) => {
 
         switch (pluginMessage.type) {
           case "read-table-data-result": {
+            console.log("pluginMessage", pluginMessage);
             const { data } = pluginMessage;
             const { cellValues, headerValues } = data;
 
@@ -105,21 +106,24 @@ export const DataView = (props: { onToggleView?: () => void }) => {
             height: "100%",
           }}
         >
-          {headerValues.map((header, colIndex) => (
-            <GridColumn
-              key={header + colIndex}
-              name={header}
-              id={header}
-              defaultWidth={100}
-              getValue={(x) => x[colIndex]}
-              headerValueComponent={CustomEditableHeader}
-              onChange={onBodyDataChange}
-            >
-              <CellEditor>
-                <TextCellEditor />
-              </CellEditor>
-            </GridColumn>
-          ))}
+          {headerValues.map((header, colIndex) => {
+            const id = `${header}-col-${colIndex}`;
+            return (
+              <GridColumn
+                key={id}
+                name={header}
+                id={id}
+                defaultWidth={100}
+                getValue={(x) => x[colIndex]}
+                headerValueComponent={CustomEditableHeader}
+                onChange={onBodyDataChange}
+              >
+                <CellEditor>
+                  <TextCellEditor />
+                </CellEditor>
+              </GridColumn>
+            );
+          })}
         </Grid>
       </FlexItem>
       <FlexLayout justify="space-between" className="button-bar">
