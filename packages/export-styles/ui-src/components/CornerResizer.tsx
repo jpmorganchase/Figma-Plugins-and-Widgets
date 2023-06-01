@@ -74,11 +74,11 @@ export const CornerResizer = () => {
     >
       <path
         d="M6.22577 16H3L16 3V6.22576L6.22577 16Z"
-        fill="var(--uitk-palette-neutral-cta-border)"
+        fill="var(--salt-palette-neutral-primary-border)"
       />
       <path
         d="M11.8602 16H8.63441L16 8.63441V11.8602L11.8602 16Z"
-        fill="var(--uitk-palette-neutral-cta-border)"
+        fill="var(--salt-palette-neutral-primary-border)"
       />
     </svg>
   );

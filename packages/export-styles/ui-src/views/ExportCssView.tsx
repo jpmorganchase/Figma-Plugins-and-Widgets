@@ -1,5 +1,11 @@
-import { Button, FlexItem, FlexLayout, StackLayout } from "@salt-ds/core";
-import { Checkbox, Dropdown, FormField, Input } from "@salt-ds/lab";
+import {
+  Button,
+  FlexItem,
+  FlexLayout,
+  StackLayout,
+  Checkbox,
+} from "@salt-ds/core";
+import { Dropdown, FormField, Input } from "@salt-ds/lab";
 import React, { useEffect, useRef, useState } from "react";
 import {
   ExportColorAllFormats,
@@ -85,12 +91,12 @@ export const ExportCssView = () => {
           <Checkbox
             label="Extract by first group"
             checked={ignoreFirstGroup}
-            onChange={(_, checked) => setIgnoreFirstGroup(checked)}
+            onChange={(event) => setIgnoreFirstGroup(event.target.checked)}
           />
           <Checkbox
             label="Trim default ending"
             checked={ignoreDefaultEnding}
-            onChange={(_, checked) => setIgnoreDefaultEnding(checked)}
+            onChange={(event) => setIgnoreDefaultEnding(event.target.checked)}
           />
         </FlexLayout>
       </FlexItem>

@@ -1,5 +1,5 @@
-import { Button, StackLayout } from "@salt-ds/core";
-import { Dropdown, FileDropZone, Checkbox, FormField } from "@salt-ds/lab";
+import { Button, StackLayout, Checkbox } from "@salt-ds/core";
+import { Dropdown, FileDropZone, FormField } from "@salt-ds/lab";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   DEFAULT_LANG,
@@ -117,7 +117,7 @@ export const SimpleView = () => {
           <Checkbox
             label="Persist in Figma"
             checked={persistChecked}
-            onChange={(_, check) => setPersistChecked(check)}
+            onChange={(event) => setPersistChecked(event.target.checked)}
           />
         </StackLayout>
       )}
