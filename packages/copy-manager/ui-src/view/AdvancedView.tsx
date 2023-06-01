@@ -1,6 +1,12 @@
-import { Button, FlexItem, FlexLayout, StackLayout } from "@salt-ds/core";
+import {
+  Button,
+  FlexItem,
+  FlexLayout,
+  StackLayout,
+  Checkbox,
+} from "@salt-ds/core";
 import { ExportIcon, RefreshIcon, TargetIcon } from "@salt-ds/icons";
-import { Checkbox, Dropdown, FormField, Input } from "@salt-ds/lab";
+import { Dropdown, FormField, Input } from "@salt-ds/lab";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   PostToFigmaMessage,
@@ -186,7 +192,9 @@ export const AdvancedView = () => {
                     <Checkbox
                       className="tableCheckbox"
                       checked={nodeInfo.checked}
-                      onChange={(_, c) => onUpdateRowChecked(nodeInfo.id, c)}
+                      onChange={(event) =>
+                        onUpdateRowChecked(nodeInfo.id, event.target.checked)
+                      }
                     />
                   </th>
                   <td>
