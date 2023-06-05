@@ -2,6 +2,9 @@
 
 A set of Figma plugins and widgets to enhance design workflows.
 
+- [Copy Manager](/packages/copy-manager)
+- [Export Styles](/packages/export-styles)
+
 ## Local Development
 
 You need node.js and Figma desktop app to run the plugins locally.
