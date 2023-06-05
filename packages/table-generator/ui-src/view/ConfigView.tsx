@@ -1,6 +1,6 @@
 import {
   Button,
-  Card,
+  InteractableCard,
   FlexItem,
   FlexLayout,
   H2,
@@ -64,8 +64,7 @@ export const ConfigView = ({
       <StackLayout style={{ flexGrow: 1 }}>
         <FlexLayout>
           <FlexItem grow={1} style={{ flexBasis: "50%" }}>
-            <Card
-              interactable
+            <InteractableCard
               className="cell-set-card"
               onClick={onHeaderCellCardClick}
             >
@@ -73,11 +72,10 @@ export const ConfigView = ({
                 {tableConfig.headerCell?.name || "Click to set"}
               </Text>
               <Label variant="secondary">Header Cell</Label>
-            </Card>
+            </InteractableCard>
           </FlexItem>
           <FlexItem grow={1} style={{ flexBasis: "50%" }}>
-            <Card
-              interactable
+            <InteractableCard
               className="cell-set-card"
               onClick={onBodyCellCardClick}
             >
@@ -85,7 +83,7 @@ export const ConfigView = ({
                 {tableConfig.bodyCell?.name || "Click to set"}
               </Text>
               <Label variant="secondary">Body Cell</Label>
-            </Card>
+            </InteractableCard>
           </FlexItem>
         </FlexLayout>
         <FlexLayout>
