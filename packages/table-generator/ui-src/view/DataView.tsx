@@ -95,17 +95,7 @@ export const DataView = ({
     );
   };
 
-  const onBodyDataChange = useCallback(
-    (colIndex: number, newData: string[]) => {
-      console.log({ colIndex, newData });
-      setBodyValues((x) => {
-        let newBody = [...x];
-        newBody[colIndex] = newData;
-        return newBody;
-      });
-    },
-    []
-  );
+  console.log({ bodyValues });
 
   return (
     <StackLayout className="data-view" align="stretch" gap={0}>
@@ -126,15 +116,20 @@ export const DataView = ({
                 id={id}
                 defaultWidth={100}
                 getValue={(x) => x[colIndex]}
-                // Don't allow editable header until salt grid supports it properly
+                // TODO: editable header
                 // headerValueComponent={CustomEditableHeader}
                 onChange={(row: string[], rowIndex, newValue) => {
-                  const newData = [
-                    ...row.slice(0, rowIndex),
+                  console.log({ row, rowIndex, colIndex, newValue });
+                  const newRowData = [
+                    ...row.slice(0, colIndex),
                     newValue,
-                    ...row.slice(rowIndex + 1),
+                    ...row.slice(colIndex + 1),
                   ];
-                  onBodyDataChange(colIndex, newData);
+                  setBodyValues((prevBodyValues) => [
+                    ...prevBodyValues.slice(0, rowIndex),
+                    newRowData,
+                    ...prevBodyValues.slice(rowIndex + 1),
+                  ]);
                 }}
               >
                 <CellEditor>

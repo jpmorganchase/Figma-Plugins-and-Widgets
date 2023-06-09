@@ -124,11 +124,16 @@ export const readDataForUiTable = (gridFrame: FrameNode): TableData => {
   };
 };
 
+export const transpose2dArray = <T>(array: Array<Array<T>>) =>
+  array[0].map((_, colIndex) => array.map((row) => row[colIndex]));
+
 export const writeDataFromUiTable = async (
   tableFrame: FrameNode,
   data: TableData
 ) => {
-  const { cellValues, headerValues } = data;
+  const { cellValues: uiCellValues, headerValues } = data;
+  // UI Table expect row by row data, so we transpose data
+  const cellValues = transpose2dArray(uiCellValues);
   for (
     let columnIndex = 0;
     columnIndex < tableFrame.children.length;
@@ -136,6 +141,7 @@ export const writeDataFromUiTable = async (
   ) {
     const column = tableFrame.children[columnIndex];
     if (column.type === "FRAME") {
+      // "+1" for header cell
       if (cellValues[columnIndex].length + 1 !== column.children.length) {
         throw new Error(
           "Number of cell doesn't match UI on column " + columnIndex

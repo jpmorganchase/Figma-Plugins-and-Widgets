@@ -1,6 +1,6 @@
 import { TableConfig } from "../../shared-src";
 import { getComponentByKey } from "./component";
-import { writeConfigToPluginData } from "./pluginData";
+import { addRelaunchData, writeConfigToPluginData } from "./pluginData";
 
 export const generateTable = async (
   config: TableConfig,
@@ -34,6 +34,7 @@ export const generateTable = async (
     table.appendChild(column);
   }
 
+  addRelaunchData(table);
   focusNode(table);
 
   return table;

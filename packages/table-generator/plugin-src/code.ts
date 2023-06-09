@@ -29,7 +29,8 @@ if (figma.command) {
   // Relaunching from relaunch button
   switch (figma.command) {
     case PLUGIN_RELAUNCH_KEY_EDIT_TABLE: {
-      notify("Relaunched! Not yet implemented");
+      // TODO: Check data / config verification, relaunch directly to data view
+      notify("Relaunched! Not fully yet implemented");
       break;
     }
     default:
@@ -103,6 +104,7 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
         break;
       }
       case "set-table-data": {
+        console.log(msg);
         const table = getValidTableFromSelection(notify);
         if (table) {
           await writeDataFromUiTable(table, msg.data);
