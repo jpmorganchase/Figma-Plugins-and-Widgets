@@ -3,7 +3,7 @@ import {
   InteractableCard,
   FlexItem,
   FlexLayout,
-  H2,
+  H3,
   Label,
   StackLayout,
   Text,
@@ -60,7 +60,7 @@ export const ConfigView = ({
 
   return (
     <StackLayout className="config-view" align="stretch" gap={0}>
-      <H2>Table Config</H2>
+      <H3>Table Config</H3>
       <StackLayout style={{ flexGrow: 1 }}>
         <FlexLayout>
           <FlexItem grow={1} style={{ flexBasis: "50%" }}>

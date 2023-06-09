@@ -1,6 +1,6 @@
 .data-view {
   margin-inline: calc(var(--salt-size-unit) * 2);
-  padding-block: calc(var(--salt-size-unit) * 2);
+  padding-block-end: calc(var(--salt-size-unit) * 2);
   height: 100%;
 }
 
