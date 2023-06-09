@@ -49,6 +49,7 @@ export const generateTableWrapper = (
 
   frame.layoutMode = "HORIZONTAL";
   frame.counterAxisSizingMode = "AUTO";
+  frame.fills = []; // remove default background
 
   writeConfigToPluginData(frame, config);
 
@@ -69,6 +70,7 @@ export const generateColumn = (
   const column = figma.createFrame();
   column.name = "Column";
   column.layoutMode = "VERTICAL";
+  column.fills = []; // remove default background
 
   const header = headerComponent.createInstance();
   column.appendChild(header);

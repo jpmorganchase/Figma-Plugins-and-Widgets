@@ -217,6 +217,7 @@ export const DataView = ({
           </Button>
 
           <FileUploadButton
+            // key={Math.random()} // TODO: how to resolve selecting the same file doesn't get callback?
             disabled={!validTableSelected}
             accept=".csv"
             onFilesChanged={handleFilesUpload}
