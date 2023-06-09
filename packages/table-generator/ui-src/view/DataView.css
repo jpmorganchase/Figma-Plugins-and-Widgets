@@ -1,21 +1,9 @@
 .data-view {
   margin-inline: calc(var(--salt-size-unit) * 2);
-  padding-block-end: calc(var(--salt-size-unit) * 2);
+  padding-block: calc(var(--salt-size-unit) * 2);
   height: 100%;
 }
 
 .data-view .button-bar {
   margin-block-start: calc(var(--salt-size-unit) * 2);
-}
-
-.data-view thead .saltGridHeaderCell-valueContainer {
-  --grid-cell-padding: 2;
-}
-
-.data-view
-  thead
-  .saltGridHeaderCell-valueContainer
-  .custom-editable-header.saltInput {
-  /* This is a hack to make an editable header cell */
-  --saltInput-height: 32px;
 }

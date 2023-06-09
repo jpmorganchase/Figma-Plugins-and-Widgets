@@ -1,0 +1,82 @@
+/* Plugin runs in Quircks mode, need to submit a Figma bug. https://stackoverflow.com/a/24259068 */
+table {
+  color: inherit;
+}
+
+table,
+th,
+td {
+  box-sizing: border-box;
+  border: 1px solid var(--salt-separable-tertiary-borderColor);
+  border-collapse: collapse;
+}
+
+th h3.saltText {
+  margin-block: 0;
+  padding: 0 var(--salt-size-unit);
+  text-align: left;
+}
+
+.table-control-table td textarea.saltInput-input {
+  resize: none;
+  /* This is some hacky workaround to make the textarea look like normal input */
+  height: calc(100% - 12px);
+
+  white-space: nowrap;
+  overflow-x: auto;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+
+  width: 100%;
+}
+
+.table-control-table td textarea.saltInput-input::-webkit-scrollbar {
+  display: none;
+}
+
+.table-control-table tr {
+  height: 28px;
+}
+
+.table-control-table .csv-icon {
+  margin: var(--salt-size-unit);
+}
+
+/* .table-control-table {
+    flex: 1;
+  } */
+
+.table-control-table .sticky-col {
+  position: sticky;
+  left: 0px;
+  z-index: 10;
+}
+
+.table-control-table .sticky-col.button-icon-size {
+  width: 28px;
+}
+
+.table-control-table .sticky-row {
+  position: sticky;
+  top: 0px;
+  z-index: 20;
+}
+
+.table-control-table .sticky-row th,
+.table-control-table .sticky-row td {
+  background: var(--salt-container-secondary-background);
+}
+
+.table-control-table th:not(.sticky-col),
+.table-control-table td:not(.sticky-col) {
+  width: var(--table-cell-width);
+}
+
+.table-control-table .table-control-table-input.saltInput {
+  width: var(--table-cell-width);
+}
+
+.salt-theme .table-control-table,
+.salt-theme .saltDropdown-popup .saltDropdown-popup-component {
+  --table-cell-width: calc(var(--salt-size-unit) * 15);
+}
