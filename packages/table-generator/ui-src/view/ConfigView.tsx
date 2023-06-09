@@ -71,7 +71,9 @@ export const ConfigView = ({
               <Text styleAs="h4" maxRows={1}>
                 {tableConfig.headerCell?.name || "Click to set"}
               </Text>
-              <Label variant="secondary">Header Cell</Label>
+              <Text variant="secondary" styleAs="label">
+                Header Cell
+              </Text>
             </InteractableCard>
           </FlexItem>
           <FlexItem grow={1} style={{ flexBasis: "50%" }}>
@@ -82,7 +84,9 @@ export const ConfigView = ({
               <Text styleAs="h4" maxRows={1}>
                 {tableConfig.bodyCell?.name || "Click to set"}
               </Text>
-              <Label variant="secondary">Body Cell</Label>
+              <Text variant="secondary" styleAs="label">
+                Body Cell
+              </Text>
             </InteractableCard>
           </FlexItem>
         </FlexLayout>
