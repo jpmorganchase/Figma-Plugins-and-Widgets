@@ -1,7 +1,5 @@
 import { TableConfig } from "../../shared-src";
-
-/** This has to match the name in manifest */
-export const PLUGIN_RELAUNCH_KEY_EDIT_TABLE = "edit-table";
+import { PLUGIN_RELAUNCH_KEY_EDIT_TABLE } from "../../shared-src/constants";
 
 export const PLUGIN_SHARED_NAMESPACE = "TableGenerator";
 export const PLUGIN_DATA_KEY_CONFIG = "Table Config";

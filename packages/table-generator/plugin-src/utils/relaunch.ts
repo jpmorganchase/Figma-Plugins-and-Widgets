@@ -1,4 +1,4 @@
-import { PLUGIN_RELAUNCH_KEY_EDIT_TABLE } from "./pluginData";
+import { PLUGIN_RELAUNCH_KEY_EDIT_TABLE } from "../../shared-src/constants";
 
 export const setRelaunchButton = (node: SceneNode) => {
   // Empty string to just show the button

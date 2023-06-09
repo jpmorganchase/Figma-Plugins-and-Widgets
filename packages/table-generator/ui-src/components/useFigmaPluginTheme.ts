@@ -15,7 +15,6 @@ export const useFigmaPluginTheme = (
   }, []);
 
   const onMutation = useCallback<MutationCallback>((mutationList) => {
-    // console.log("onMutation", mutationList, (mutationList[0].target as any).classList.value);
     const theme = (mutationList[0].target as any).classList.contains(
       "figma-dark"
     )
@@ -25,8 +24,6 @@ export const useFigmaPluginTheme = (
   }, []);
 
   useMutationObservable(document.querySelector("html")!, onMutation);
-
-  console.log("useFigmaPluginTheme", { theme });
 
   return [theme, setTheme] as const;
 };

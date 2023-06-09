@@ -10,12 +10,17 @@ import { CornerResizer } from "./components/CornerResizer";
 import { useFigmaPluginTheme } from "./components/useFigmaPluginTheme";
 import { ConfigView } from "./view/ConfigView";
 import { DataView } from "./view/DataView";
+import { PLUGIN_RELAUNCH_KEY_EDIT_TABLE } from "../shared-src/constants";
 
 import "./App.css";
 
+declare const __FIGMA_COMMAND__: string;
+
 function App() {
   const [theme] = useFigmaPluginTheme();
-  const [viewShown, setViewShown] = useState<"Config" | "Data">("Config");
+  const [viewShown, setViewShown] = useState<"Config" | "Data">(
+    __FIGMA_COMMAND__ === PLUGIN_RELAUNCH_KEY_EDIT_TABLE ? "Data" : "Config"
+  );
 
   const [tableConfig, setTableConfig] =
     useState<TableConfig>(DEFAULT_TABLE_CONFIG);

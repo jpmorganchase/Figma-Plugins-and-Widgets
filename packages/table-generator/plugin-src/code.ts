@@ -14,34 +14,24 @@ import {
   getComponentFromSelection,
   getValidTableFromSelection,
 } from "./utils/guard";
-import {
-  PLUGIN_RELAUNCH_KEY_EDIT_TABLE,
-  readConfigFromPluginData,
-} from "./utils/pluginData";
+import { readConfigFromPluginData } from "./utils/pluginData";
 
 let notifyHandler: NotificationHandler | null;
 
 const MIN_WIDTH = 340;
 const MIN_HEIGHT = 340;
 
-figma.showUI(__html__, {
-  themeColors: true,
-  height: MIN_HEIGHT,
-  width: MIN_WIDTH,
-});
-
-if (figma.command) {
-  // Relaunching from relaunch button
-  switch (figma.command) {
-    case PLUGIN_RELAUNCH_KEY_EDIT_TABLE: {
-      // TODO: Check data / config verification, relaunch directly to data view
-      notify("Relaunched! Not fully yet implemented");
-      break;
-    }
-    default:
-      notify(`Unknown figma command: ${figma.command}`, { error: true });
+figma.showUI(
+  `${__html__}<script>const __FIGMA_COMMAND__='${
+    // This is used by the UI to toggle default view on load
+    typeof figma.command === "undefined" ? "" : figma.command
+  }';</script>`,
+  {
+    themeColors: true,
+    width: MIN_WIDTH,
+    height: MIN_HEIGHT,
   }
-}
+);
 
 figma.on("selectionchange", () => {
   detectGridSelection();
