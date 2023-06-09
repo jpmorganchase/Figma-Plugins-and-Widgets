@@ -10,14 +10,20 @@ import { CsvIcon, DownloadIcon } from "@salt-ds/icons";
 import { parse, ParseResult, unparse } from "papaparse";
 import React, { useCallback, useEffect, useReducer, useState } from "react";
 import { PostToFigmaMessage, PostToUIMessage } from "../../shared-src";
+import { FileUploadButton } from "../components/FileUploadButton";
+import {
+  SettingMenuButton,
+  SettingMenuButtonSetting,
+} from "../components/SettingMenuButton";
 import { TableControl } from "../components/TableControl";
 import { tableReducer } from "../components/TableControlReducer";
+import { downloadBlob, maskArrayToLength } from "../components/utils";
 import { ViewSharedProps } from "./types";
 
-import { FileUploadButton } from "../components/FileUploadButton";
-import { downloadBlob, maskArrayToLength } from "../components/utils";
-
 import "./DataView.css";
+
+const CSV_SYNC_HEADER_LABEL = "Sync CSV Header";
+const POPULATE_ALL_CVS_COLUMNS_LABEL = "Auto populate columns";
 
 export const DataView = ({
   onToggleView,
@@ -30,6 +36,7 @@ export const DataView = ({
   });
 
   const [csvResults, setCsvResults] = useState<ParseResult<File> | undefined>();
+  // This would contain CSV file name if needed
   const [csvFile, setCsvFile] = useState<File | null>(null);
 
   const [csvSyncHeader, setCsvSyncHeader] = useState<boolean>(false);
@@ -37,10 +44,19 @@ export const DataView = ({
     useState<boolean>(false);
 
   useEffect(() => {
+    // TODO: combine these 2 messages to 1
     parent.postMessage(
       {
         pluginMessage: {
           type: "read-table-data",
+        } satisfies PostToFigmaMessage,
+      },
+      "*"
+    );
+    parent.postMessage(
+      {
+        pluginMessage: {
+          type: "read-data-table-setting",
         } satisfies PostToFigmaMessage,
       },
       "*"
@@ -58,7 +74,6 @@ export const DataView = ({
 
         switch (pluginMessage.type) {
           case "read-table-data-result": {
-            console.log("pluginMessage", pluginMessage);
             const { data } = pluginMessage;
             const { cellValues, headerValues } = data;
 
@@ -67,6 +82,13 @@ export const DataView = ({
               headerValues,
               cellValues,
             });
+            break;
+          }
+          case "read-data-table-setting-result": {
+            console.log({ pluginMessage });
+            const { setting } = pluginMessage;
+            setCsvSyncHeader(setting.syncCsvHeader);
+            setAutoPopulateCsvColumns(setting.autoPopulateCsvColumns);
             break;
           }
           default:
@@ -148,9 +170,30 @@ export const DataView = ({
       data: tableState.cellValues,
     });
     const blobToDownload = new Blob([csv], { type: "text/csv;charset=utf-8" });
-    const fileName = "Grid Data.csv";
+    const fileName = "Table Data.csv";
     // Use blob instead of plain text downloadDataUri, as Safari wipes out new line
     downloadBlob(blobToDownload, fileName);
+  };
+
+  const onSettingMenuButtonChange = (
+    newSetting: SettingMenuButtonSetting[]
+  ) => {
+    parent.postMessage(
+      {
+        pluginMessage: {
+          type: "set-data-table-setting",
+          setting: {
+            syncCsvHeader:
+              newSetting.find((s) => s.label === CSV_SYNC_HEADER_LABEL)
+                ?.selected || false,
+            autoPopulateCsvColumns:
+              newSetting.find((s) => s.label === POPULATE_ALL_CVS_COLUMNS_LABEL)
+                ?.selected || false,
+          },
+        } satisfies PostToFigmaMessage,
+      },
+      "*"
+    );
   };
 
   return (
@@ -164,8 +207,7 @@ export const DataView = ({
           disableRowEdit
           csvImportResults={csvResults}
           disableNewRowFromCsv
-          // TODO: enable via setting
-          // updateColumnNameOnCsvSelect={csvSyncHeader}
+          updateColumnNameOnCsvSelect={csvSyncHeader}
         />
       </FlexItem>
       <FlexLayout justify="space-between" className="button-bar">
@@ -203,6 +245,16 @@ export const DataView = ({
               <DownloadIcon />
             </Button>
           </Tooltip>
+          <SettingMenuButton
+            settings={[
+              { label: CSV_SYNC_HEADER_LABEL, selected: csvSyncHeader },
+              {
+                label: POPULATE_ALL_CVS_COLUMNS_LABEL,
+                selected: autoPopulateCsvColumns,
+              },
+            ]}
+            onSettingsChanged={onSettingMenuButtonChange}
+          />
         </FlexLayout>
 
         <Tooltip

@@ -1,4 +1,9 @@
 import { PostToFigmaMessage, PostToUIMessage } from "../shared-src";
+import {
+  readUISetting,
+  sendUISettingToUI,
+  setUiSetting,
+} from "./utils/clientStorage";
 import { getComponentDisplayName, loadLocalComponent } from "./utils/component";
 import {
   readDataForUiTable,
@@ -109,7 +114,16 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
         if (table) {
           await writeDataFromUiTable(table, msg.data);
         }
-
+        break;
+      }
+      case "read-data-table-setting": {
+        sendUISettingToUI(await readUISetting());
+        break;
+      }
+      case "set-data-table-setting": {
+        const { setting } = msg;
+        await setUiSetting(setting);
+        sendUISettingToUI(await readUISetting());
         break;
       }
       default: {

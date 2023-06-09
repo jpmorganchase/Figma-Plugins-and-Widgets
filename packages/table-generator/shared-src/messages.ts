@@ -22,6 +22,11 @@ export type TableData = {
   cellValues: string[][];
 };
 
+export type UISetting = {
+  syncCsvHeader: boolean;
+  autoPopulateCsvColumns: boolean;
+};
+
 export type SelectionChangedToUIMessage = {
   type: "selection-changed";
 };
@@ -46,12 +51,18 @@ export type ReadTableDataResultToUIMessage = {
   data: TableData;
 };
 
+export type ReadUISettingResultToUIMessage = {
+  type: "read-data-table-setting-result";
+  setting: UISetting;
+};
+
 export type PostToUIMessage =
   | SelectionChangedToUIMessage
   | FullConfigUpdatedToUIMessage
   | UpdateHeaderCellToUIMessage
   | UpdateBodyCellToUIMessage
-  | ReadTableDataResultToUIMessage;
+  | ReadTableDataResultToUIMessage
+  | ReadUISettingResultToUIMessage;
 
 // This is useful to run some code when react is finished to get new information from Figma
 export type UiFinishLoadingToFigmaMessage = {
@@ -86,6 +97,15 @@ export type SetTableDataToFigmaMessage = {
   data: TableData;
 };
 
+export type ReadUISettingToFigmaMessage = {
+  type: "read-data-table-setting";
+};
+
+export type SetUISettingToFigmaMessage = {
+  type: "set-data-table-setting";
+  setting: UISetting;
+};
+
 export type PostToFigmaMessage =
   | UiFinishLoadingToFigmaMessage
   | ResizeWindowToFigmaMessage
@@ -93,4 +113,6 @@ export type PostToFigmaMessage =
   | SetTableBodyCellToFigmaMessage
   | GenerateTableToFigmaMessage
   | ReadTableDataToFigmaMessage
-  | SetTableDataToFigmaMessage;
+  | SetTableDataToFigmaMessage
+  | ReadUISettingToFigmaMessage
+  | SetUISettingToFigmaMessage;
