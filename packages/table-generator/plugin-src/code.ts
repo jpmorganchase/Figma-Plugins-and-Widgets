@@ -84,6 +84,8 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
         const table = await generateTable(config);
         if (table) {
           notify("Table created");
+        } else {
+          notify("Error creating table", { error: true });
         }
         break;
       }
@@ -93,6 +95,8 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
         const table = await updateTable(config);
         if (table) {
           notify("Table updated");
+        } else {
+          notify("Error updating table", { error: true });
         }
         break;
       }
@@ -104,6 +108,8 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
             type: "read-table-data-result",
             data,
           } satisfies PostToUIMessage);
+        } else {
+          notify("Error reading table data", { error: true });
         }
         break;
       }
@@ -112,6 +118,8 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
         const table = getValidTableFromSelection(notify);
         if (table) {
           await writeDataFromUiTable(table, msg.data);
+        } else {
+          notify("Error updating table data", { error: true });
         }
         break;
       }
