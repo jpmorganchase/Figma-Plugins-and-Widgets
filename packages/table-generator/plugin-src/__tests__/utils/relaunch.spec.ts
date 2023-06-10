@@ -1,7 +1,10 @@
 import { setRelaunchButton } from "../../utils/relaunch";
 
 describe("setRelaunchButton", () => {
-  test.skip("todo", () => {
-    setRelaunchButton({} as any);
+  test("sets relaunch data with empty string", () => {
+    const mockSet = jest.fn();
+    setRelaunchButton({ setRelaunchData: mockSet } as any);
+
+    expect(mockSet).toBeCalledWith({ "edit-table": "" });
   });
 });

@@ -17,7 +17,7 @@ describe("ConfigView", () => {
       <ConfigView
         setTableConfig={() => {}}
         tableConfig={DEFAULT_TABLE_CONFIG}
-        validTableSelected={true}
+        validTableSelected={false}
       />
     );
   });
@@ -46,7 +46,7 @@ describe("ConfigView", () => {
             key: "def",
           },
         }}
-        validTableSelected={true}
+        validTableSelected={false}
       />
     );
     await userEvents.click(screen.getByRole("button", { name: "Create" }));
