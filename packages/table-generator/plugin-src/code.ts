@@ -138,7 +138,11 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
       }
     }
   } catch (e) {
-    notify((e as any).message, { error: true });
+    if (typeof e === "string") {
+      notify(e as string, { error: true });
+    } else {
+      notify((e as any).message, { error: true });
+    }
   }
 };
 
