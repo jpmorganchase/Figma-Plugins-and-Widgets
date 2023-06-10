@@ -69,7 +69,6 @@ const TableCell = React.memo(function TableCell({
             row,
             column,
             newValue: value,
-            disableNewRowFromCsv,
           });
         }}
         inputComponent="textarea"
@@ -80,6 +79,21 @@ const TableCell = React.memo(function TableCell({
           if (e.key === "Enter") {
             e.preventDefault();
           }
+        }}
+        onPaste={(event) => {
+          const pasteValue = event.clipboardData.getData("text");
+          const selectStart = (event.target as HTMLInputElement).selectionStart;
+          const selectEnd = (event.target as HTMLInputElement).selectionEnd;
+          dispatch({
+            type: "PASTE_VALUE_AT_CELL",
+            row,
+            column,
+            pasteValue,
+            disableNewRowFromCsv,
+            selectStart,
+            selectEnd,
+          });
+          event.preventDefault();
         }}
       />
     </td>

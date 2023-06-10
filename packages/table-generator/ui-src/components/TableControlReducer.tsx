@@ -2,25 +2,21 @@ import { Reducer } from "react";
 
 export const DEFAULT_CSV_CHOICE = "CSV Column";
 
-// const initialTodos = [
-//     {
-//       id: 1,
-//       title: "Todo 1",
-//       complete: false,
-//     },
-//     {
-//       id: 2,
-//       title: "Todo 2",
-//       complete: false,
-//     },
-//   ];
-
 interface UpdateValueAtCell {
   type: "UPDATE_VALUE_AT_CELL";
   row: number;
   column: number;
   newValue: string;
+}
+
+interface PasteValueAtCell {
+  type: "PASTE_VALUE_AT_CELL";
+  row: number;
+  column: number;
+  pasteValue: string;
   disableNewRowFromCsv?: boolean;
+  selectStart: number | null;
+  selectEnd: number | null;
 }
 
 interface UpdateValueAtHeader {
@@ -74,6 +70,7 @@ export type TableState = {
 
 export type TableReducerAction =
   | UpdateValueAtCell
+  | PasteValueAtCell
   | UpdateValueAtHeader
   | UpdateValueAtGroupHeader
   | InsertNewRow
@@ -92,7 +89,24 @@ export const tableReducer: Reducer<TableState, TableReducerAction> = (
 ): TableState => {
   switch (action.type) {
     case "UPDATE_VALUE_AT_CELL": {
-      const { row, column, newValue: rawValue, disableNewRowFromCsv } = action;
+      const { row, column, newValue } = action;
+      const newValues = state.cellValues;
+      newValues[row][column] = newValue;
+
+      return {
+        ...state,
+        cellValues: newValues,
+      };
+    }
+    case "PASTE_VALUE_AT_CELL": {
+      const {
+        row,
+        column,
+        pasteValue: rawValue,
+        disableNewRowFromCsv,
+        selectStart,
+        selectEnd,
+      } = action;
       const oldValues = state.cellValues;
 
       // Support excel multi-cell pasting
@@ -119,7 +133,16 @@ export const tableReducer: Reducer<TableState, TableReducerAction> = (
           // Some row could not be there, by disableNewRowFromCsv
           if (oldValues[row + i]) {
             if (column + j < oldValues[row + i].length) {
-              oldValues[row + i][column + j] = cellData;
+              if (i === 0 && j === 0) {
+                const existingCellValue = oldValues[row + i][column + j];
+                oldValues[row + i][column + j] =
+                  existingCellValue.substring(
+                    0,
+                    selectStart ?? existingCellValue.length
+                  ) + cellData;
+              } else {
+                oldValues[row + i][column + j] = cellData;
+              }
             } else {
               console.warn("Ignore update unknown columns", {
                 row: row + i,
