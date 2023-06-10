@@ -1,3 +1,4 @@
+import { TableConfig } from "../../shared-src";
 import { readConfigFromPluginData } from "./pluginData";
 
 export const getComponentFromSelection = (
@@ -26,7 +27,7 @@ export const getComponentFromSelection = (
 
 export const getValidTableFromSelection = (
   notify?: (message: string, options?: NotificationOptions) => void
-): null | FrameNode => {
+): null | { node: FrameNode; config: TableConfig } => {
   if (figma.currentPage.selection.length !== 1) {
     notify?.("Select one layer");
     return null;
@@ -38,7 +39,7 @@ export const getValidTableFromSelection = (
     const pluginData = readConfigFromPluginData(selected);
 
     if (pluginData) {
-      return selected;
+      return { node: selected, config: pluginData };
     }
   }
 

@@ -100,9 +100,9 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
         break;
       }
       case "read-table-data": {
-        const table = getValidTableFromSelection(notify);
-        if (table) {
-          const data = readDataForUiTable(table);
+        const info = getValidTableFromSelection(notify);
+        if (info) {
+          const data = readDataForUiTable(info.node);
           figma.ui.postMessage({
             type: "read-table-data-result",
             data,
@@ -113,9 +113,9 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
         break;
       }
       case "set-table-data": {
-        const table = getValidTableFromSelection(notify);
-        if (table) {
-          await writeDataFromUiTable(table, msg.data);
+        const info = getValidTableFromSelection(notify);
+        if (info) {
+          await writeDataFromUiTable(info.node, msg.data);
         } else {
           notify("Error updating table data", { error: true });
         }
@@ -150,17 +150,16 @@ function notify(message: string, options?: NotificationOptions) {
 }
 
 function detectGridSelection() {
-  const validatedTable = getValidTableFromSelection();
-  if (validatedTable) {
-    // TODO: clean up readConfigFromPluginData was already called in `getValidTableFromSelection`
-    const tableConfig = readConfigFromPluginData(validatedTable);
+  const info = getValidTableFromSelection();
+  if (info) {
+    const tableConfig = info.config;
     figma.ui.postMessage({
       type: "full-config-updated",
       config: tableConfig,
     } satisfies PostToUIMessage);
 
     if (tableConfig) {
-      const data = readDataForUiTable(validatedTable);
+      const data = readDataForUiTable(info.node);
       figma.ui.postMessage({
         type: "read-table-data-result",
         data,
