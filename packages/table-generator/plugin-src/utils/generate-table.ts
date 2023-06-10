@@ -67,11 +67,12 @@ export const updateTable = async (
     return;
   }
 
-  const validatedTable = getValidTableFromSelection();
-  if (validatedTable === null) {
+  const info = getValidTableFromSelection();
+  if (info === null) {
     notify?.("Failed to validate selected");
     return;
   }
+  const validatedTable = info.node;
 
   const existingColumnCount = validatedTable.children.length;
 
