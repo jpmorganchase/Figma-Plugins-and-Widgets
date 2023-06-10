@@ -90,7 +90,6 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
         break;
       }
       case "update-table": {
-        console.log(msg);
         const { config } = msg;
         const table = await updateTable(config);
         if (table) {
@@ -114,7 +113,6 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
         break;
       }
       case "set-table-data": {
-        console.log(msg);
         const table = getValidTableFromSelection(notify);
         if (table) {
           await writeDataFromUiTable(table, msg.data);

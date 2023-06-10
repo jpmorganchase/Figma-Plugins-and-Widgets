@@ -75,8 +75,6 @@ export const updateTable = async (
 
   const existingColumnCount = validatedTable.children.length;
 
-  console.log({ existingColumnCount, columns });
-
   for (let index = 0; index < existingColumnCount; index++) {
     const column = validatedTable.children[index];
     updateColumn(column as FrameNode, rows, body, notify);
@@ -105,7 +103,6 @@ export const updateTable = async (
       toBeRemoved.push(node);
     }
 
-    console.log("Removing column", toBeRemoved.length);
     for (const node of toBeRemoved) {
       node.remove();
     }

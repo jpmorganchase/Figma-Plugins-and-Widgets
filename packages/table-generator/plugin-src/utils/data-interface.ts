@@ -186,7 +186,6 @@ export const writeDataFromUiTable = async (
 };
 
 export const syncTextInTextNode = async (text: string, textNode: TextNode) => {
-  // console.log("checkAndUpdateTextInTextNode", { text, textNode });
   if (textNode.characters === text) {
     return;
   }

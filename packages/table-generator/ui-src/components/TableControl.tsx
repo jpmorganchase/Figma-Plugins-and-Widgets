@@ -26,7 +26,6 @@ const TableColumnCsvPicker = ({
   onSelectionChange,
 }: TableColumnCsvPickerProps) => {
   const source = [DEFAULT_CSV_CHOICE, ...csvHeaders];
-  // console.log("TableColumnCsvPicker", { source });
   return (
     <Dropdown
       // Use `key` as a workaround for UITK Dropdown bug. It throws error when: 1. uncontrolled. 2. select something first. 3. update source. 4. expand dropdown (item on the button no longer available)
@@ -236,7 +235,6 @@ export const TableControl = ({
     valueSelected: string
   ) => {
     if (valueSelected !== DEFAULT_CSV_CHOICE) {
-      console.log("csvImportResults!.data", csvImportResults!.data);
       dispatch({
         type: "UPDATE_COLUMN_DATA",
         columnName: valueSelected,

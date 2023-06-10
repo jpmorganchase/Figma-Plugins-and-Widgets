@@ -90,10 +90,8 @@ export const tableReducer: Reducer<TableState, TableReducerAction> = (
   state,
   action
 ): TableState => {
-  //   console.log("tableReducer", action);
   switch (action.type) {
     case "UPDATE_VALUE_AT_CELL": {
-      console.log(action);
       const { row, column, newValue: rawValue, disableNewRowFromCsv } = action;
       const oldValues = state.cellValues;
 
@@ -101,18 +99,14 @@ export const tableReducer: Reducer<TableState, TableReducerAction> = (
       const allNewValues: string[][] = rawValue
         .split(/\r\n|\n/)
         .map((row) => row.split(/\t|,/));
-      // console.log({ allNewValues });
+
       if (
         !disableNewRowFromCsv &&
         oldValues.length < allNewValues.length + row
       ) {
         const columnCount = oldValues[row].length;
         const newRowCount = allNewValues.length + row - oldValues.length;
-        // console.log("Inserting new rows", {
-        //   allNewValues,
-        //   newRowCount,
-        //   oldValues,
-        // });
+
         for (let index = 0; index < newRowCount; index++) {
           oldValues.push(Array(columnCount).fill(""));
         }

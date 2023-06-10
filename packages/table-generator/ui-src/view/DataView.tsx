@@ -85,7 +85,6 @@ export const DataView = ({
             break;
           }
           case "read-data-table-setting-result": {
-            console.log({ pluginMessage });
             const { setting } = pluginMessage;
             setCsvSyncHeader(setting.syncCsvHeader);
             setAutoPopulateCsvColumns(setting.autoPopulateCsvColumns);
@@ -126,7 +125,6 @@ export const DataView = ({
       parse<File, File>(file, {
         header: true,
         complete: function (results, file) {
-          console.log("CSV parse complete:", results, file);
           setCsvResults(results);
           setCsvFile(file);
 
