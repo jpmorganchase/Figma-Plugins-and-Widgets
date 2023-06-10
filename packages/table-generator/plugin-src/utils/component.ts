@@ -1,4 +1,4 @@
-// we need this map as import component doesn't work on local ones
+// we need this map as `importComponentByKeyAsync` doesn't work on local ones
 const localComponentMap: Map<string, ComponentNode> = new Map();
 
 export const loadLocalComponent = () => {

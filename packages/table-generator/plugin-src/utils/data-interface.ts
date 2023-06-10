@@ -28,9 +28,9 @@ export function getAllVisibleTextLayers(node: ChildrenMixin) {
 }
 
 /**
- * This is to future prove the custom cell component feature, so we can tell the user that
- * they can construct a custom cell with multiple text layer in it (e.g. legacy icon) and
- * text layer named "X" will be used in table population.
+ * Get one nested TextNode with preferred naming.
+ *
+ * This enables any custom cell with multiple text layer in it.
  */
 export const getPreferredChildTextNode = (
   cell: ChildrenMixin

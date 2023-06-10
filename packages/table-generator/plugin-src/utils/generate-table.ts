@@ -1,7 +1,8 @@
 import { TableConfig } from "../../shared-src";
 import { getComponentByKey } from "./component";
 import { getValidTableFromSelection } from "./guard";
-import { addRelaunchData, writeConfigToPluginData } from "./pluginData";
+import { writeConfigToPluginData } from "./pluginData";
+import { setRelaunchButton } from "./relaunch";
 
 export const generateTable = async (
   config: TableConfig,
@@ -35,7 +36,7 @@ export const generateTable = async (
     table.appendChild(column);
   }
 
-  addRelaunchData(table);
+  setRelaunchButton(table);
   focusNode(table);
 
   return table;
