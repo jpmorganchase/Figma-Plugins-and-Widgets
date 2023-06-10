@@ -9,7 +9,7 @@ import {
   readDataForUiTable,
   writeDataFromUiTable,
 } from "./utils/data-interface";
-import { generateTable } from "./utils/generate-table";
+import { generateTable, updateTable } from "./utils/generate-table";
 import {
   getComponentFromSelection,
   getValidTableFromSelection,
@@ -84,6 +84,15 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
         const table = await generateTable(config);
         if (table) {
           notify("Table created");
+        }
+        break;
+      }
+      case "update-table": {
+        console.log(msg);
+        const { config } = msg;
+        const table = await updateTable(config);
+        if (table) {
+          notify("Table updated");
         }
         break;
       }

@@ -88,6 +88,11 @@ export type GenerateTableToFigmaMessage = {
   config: TableConfig;
 };
 
+export type UpdateTableToFigmaMessage = {
+  type: "update-table";
+  config: TableConfig;
+};
+
 export type ReadTableDataToFigmaMessage = {
   type: "read-table-data";
 };
@@ -112,6 +117,7 @@ export type PostToFigmaMessage =
   | SetTableHeaderCellToFigmaMessage
   | SetTableBodyCellToFigmaMessage
   | GenerateTableToFigmaMessage
+  | UpdateTableToFigmaMessage
   | ReadTableDataToFigmaMessage
   | SetTableDataToFigmaMessage
   | ReadUISettingToFigmaMessage

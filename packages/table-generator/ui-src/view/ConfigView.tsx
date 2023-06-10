@@ -20,6 +20,7 @@ export const ConfigView = ({
   onToggleView,
   setTableConfig,
   tableConfig,
+  validTableSelected,
 }: ViewSharedProps) => {
   const onHeaderCellCardClick = () => {
     parent.postMessage(
@@ -48,6 +49,18 @@ export const ConfigView = ({
       {
         pluginMessage: {
           type: "generate-table",
+          config: tableConfig,
+        } satisfies PostToFigmaMessage,
+      },
+      "*"
+    );
+  };
+
+  const updateTable = () => {
+    parent.postMessage(
+      {
+        pluginMessage: {
+          type: "update-table",
           config: tableConfig,
         } satisfies PostToFigmaMessage,
       },
@@ -142,9 +155,9 @@ export const ConfigView = ({
             variant="cta"
             disabled={!hasCellValuesSet}
             focusableWhenDisabled
-            onClick={createTable}
+            onClick={validTableSelected ? updateTable : createTable}
           >
-            Create
+            {validTableSelected ? "Update" : "Create"}
           </Button>
         </Tooltip>
       </FlexLayout>
