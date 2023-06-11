@@ -6,8 +6,8 @@ import {
 } from "@testing-library/react";
 import userEvents from "@testing-library/user-event";
 import React from "react";
-import { DEFAULT_TABLE_CONFIG } from "../../shared-src";
-import { ConfigView } from "../view/ConfigView";
+import { DEFAULT_TABLE_CONFIG } from "../../../shared-src";
+import { ConfigView } from "../../view/ConfigView";
 
 describe("ConfigView", () => {
   let renderResult: RenderResult;
