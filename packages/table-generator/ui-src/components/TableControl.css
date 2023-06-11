@@ -17,23 +17,6 @@ th h3.saltText {
   text-align: left;
 }
 
-.table-control-table td textarea.saltInput-input {
-  resize: none;
-  /* This is some hacky workaround to make the textarea look like normal input */
-  height: calc(100% - 12px);
-
-  white-space: nowrap;
-  overflow-x: auto;
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-
-  width: 100%;
-}
-
-.table-control-table td textarea.saltInput-input::-webkit-scrollbar {
-  display: none;
-}
-
 .table-control-table tr {
   height: 28px;
 }
@@ -41,10 +24,6 @@ th h3.saltText {
 .table-control-table .csv-icon {
   margin: var(--salt-size-unit);
 }
-
-/* .table-control-table {
-    flex: 1;
-  } */
 
 .table-control-table .sticky-col {
   position: sticky;

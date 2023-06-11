@@ -1,4 +1,5 @@
 import { Reducer } from "react";
+import { parse } from "papaparse";
 
 export const DEFAULT_CSV_CHOICE = "CSV Column";
 
@@ -110,10 +111,9 @@ export const tableReducer: Reducer<TableState, TableReducerAction> = (
       const oldValues = state.cellValues;
 
       // Support excel multi-cell pasting
-      const allNewValues: string[][] = rawValue
-        .split(/\r\n|\n/)
-        .map((row) => row.split(/\t|,/));
+      const allNewValues: string[][] = parse(rawValue).data as string[][];
 
+      // Create empty rows to be filled in later, when `disableNewRowFromCsv` is off
       if (
         !disableNewRowFromCsv &&
         oldValues.length < allNewValues.length + row

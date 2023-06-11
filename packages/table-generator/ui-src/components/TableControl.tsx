@@ -28,7 +28,7 @@ const TableColumnCsvPicker = ({
   const source = [DEFAULT_CSV_CHOICE, ...csvHeaders];
   return (
     <Dropdown
-      // Use `key` as a workaround for UITK Dropdown bug. It throws error when: 1. uncontrolled. 2. select something first. 3. update source. 4. expand dropdown (item on the button no longer available)
+      // Use `key` as a workaround for Dropdown bug. It throws error when: 1. uncontrolled. 2. select something first. 3. update source. 4. expand dropdown (item on the button no longer available)
       key={JSON.stringify(source)}
       aria-label="CSV column to fill"
       defaultSelected={source[0]}
@@ -57,7 +57,6 @@ const TableCell = React.memo(function TableCell({
   dispatch,
   disableNewRowFromCsv,
 }: TableCellProp) {
-  // This is very hacky code to make sure the cell would not swallow "\n" so reducer can handle batch / range pasting
   return (
     <td>
       <Input
@@ -71,15 +70,7 @@ const TableCell = React.memo(function TableCell({
             newValue: value,
           });
         }}
-        inputComponent="textarea"
-        // TK inputProps is not generic, so `rows` will error on textarea input
-        inputProps={{ rows: 1, spellCheck: true } as any}
-        onKeyDownCapture={(e) => {
-          // Do not support user manually enter multiline data, obviously CSV could contain these
-          if (e.key === "Enter") {
-            e.preventDefault();
-          }
-        }}
+        inputProps={{ spellCheck: true }}
         onPaste={(event) => {
           const pasteValue = event.clipboardData.getData("text");
           const selectStart = (event.target as HTMLInputElement).selectionStart;
@@ -93,7 +84,7 @@ const TableCell = React.memo(function TableCell({
             selectStart,
             selectEnd,
           });
-          event.preventDefault();
+          event.preventDefault(); // To support pasting into multi-range cells
         }}
       />
     </td>
