@@ -33,6 +33,10 @@ export const FileUploadButton = ({
   const handleInputChange: ChangeEventHandler<HTMLInputElement> = (event) => {
     event.stopPropagation();
     onFilesChanged?.(event.target.files);
+    if (fileInputRef.current) {
+      // make sure selecting the same file would trigger the event next time
+      fileInputRef.current.value = "";
+    }
   };
 
   return (
