@@ -5,4 +5,5 @@ export type ViewSharedProps = {
   tableConfig: TableConfig;
   setTableConfig: React.Dispatch<React.SetStateAction<TableConfig>>;
   validTableSelected: boolean;
+  initializing: boolean;
 };

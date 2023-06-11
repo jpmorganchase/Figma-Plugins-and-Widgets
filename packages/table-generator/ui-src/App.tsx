@@ -21,6 +21,7 @@ function App() {
   const [viewShown, setViewShown] = useState<"Config" | "Data">(
     __FIGMA_COMMAND__ === PLUGIN_RELAUNCH_KEY_EDIT_TABLE ? "Data" : "Config"
   );
+  const [initializing, setinitializing] = useState(true);
 
   const [tableConfig, setTableConfig] =
     useState<TableConfig>(DEFAULT_TABLE_CONFIG);
@@ -37,6 +38,7 @@ function App() {
 
         switch (pluginMessage.type) {
           case "full-config-updated": {
+            setinitializing(false);
             if (pluginMessage.config) {
               setValidTableSelected(true);
               setTableConfig(pluginMessage.config);
@@ -92,6 +94,7 @@ function App() {
           setTableConfig={setTableConfig}
           tableConfig={tableConfig}
           onToggleView={() => setViewShown("Data")}
+          initializing={initializing}
         />
       )}
       {viewShown === "Data" && (
@@ -100,6 +103,7 @@ function App() {
           setTableConfig={setTableConfig}
           tableConfig={tableConfig}
           onToggleView={() => setViewShown("Config")}
+          initializing={initializing}
         />
       )}
       <CornerResizer />
