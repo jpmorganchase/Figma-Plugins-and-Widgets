@@ -78,6 +78,7 @@ export const ConfigView = ({
         <FlexLayout>
           <FlexItem grow={1} style={{ flexBasis: "50%" }}>
             <InteractableCard
+              disabled={validTableSelected}
               className="cell-set-card"
               onClick={onHeaderCellCardClick}
             >
@@ -91,6 +92,7 @@ export const ConfigView = ({
           </FlexItem>
           <FlexItem grow={1} style={{ flexBasis: "50%" }}>
             <InteractableCard
+              disabled={validTableSelected}
               className="cell-set-card"
               onClick={onBodyCellCardClick}
             >
