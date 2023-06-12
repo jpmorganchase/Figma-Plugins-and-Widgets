@@ -16,6 +16,14 @@ class ComponentNode {
 }
 
 global.figma = {
+  ui: {
+    postMessage: jest.fn(),
+  },
+  clientStorage: {
+    keysAsync: jest.fn(),
+    getAsync: jest.fn(),
+    setAsync: jest.fn(),
+  },
   createComponent: () => new ComponentNode(),
   createText: jest.fn(),
 };

@@ -1,0 +1,15 @@
+#root,
+.appRoot {
+  height: 100%;
+}
+
+body {
+  background: var(--figma-color-bg);
+  font-family: "Open Sans";
+  margin: 0;
+  overflow: hidden;
+}
+
+.appRoot.appRoot {
+  background: var(--salt-container-primary-background);
+}

@@ -1,0 +1,10 @@
+#corner {
+  position: absolute;
+  right: 1px;
+  bottom: 2px;
+  cursor: nwse-resize;
+}
+
+.corner-resizer-stroke {
+  fill: var(--salt-palette-neutral-primary-border);
+}
