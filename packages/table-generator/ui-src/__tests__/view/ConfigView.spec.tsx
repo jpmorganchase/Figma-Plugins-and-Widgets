@@ -32,6 +32,36 @@ describe("ConfigView", () => {
       "true"
     );
   });
+  describe("view toggle button", () => {
+    test("is disabled by default", () => {
+      expect(
+        screen.getByRole("button", { name: "Configure Data" })
+      ).toHaveAttribute("aria-disabled", "true");
+    });
+    test("is available when valid grid is selected", () => {
+      renderResult?.rerender(
+        <ConfigView
+          setTableConfig={() => {}}
+          tableConfig={{
+            ...DEFAULT_TABLE_CONFIG,
+            headerCell: {
+              name: "Test header",
+              key: "abc",
+            },
+            bodyCell: {
+              name: "Test cell",
+              key: "def",
+            },
+          }}
+          validTableSelected={true}
+          initializing={false}
+        />
+      );
+      expect(
+        screen.getByRole("button", { name: "Configure Data" })
+      ).not.toHaveAttribute("aria-disabled", "true");
+    });
+  });
   test("sends create message to figma when clicking create", async () => {
     renderResult?.rerender(
       <ConfigView
