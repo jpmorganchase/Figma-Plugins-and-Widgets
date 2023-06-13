@@ -141,7 +141,7 @@ export const ConfigView = ({
         >
           <Button
             variant="primary"
-            disabled={!hasCellValuesSet}
+            disabled={!hasCellValuesSet || !validTableSelected}
             focusableWhenDisabled
             onClick={onToggleView}
           >
