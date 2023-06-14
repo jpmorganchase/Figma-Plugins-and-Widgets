@@ -4,6 +4,7 @@ A set of Figma plugins and widgets to enhance design workflows.
 
 - [Copy Manager](/packages/copy-manager)
 - [Export Styles](/packages/export-styles)
+- [Table Generator](/packages/table-generator)
 
 ## Local Development
 
