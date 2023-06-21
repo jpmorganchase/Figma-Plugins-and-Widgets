@@ -171,6 +171,18 @@ function createTokens(
 
   console.log("aliasData", aliasData);
 
+  const existingVariables: { [name: string]: Variable } = {};
+
+  // Roundabout way to get variables via name in a collection
+  {
+    const collectionVariables = figma.variables
+      .getLocalVariables()
+      .filter((v) => v.variableCollectionId === collection!.id);
+    for (const variable of collectionVariables) {
+      existingVariables[variable.name] = variable;
+    }
+  }
+
   styleData.forEach(({ name, color, opacity }) => {
     // Alias path
     if (aliasCollectionName && aliasModeName) {
@@ -181,22 +193,18 @@ function createTokens(
 
       if (aliasVariableId) {
         // there is a match, create a reference
-        const token = figma.variables.createVariable(
-          name,
-          collection.id,
-          "COLOR"
-        );
+        const token =
+          existingVariables[name] ||
+          figma.variables.createVariable(name, collection.id, "COLOR");
         token.setValueForMode(modeId, {
           type: "VARIABLE_ALIAS",
           id: aliasVariableId,
         });
       } else {
         // There isn't a match, create raw color var
-        const token = figma.variables.createVariable(
-          name,
-          collection.id,
-          "COLOR"
-        );
+        const token =
+          existingVariables[name] ||
+          figma.variables.createVariable(name, collection.id, "COLOR");
         token.setValueForMode(modeId, {
           r: color.r,
           g: color.g,
@@ -205,11 +213,9 @@ function createTokens(
         });
       }
     } else {
-      const token = figma.variables.createVariable(
-        name,
-        collection.id,
-        "COLOR"
-      );
+      const token =
+        existingVariables[name] ||
+        figma.variables.createVariable(name, collection.id, "COLOR");
       token.setValueForMode(modeId, {
         r: color.r,
         g: color.g,
