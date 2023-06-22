@@ -44,6 +44,10 @@ export const storeLibraryStyles = async () => {
   await figma.clientStorage.setAsync(figma.root.name, styleData);
 };
 
+export const deleteSelectedLibrary = async (libName: string) => {
+  await figma.clientStorage.deleteAsync(libName);
+};
+
 export const getAvailableLibraries = async (): Promise<string[]> => {
   const allKeysStored = await figma.clientStorage.keysAsync();
   return allKeysStored;
@@ -84,6 +88,8 @@ export const createVariablesFromLibrary = async (
   const storedInfo = (await figma.clientStorage.getAsync(
     libraryName
   )) as StoredColorStyleInfo[];
+
+  console.log({ storedInfo });
 
   createTokens(
     storedInfo,
@@ -183,7 +189,8 @@ function createTokens(
     }
   }
 
-  styleData.forEach(({ name, color, opacity }) => {
+  styleData.forEach(({ name: originalName, color, opacity }) => {
+    const name = originalName.replaceAll(".", "-"); // `createVariable` will fail when name contains "."
     // Alias path
     if (aliasCollectionName && aliasModeName) {
       // Dirty way to check whether the token existed

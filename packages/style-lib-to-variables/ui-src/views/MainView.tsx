@@ -1,4 +1,4 @@
-import { Button, StackLayout } from "@salt-ds/core";
+import { Button, FlexLayout, StackLayout } from "@salt-ds/core";
 import { FormField, Input, List } from "@salt-ds/lab";
 import React, { useEffect, useRef, useState } from "react";
 import { PostToFigmaMessage } from "../../shared-src";
@@ -61,6 +61,20 @@ export const MainView = () => {
     );
   };
 
+  const onDelete = () => {
+    if (selectedLibrary) {
+      parent.postMessage(
+        {
+          pluginMessage: {
+            type: "delete-library-styles",
+            selectedLibrary,
+          } satisfies PostToFigmaMessage,
+        },
+        "*"
+      );
+    }
+  };
+
   const onCreateVariables = () => {
     if (selectedLibrary) {
       parent.postMessage(
@@ -81,7 +95,12 @@ export const MainView = () => {
 
   return (
     <StackLayout gap={1}>
-      <Button onClick={onStore}>Store Style</Button>
+      <FlexLayout direction="row">
+        <Button onClick={onStore}>Store Style</Button>
+        <Button onClick={onDelete} disabled={selectedLibrary === null}>
+          Delete Style
+        </Button>
+      </FlexLayout>
       <List
         source={libraries}
         onSelectionChange={(_, selected) => setSelectedLibrary(selected)}

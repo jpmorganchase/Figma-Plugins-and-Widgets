@@ -1,6 +1,7 @@
 import { PostToFigmaMessage, PostToUIMessage } from "../shared-src/messages";
 import {
   createVariablesFromLibrary,
+  deleteSelectedLibrary,
   getAvailableLibraries,
   storeLibraryStyles,
 } from "./utils";
@@ -25,6 +26,13 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
       );
     } else if (msg.type === "store-library-styles") {
       await storeLibraryStyles();
+      const libraries = await getAvailableLibraries();
+      figma.ui.postMessage({
+        type: "read-available-library-result",
+        libraries,
+      } satisfies PostToUIMessage);
+    } else if (msg.type === "delete-library-styles") {
+      await deleteSelectedLibrary(msg.selectedLibrary);
       const libraries = await getAvailableLibraries();
       figma.ui.postMessage({
         type: "read-available-library-result",

@@ -19,6 +19,11 @@ export type StoreLibraryStylesToFigmaMessage = {
   type: "store-library-styles";
 };
 
+export type DeleteLibraryStylesToFigmaMessage = {
+  type: "delete-library-styles";
+  selectedLibrary: string;
+};
+
 export type ReadAvailableLibraryToFigmaMessage = {
   type: "read-available-library";
 };
@@ -36,5 +41,6 @@ export type PostToFigmaMessage =
   | UIReadyToFigmaMessage
   | ResizeWindowToFigmaMessage
   | StoreLibraryStylesToFigmaMessage
+  | DeleteLibraryStylesToFigmaMessage
   | ReadAvailableLibraryToFigmaMessage
   | CreateVariablesFromLibraryToFigmaMessage;
