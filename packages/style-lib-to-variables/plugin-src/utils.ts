@@ -232,3 +232,287 @@ function createTokens(
     }
   });
 }
+
+export async function importJson(
+  collectionName: string,
+  modeName: string,
+  aliasCollectionName: string,
+  aliasModeName: string,
+  jsonContent: string
+) {
+  const existingCollections = figma.variables.getLocalVariableCollections();
+  const existingCollection = existingCollections.find(
+    (x) => x.name === collectionName
+  );
+  const collection =
+    existingCollection ||
+    figma.variables.createVariableCollection(collectionName);
+  const modeId = existingCollection
+    ? collection.modes.find((m) => m.name === modeName)?.modeId ||
+      collection.addMode(modeName)
+    : collection.modes[0].modeId;
+  if (!existingCollection) {
+    collection.renameMode(modeId, modeName);
+  }
+  let aliasCollection: VariableCollection | undefined;
+
+  /**
+   * Key is `name`, value is token id
+   * */
+  const aliasData: { [key: string]: string } = {};
+
+  if (aliasCollectionName && aliasModeName) {
+    aliasCollection = existingCollections.find(
+      (x) => x.name === aliasCollectionName
+    );
+    if (!aliasCollection) {
+      throw new Error(
+        "Cannot find alias collection named: " + aliasCollectionName
+      );
+    }
+    const aliasMode = aliasCollection.modes.find(
+      (m) => m.name === aliasModeName
+    );
+    if (!aliasMode) {
+      throw new Error("Cannot find alias mode named: " + aliasModeName);
+    }
+
+    const aliasVariables = figma.variables
+      .getLocalVariables()
+      .filter((v) => v.variableCollectionId === aliasCollection!.id);
+
+    console.log("aliasVariables", aliasVariables);
+    console.log("aliasCollection", aliasCollection);
+
+    // TODO: there's no way to get variable from collection / mode ?
+
+    for (const variable of aliasVariables) {
+      const value = variable.valuesByMode[aliasMode.modeId];
+      if (typeof value === "object") {
+        aliasData[variable.name] = variable.id;
+      } else {
+        console.warn(
+          "Skip var value not object",
+          value,
+          "in variable",
+          variable
+        );
+      }
+    }
+  }
+
+  console.log("aliasData", aliasData);
+
+  const existingVariables: { [name: string]: Variable } = {};
+
+  // Roundabout way to get variables via name in a collection
+  {
+    const collectionVariables = figma.variables
+      .getLocalVariables()
+      .filter((v) => v.variableCollectionId === collection!.id);
+    for (const variable of collectionVariables) {
+      existingVariables[variable.name] = variable;
+    }
+  }
+
+  console.log({ existingVariables });
+
+  const json = JSON.parse(
+    jsonContent
+      .replaceAll(`"value"`, `"$value"`)
+      .replaceAll(`"type"`, `"$type"`)
+      .replaceAll(`"transparent"`, `"{Transparent}"`)
+  );
+
+  Object.entries(json).forEach(([key, object]) => {
+    traverseToken(
+      collection,
+      modeId,
+      json.$type,
+      key,
+      object,
+      aliasData,
+      existingVariables,
+      aliasCollection!
+    );
+  });
+}
+
+function isAlias(value: string) {
+  return value.toString().trim().charAt(0) === "{";
+}
+
+function traverseToken(
+  collection: VariableCollection,
+  modeId: string,
+  type: any, // VariableResolvedDataType
+  key: string,
+  object: any,
+  aliasData: { [key: string]: string },
+  existingVariables: { [name: string]: Variable },
+  aliasCollection: VariableCollection
+  // tokens: { [key: string]: Variable },
+  // aliases: { [key: string]: { key: string; type: string; valueKey: string } }
+) {
+  type = type || object.$type;
+  // console.log("traverseToken", { type });
+  // if key is a meta field, move on
+  if (key.charAt(0) === "$") {
+    console.log(key, "is a meta field, move on");
+    return;
+  }
+  if (object.$value !== undefined) {
+    if (isAlias(object.$value)) {
+      const valueKey = saltReferenceKeyTransformer(object.$value.trim())
+        .replace(/\./g, "/")
+        .replace(/[\{\}]/g, "") as string;
+      // console.log("traverseToken", { type, valueKey });
+      if (aliasData[valueKey]) {
+        // there is a match, create a reference
+        const token =
+          existingVariables[key] ||
+          figma.variables.createVariable(key, collection.id, "COLOR");
+        token.setValueForMode(modeId, {
+          type: "VARIABLE_ALIAS",
+          id: aliasData[valueKey],
+        });
+      } else {
+        const alphaMatch = valueKey.match("\\d{2}A$");
+        if (alphaMatch) {
+          // e.g. valueKey = Blue/500/40A
+
+          const alpha = Number.parseInt(alphaMatch[0].replace("A", "")) / 100; // 0.4
+
+          const existedKey = valueKey.substring(0, valueKey.lastIndexOf("/")); // -> Blue/500
+          const tokenId = aliasData[existedKey];
+          if (tokenId) {
+            const originalToken = figma.variables.getVariableById(tokenId);
+            if (originalToken) {
+              const alphaVariant = figma.variables.createVariable(
+                valueKey,
+                aliasCollection.id,
+                "COLOR"
+              );
+
+              console.info(
+                "Created new alpha alias for",
+                valueKey,
+                "alpha",
+                alpha
+              );
+
+              // Store to aliasData to be used in another iteration
+              aliasData[alphaVariant.name] = alphaVariant.id;
+
+              // there is a match, create a reference
+              const token =
+                existingVariables[key] ||
+                figma.variables.createVariable(key, collection.id, "COLOR");
+              token.setValueForMode(modeId, {
+                type: "VARIABLE_ALIAS",
+                id: aliasData[valueKey],
+              });
+            } else {
+              console.error(
+                "Alias not found",
+                valueKey,
+                "failed to find original token to copy from"
+              );
+            }
+          } else {
+            console.error(
+              "Alias not found",
+              valueKey,
+              "failed to create alpha variation"
+            );
+          }
+        } else {
+          console.error("Alias not found", valueKey);
+        }
+      }
+    }
+    // else if (type === "color") {
+    //   tokens[key] = createToken(
+    //     collection,
+    //     modeId,
+    //     "COLOR",
+    //     key,
+    //     parseColor(object.$value)
+    //   );
+    // } else if (type === "number") {
+    //   tokens[key] = createToken(
+    //     collection,
+    //     modeId,
+    //     "FLOAT",
+    //     key,
+    //     object.$value
+    //   );
+    // }
+    else {
+      console.log("unsupported type", type, object);
+    }
+  } else {
+    Object.entries(object).forEach(([key2, object2]) => {
+      if (key2.charAt(0) !== "$") {
+        // console.log("traverseToken further", key2, object2);
+        traverseToken(
+          collection,
+          modeId,
+          type,
+          `${key}/${key2}`,
+          object2,
+          aliasData,
+          existingVariables,
+          aliasCollection
+        );
+      }
+    });
+  }
+}
+
+const replaceStrings = [
+  ["fade.background", "40A"],
+  ["fade.background.readonly", "15A"],
+  ["fade.border", "40A"],
+  ["fade.border.readonly", "25A"],
+  ["fade.fill", "40A"],
+  ["fade.foreground", "70A"],
+  ["fade.backdrop", "70A"],
+  ["fade.stroke", "40A"],
+  ["fade.primary.border", "40A"],
+  ["fade.secondary.border", "25A"],
+  ["fade.tertiary.border", "15A"],
+  ["fade.separatorOpacity.primary", "40A"],
+  ["fade.separatorOpacity.secondary", "25A"],
+  ["fade.separatorOpacity.tertiary", "15A"],
+] as const;
+
+const replacementMap = new Map(replaceStrings);
+
+var replaceRegex = new RegExp(
+  ".(" + replaceStrings.map(([from, to]) => from).join("|") + ")$",
+  ""
+);
+var replacer = function (value: string) {
+  return "." + (replacementMap.get(value.substring(1) as any) || "");
+};
+
+export function saltReferenceKeyTransformer(input: string) {
+  const ref = input
+    .replace("salt.color.", "")
+    .replace(/^{/, "")
+    .replace(/}$/, "");
+  if (ref.includes("fade")) {
+    return capitalizeAllParts(ref.replace(replaceRegex, replacer));
+  } else {
+    return capitalizeAllParts(ref);
+  }
+}
+
+function capitalizeAllParts(string: string) {
+  return string.split(".").map(capitalizeFirstLetter).join(".");
+}
+
+function capitalizeFirstLetter(string: string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}

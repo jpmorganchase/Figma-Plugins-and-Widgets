@@ -4,6 +4,7 @@
   "description": "Figma plugin converts library styles to variables",
   "main": "dist/code.js",
   "scripts": {
+    "test": "jest",
     "tsc": "npm run tsc:main && npm run tsc:ui",
     "tsc:main": "tsc --noEmit -p plugin-src",
     "tsc:ui": "tsc --noEmit -p ui-src",
@@ -35,5 +36,10 @@
     "lz-string": "^1.5.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
+  },
+  "jest": {
+    "projects": [
+      "plugin-src/jest.config.js"
+    ]
   }
 }

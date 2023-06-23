@@ -3,6 +3,7 @@ import {
   createVariablesFromLibrary,
   deleteSelectedLibrary,
   getAvailableLibraries,
+  importJson,
   storeLibraryStyles,
 } from "./utils";
 
@@ -53,6 +54,15 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
         msg.aliasModeName
       );
       figma.notify("Created variables");
+    } else if (msg.type === "import-json") {
+      await importJson(
+        msg.collectionName,
+        msg.modeName,
+        msg.aliasCollectionName,
+        msg.aliasModeName,
+        msg.jsonContent
+      );
+      figma.notify("JSON imported");
     }
   } catch (error) {
     if (typeof error === "string") {

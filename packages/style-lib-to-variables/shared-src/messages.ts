@@ -37,10 +37,20 @@ export type CreateVariablesFromLibraryToFigmaMessage = {
   aliasModeName: string;
 };
 
+export type ImportJsonToFigmaMessage = {
+  type: "import-json";
+  collectionName: string;
+  modeName: string;
+  aliasCollectionName: string;
+  aliasModeName: string;
+  jsonContent: string;
+};
+
 export type PostToFigmaMessage =
   | UIReadyToFigmaMessage
   | ResizeWindowToFigmaMessage
   | StoreLibraryStylesToFigmaMessage
   | DeleteLibraryStylesToFigmaMessage
   | ReadAvailableLibraryToFigmaMessage
-  | CreateVariablesFromLibraryToFigmaMessage;
+  | CreateVariablesFromLibraryToFigmaMessage
+  | ImportJsonToFigmaMessage;

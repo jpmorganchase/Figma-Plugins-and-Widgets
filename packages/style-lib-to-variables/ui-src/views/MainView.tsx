@@ -12,8 +12,11 @@ export const MainView = () => {
     useState<string>("New Collection");
   const [modeName, setModeName] = useState<string>("Style");
 
-  const [aliasCollectionName, setAliasCollectionName] = useState<string>("");
-  const [aliasModeName, setAliasModeName] = useState<string>("");
+  const [aliasCollectionName, setAliasCollectionName] =
+    useState<string>("Salt Foundation");
+  const [aliasModeName, setAliasModeName] = useState<string>("Color");
+
+  const [jsonContent, setJsonContent] = useState("");
 
   const onRefreshList = () => {
     parent.postMessage(
@@ -93,6 +96,22 @@ export const MainView = () => {
     }
   };
 
+  const onImportJSON = () => {
+    parent.postMessage(
+      {
+        pluginMessage: {
+          type: "import-json",
+          collectionName,
+          modeName,
+          aliasCollectionName,
+          aliasModeName,
+          jsonContent,
+        } satisfies PostToFigmaMessage,
+      },
+      "*"
+    );
+  };
+
   return (
     <StackLayout gap={1}>
       <FlexLayout direction="row">
@@ -129,6 +148,13 @@ export const MainView = () => {
           onChange={(e) => setAliasModeName(e.target.value)}
         />
       </FormField>
+      <textarea
+        value={jsonContent}
+        onChange={(e) => setJsonContent(e.target.value)}
+      ></textarea>
+      <Button onClick={onImportJSON} disabled={!jsonContent}>
+        Import JSON
+      </Button>
     </StackLayout>
   );
 };
