@@ -27,7 +27,7 @@ export const storeLibraryStyles = async () => {
             name: current.name,
             color: { r, g, b },
             // hex,
-            opacity: opacity || 1,
+            opacity: opacity === undefined ? 1 : opacity,
             // tokens: [],
           };
           // into[uniqueId].tokens.push(current.name);
@@ -46,6 +46,111 @@ export const storeLibraryStyles = async () => {
 
 export const deleteSelectedLibrary = async (libName: string) => {
   await figma.clientStorage.deleteAsync(libName);
+};
+
+export const restoreSelectedLibrary = async (
+  libName: string,
+  collectionName: string,
+  modeName: string
+) => {
+  const storedInfo = (await figma.clientStorage.getAsync(
+    libName
+  )) as StoredColorStyleInfo[];
+
+  console.log({ storedInfo });
+
+  const collection = figma.variables
+    .getLocalVariableCollections()
+    .find((x) => x.name === collectionName);
+
+  if (collection === undefined) {
+    throw new Error("Collection doesn't exist - " + collectionName);
+  }
+
+  const modeId = collection.modes.find((m) => m.name === modeName)?.modeId;
+
+  if (modeId === undefined) {
+    throw new Error(
+      "Mode doesn't exist in Collection - " + collectionName + " / " + modeName
+    );
+  }
+
+  // hashed value by `rgbToKey`
+  const existingVariables: { [hashedValueKey: string]: Variable } = {};
+
+  // Roundabout way to get variables via name in a collection
+  {
+    const collectionVariables = figma.variables
+      .getLocalVariables()
+      .filter((v) => v.variableCollectionId === collection!.id);
+    for (const variable of collectionVariables) {
+      const value = variable.valuesByMode[modeId];
+      if (typeof value === "object") {
+        if ("type" in value && value.type === "VARIABLE_ALIAS") {
+          const resolvedVar = figma.variables.getVariableById(value.id);
+          if (resolvedVar) {
+            // TODO: Assume this is foundation color
+            const resolvedValue = Object.values(resolvedVar.valuesByMode)[0];
+            // console.log("resolved alias value", resolvedValue, "from", value);
+            const key = rgbToKey(resolvedValue as any);
+            existingVariables[key] = variable;
+          } else {
+            throw new Error(
+              "Cannot resolve variable by id aliased - " + value.id
+            );
+          }
+        } else {
+          // TODO: Assume this is color for now
+          const key = rgbToKey(value as any);
+          existingVariables[key] = variable;
+        }
+      } else {
+        console.warn(
+          "Skip var value not object",
+          value,
+          "in variable",
+          variable
+        );
+      }
+    }
+  }
+
+  console.log({ existingVariables });
+
+  for (const storedStyle of storedInfo) {
+    // opacity is always there, taken care during store time
+    const hashValue = rgbToKey({
+      ...storedStyle.color,
+      a: storedStyle.opacity,
+    });
+    if (existingVariables[hashValue]) {
+      const style = figma.createPaintStyle();
+      style.name = storedStyle.name;
+      style.paints = [
+        figma.variables.setBoundVariableForPaint(
+          {
+            type: "SOLID",
+            opacity: storedStyle.opacity,
+            color: storedStyle.color,
+          },
+          "color",
+          existingVariables[hashValue]
+        ),
+      ];
+    } else {
+      console.warn("Couldn't variable stored with same value", storedStyle);
+
+      const style = figma.createPaintStyle();
+      style.name = storedStyle.name;
+      style.paints = [
+        {
+          type: "SOLID",
+          opacity: storedStyle.opacity,
+          color: storedStyle.color,
+        },
+      ];
+    }
+  }
 };
 
 export const getAvailableLibraries = async (): Promise<string[]> => {
@@ -260,6 +365,7 @@ export async function importJson(
    * Key is `name`, value is token id
    * */
   const aliasData: { [key: string]: string } = {};
+  let aliasModeId: string | undefined;
 
   if (aliasCollectionName && aliasModeName) {
     aliasCollection = existingCollections.find(
@@ -286,8 +392,10 @@ export async function importJson(
 
     // TODO: there's no way to get variable from collection / mode ?
 
+    aliasModeId = aliasMode.modeId;
+
     for (const variable of aliasVariables) {
-      const value = variable.valuesByMode[aliasMode.modeId];
+      const value = variable.valuesByMode[aliasModeId];
       if (typeof value === "object") {
         aliasData[variable.name] = variable.id;
       } else {
@@ -333,7 +441,8 @@ export async function importJson(
       object,
       aliasData,
       existingVariables,
-      aliasCollection!
+      aliasCollection!,
+      aliasModeId!
     );
   });
 }
@@ -350,7 +459,8 @@ function traverseToken(
   object: any,
   aliasData: { [key: string]: string },
   existingVariables: { [name: string]: Variable },
-  aliasCollection: VariableCollection
+  aliasCollection: VariableCollection,
+  aliasModeId: string
   // tokens: { [key: string]: Variable },
   // aliases: { [key: string]: { key: string; type: string; valueKey: string } }
 ) {
@@ -393,6 +503,10 @@ function traverseToken(
                 aliasCollection.id,
                 "COLOR"
               );
+              alphaVariant.setValueForMode(aliasModeId, {
+                ...(originalToken.valuesByMode[aliasModeId] as any),
+                a: alpha,
+              });
 
               console.info(
                 "Created new alpha alias for",
@@ -463,7 +577,8 @@ function traverseToken(
           object2,
           aliasData,
           existingVariables,
-          aliasCollection
+          aliasCollection,
+          aliasModeId
         );
       }
     });

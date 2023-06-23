@@ -37,6 +37,13 @@ export type CreateVariablesFromLibraryToFigmaMessage = {
   aliasModeName: string;
 };
 
+export type RestoreStylesToFigmaMessage = {
+  type: "restore-library-styles";
+  selectedLibrary: string;
+  collectionName: string;
+  modeName: string;
+};
+
 export type ImportJsonToFigmaMessage = {
   type: "import-json";
   collectionName: string;
@@ -51,6 +58,7 @@ export type PostToFigmaMessage =
   | ResizeWindowToFigmaMessage
   | StoreLibraryStylesToFigmaMessage
   | DeleteLibraryStylesToFigmaMessage
+  | RestoreStylesToFigmaMessage
   | ReadAvailableLibraryToFigmaMessage
   | CreateVariablesFromLibraryToFigmaMessage
   | ImportJsonToFigmaMessage;

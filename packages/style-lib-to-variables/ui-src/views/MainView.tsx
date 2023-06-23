@@ -8,9 +8,8 @@ export const MainView = () => {
   const [libraries, setLibraries] = useState<string[]>([]);
   const [selectedLibrary, setSelectedLibrary] = useState<null | string>(null);
 
-  const [collectionName, setCollectionName] =
-    useState<string>("New Collection");
-  const [modeName, setModeName] = useState<string>("Style");
+  const [collectionName, setCollectionName] = useState<string>("Salt Palette");
+  const [modeName, setModeName] = useState<string>("Light");
 
   const [aliasCollectionName, setAliasCollectionName] =
     useState<string>("Salt Foundation");
@@ -78,6 +77,22 @@ export const MainView = () => {
     }
   };
 
+  const onRestore = () => {
+    if (selectedLibrary) {
+      parent.postMessage(
+        {
+          pluginMessage: {
+            type: "restore-library-styles",
+            selectedLibrary,
+            collectionName,
+            modeName,
+          } satisfies PostToFigmaMessage,
+        },
+        "*"
+      );
+    }
+  };
+
   const onCreateVariables = () => {
     if (selectedLibrary) {
       parent.postMessage(
@@ -118,6 +133,9 @@ export const MainView = () => {
         <Button onClick={onStore}>Store Style</Button>
         <Button onClick={onDelete} disabled={selectedLibrary === null}>
           Delete Style
+        </Button>
+        <Button onClick={onRestore} disabled={selectedLibrary === null}>
+          Restore Style
         </Button>
       </FlexLayout>
       <List

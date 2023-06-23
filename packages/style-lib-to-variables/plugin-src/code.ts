@@ -4,6 +4,7 @@ import {
   deleteSelectedLibrary,
   getAvailableLibraries,
   importJson,
+  restoreSelectedLibrary,
   storeLibraryStyles,
 } from "./utils";
 
@@ -39,6 +40,12 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
         type: "read-available-library-result",
         libraries,
       } satisfies PostToUIMessage);
+    } else if (msg.type === "restore-library-styles") {
+      await restoreSelectedLibrary(
+        msg.selectedLibrary,
+        msg.collectionName,
+        msg.modeName
+      );
     } else if (msg.type === "read-available-library") {
       const libraries = await getAvailableLibraries();
       figma.ui.postMessage({
