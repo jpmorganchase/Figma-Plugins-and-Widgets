@@ -61,6 +61,8 @@ const TableCell = React.memo(function TableCell({
     <td>
       <Input
         className="table-control-table-input"
+        data-row={row}
+        data-column={column}
         value={value}
         onChange={(_, value) => {
           dispatch({
@@ -84,7 +86,20 @@ const TableCell = React.memo(function TableCell({
             selectStart,
             selectEnd,
           });
-          event.preventDefault(); // To support pasting into multi-range cells
+          event.preventDefault(); // Stop default pasting bahaviour, reducer updates multiple cell values directly
+        }}
+        onKeyUp={(event) => {
+          if (event.code === "Enter") {
+            const inputEle = document
+              .querySelector(".table-control-table")
+              ?.querySelector(
+                `.table-control-table-input[data-row="${
+                  row + (event.shiftKey ? -1 : 1)
+                }"][data-column="${column}"] input`
+              ) as HTMLInputElement | null;
+            inputEle?.focus();
+            inputEle?.select(); // "Tab" does this as well
+          }
         }}
       />
     </td>
@@ -140,9 +155,13 @@ const TableHeaderCell = React.memo(
     columnIndex: number;
   }) => {
     if (editable) {
+      const row = -1;
       return (
         <th>
           <Input
+            className="table-control-table-input"
+            data-row={row}
+            data-column={columnIndex}
             value={value}
             onChange={(_, value) => {
               dispatch({
@@ -150,6 +169,19 @@ const TableHeaderCell = React.memo(
                 columnIndex,
                 newValue: value,
               });
+            }}
+            onKeyUp={(event) => {
+              if (event.code === "Enter") {
+                const inputEle = document
+                  .querySelector(".table-control-table")
+                  ?.querySelector(
+                    `.table-control-table-input[data-row="${
+                      row + (event.shiftKey ? -1 : 1)
+                    }"][data-column="${columnIndex}"] input`
+                  ) as HTMLInputElement | null;
+                inputEle?.focus();
+                inputEle?.select(); // "Tab" does this as well
+              }
             }}
           />
         </th>
@@ -177,9 +209,13 @@ const TableGroupHeaderCell = React.memo(
     columnIndex: number;
   }) => {
     if (editable) {
+      const row = -2;
       return (
         <th>
           <Input
+            className="table-control-table-input"
+            data-row={row}
+            data-column={columnIndex}
             value={value}
             onChange={(_, value) => {
               dispatch({
@@ -187,6 +223,19 @@ const TableGroupHeaderCell = React.memo(
                 columnIndex,
                 newValue: value,
               });
+            }}
+            onKeyUp={(event) => {
+              if (event.code === "Enter") {
+                const inputEle = document
+                  .querySelector(".table-control-table")
+                  ?.querySelector(
+                    `.table-control-table-input[data-row="${
+                      row + (event.shiftKey ? -1 : 1)
+                    }"][data-column="${columnIndex}"] input`
+                  ) as HTMLInputElement | null;
+                inputEle?.focus();
+                inputEle?.select(); // "Tab" does this as well
+              }
             }}
           />
         </th>
