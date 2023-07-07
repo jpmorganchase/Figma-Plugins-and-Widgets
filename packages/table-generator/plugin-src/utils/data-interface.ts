@@ -153,25 +153,28 @@ export const writeDataFromUiTable = async (
             if (rowIndex === 0) {
               // header
               const textNode = getPreferredChildTextNode(cell);
+              const newValue = headerValues[columnIndex];
               if (textNode) {
-                await syncTextInTextNode(headerValues[columnIndex], textNode);
+                await syncTextInTextNode(newValue, textNode);
               } else {
-                throw new Error(
-                  `Can't find visible text layer within col ${columnIndex} header cell`
-                );
+                if (newValue) {
+                  throw new Error(
+                    `Can't find visible text layer within col ${columnIndex} header cell`
+                  );
+                }
               }
             } else {
               // body
               const textNode = getPreferredChildTextNode(cell);
+              const newValue = cellValues[columnIndex][rowIndex - 1];
               if (textNode) {
-                await syncTextInTextNode(
-                  cellValues[columnIndex][rowIndex - 1],
-                  textNode
-                );
+                await syncTextInTextNode(newValue, textNode);
               } else {
-                throw new Error(
-                  `Can't find visible text layer within col ${columnIndex} row ${rowIndex}`
-                );
+                if (newValue) {
+                  throw new Error(
+                    `Can't find visible text layer within col ${columnIndex} row ${rowIndex}`
+                  );
+                }
               }
             }
           } else {
