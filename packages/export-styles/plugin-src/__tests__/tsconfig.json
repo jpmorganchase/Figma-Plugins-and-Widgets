@@ -3,6 +3,7 @@
     "target": "es6",
     "lib": ["es6"],
     "strict": true,
+    "skipLibCheck": true,
     "types": ["jest", "plugin-typings"],
     "typeRoots": [
       "../../../../node_modules/@figma",
