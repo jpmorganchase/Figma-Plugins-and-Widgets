@@ -5,9 +5,7 @@
     "strict": true,
     "skipLibCheck": true,
     "types": ["plugin-typings"],
-    "typeRoots": [
-      "../../../../node_modules/@figma",
-    ],
+    "typeRoots": ["../../../../node_modules/@figma"],
     "esModuleInterop": true,
     "moduleResolution": "node"
   },
