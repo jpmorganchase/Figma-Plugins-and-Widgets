@@ -131,3 +131,5 @@ dist
 
 # Turbo
 .turbo
+
+.DS_Store

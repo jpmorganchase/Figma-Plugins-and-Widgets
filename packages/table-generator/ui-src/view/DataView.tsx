@@ -7,8 +7,8 @@ import {
   Tooltip,
 } from "@salt-ds/core";
 import { CsvIcon, DownloadIcon } from "@salt-ds/icons";
-import { parse, ParseResult, unparse } from "papaparse";
-import React, { useCallback, useEffect, useReducer, useState } from "react";
+import { ParseResult, parse, unparse } from "papaparse";
+import { useCallback, useEffect, useReducer, useState } from "react";
 import { PostToFigmaMessage, PostToUIMessage } from "../../shared-src";
 import { FileUploadButton } from "../components/FileUploadButton";
 import {
@@ -20,8 +20,8 @@ import { tableReducer } from "../components/TableControlReducer";
 import { downloadBlob, maskArrayToLength } from "../components/utils";
 import { ViewSharedProps } from "./types";
 
-import "./DataView.css";
 import { ContentStatus } from "@salt-ds/lab";
+import "./DataView.css";
 
 const CSV_SYNC_HEADER_LABEL = "Sync CSV Header";
 const POPULATE_ALL_CVS_COLUMNS_LABEL = "Auto populate columns";

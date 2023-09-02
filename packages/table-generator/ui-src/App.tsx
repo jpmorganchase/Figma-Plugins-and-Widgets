@@ -1,16 +1,16 @@
 import { SaltProvider } from "@salt-ds/core";
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   DEFAULT_TABLE_CONFIG,
   PostToFigmaMessage,
   PostToUIMessage,
   TableConfig,
 } from "../shared-src";
+import { PLUGIN_RELAUNCH_KEY_EDIT_TABLE } from "../shared-src/constants";
 import { CornerResizer } from "./components/CornerResizer";
 import { useFigmaPluginTheme } from "./components/useFigmaPluginTheme";
 import { ConfigView } from "./view/ConfigView";
 import { DataView } from "./view/DataView";
-import { PLUGIN_RELAUNCH_KEY_EDIT_TABLE } from "../shared-src/constants";
 
 import "./App.css";
 

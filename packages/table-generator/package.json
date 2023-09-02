@@ -4,8 +4,9 @@
   "description": "Table Generator Figma Plugin",
   "main": "dist/code.js",
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watch",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "test:coverage": "vitest run --coverage",
     "tsc": "npm run tsc:main && npm run tsc:ui && npm run tsc:tests",
     "tsc:main": "tsc --noEmit -p plugin-src",
     "tsc:ui": "tsc --noEmit -p ui-src",
@@ -41,11 +42,5 @@
   },
   "devDependencies": {
     "@types/papaparse": "^5.3.7"
-  },
-  "jest": {
-    "projects": [
-      "ui-src/jest.config.js",
-      "plugin-src/jest.config.js"
-    ]
   }
 }

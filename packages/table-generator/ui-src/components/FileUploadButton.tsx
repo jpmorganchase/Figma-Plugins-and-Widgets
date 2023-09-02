@@ -1,5 +1,5 @@
 import { Button, ButtonProps, Tooltip, TooltipProps } from "@salt-ds/core";
-import React, {
+import {
   ChangeEventHandler,
   InputHTMLAttributes,
   SyntheticEvent,
