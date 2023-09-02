@@ -33,4 +33,5 @@ populateGlobal(global, {
     createComponent: () => new ComponentNode(),
     createText: vi.fn(),
   },
+  // Int32Array: vi.fn(),
 });

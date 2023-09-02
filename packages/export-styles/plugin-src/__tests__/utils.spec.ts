@@ -1,9 +1,10 @@
+import { describe, expect, test } from "vitest";
 import {
-  convertNaming,
-  color1To255,
-  getRgbStringFromFigmaColor,
-  getHexStringFromFigmaColor,
   camelize,
+  color1To255,
+  convertNaming,
+  getHexStringFromFigmaColor,
+  getRgbStringFromFigmaColor,
   trimDefaultEnding,
 } from "../utils";
 

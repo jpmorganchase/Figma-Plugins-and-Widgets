@@ -4,11 +4,9 @@
     "lib": ["es6"],
     "strict": true,
     "skipLibCheck": true,
-    "types": ["jest", "plugin-typings"],
+    "types": ["plugin-typings"],
     "typeRoots": [
       "../../../../node_modules/@figma",
-      "../../../../node_modules/@jest",
-      "../../../../node_modules/@types"
     ],
     "esModuleInterop": true,
     "moduleResolution": "node"
