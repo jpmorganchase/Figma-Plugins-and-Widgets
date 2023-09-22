@@ -1,5 +1,5 @@
-import { Button, FlexLayout, StackLayout } from "@salt-ds/core";
-import { FormField, Input, List } from "@salt-ds/lab";
+import { Button, FlexLayout, StackLayout, Tooltip } from "@salt-ds/core";
+import { FormField, Input, List, Switch } from "@salt-ds/lab";
 import React, { useEffect, useRef, useState } from "react";
 import { PostToFigmaMessage } from "../../shared-src";
 import { FigmaToUIMessageEvent } from "../types";
@@ -11,6 +11,7 @@ export const MainView = () => {
   const [collectionName, setCollectionName] = useState<string>("Salt Palette");
   const [modeName, setModeName] = useState<string>("Light");
 
+  const [useAlias, setUseAlias] = useState(false);
   const [aliasCollectionName, setAliasCollectionName] =
     useState<string>("Salt Foundation");
   const [aliasModeName, setAliasModeName] = useState<string>("Color");
@@ -102,6 +103,7 @@ export const MainView = () => {
             selectedLibrary: selectedLibrary,
             collectionName,
             modeName,
+            useAlias,
             aliasCollectionName,
             aliasModeName,
           } satisfies PostToFigmaMessage,
@@ -141,31 +143,55 @@ export const MainView = () => {
       <List
         source={libraries}
         onSelectionChange={(_, selected) => setSelectedLibrary(selected)}
+        showEmptyMessage
+        emptyMessage="Open library and store color styles"
       ></List>
-      <FormField label="Collection Name">
-        <Input
-          value={collectionName}
-          onChange={(e) => setCollectionName(e.target.value)}
-        />
-      </FormField>
-      <FormField label="Mode Name">
-        <Input value={modeName} onChange={(e) => setModeName(e.target.value)} />
-      </FormField>
-      <Button onClick={onCreateVariables} disabled={selectedLibrary === null}>
-        Create Variables
-      </Button>
-      <FormField label="Alias Collection Name">
-        <Input
-          value={aliasCollectionName}
-          onChange={(e) => setAliasCollectionName(e.target.value)}
-        />
-      </FormField>
-      <FormField label="Alias Mode Name">
-        <Input
-          value={aliasModeName}
-          onChange={(e) => setAliasModeName(e.target.value)}
-        />
-      </FormField>
+      <FlexLayout>
+        <FormField label="Collection Name">
+          <Input
+            value={collectionName}
+            onChange={(e) => setCollectionName(e.target.value)}
+          />
+        </FormField>
+        <FormField label="Mode Name">
+          <Input
+            value={modeName}
+            onChange={(e) => setModeName(e.target.value)}
+          />
+        </FormField>
+      </FlexLayout>
+      <Tooltip
+        content="Select stored style from list"
+        disabled={selectedLibrary !== null}
+        placement="bottom"
+      >
+        <Button
+          onClick={onCreateVariables}
+          disabled={selectedLibrary === null}
+          focusableWhenDisabled
+        >
+          Create Variables
+        </Button>
+      </Tooltip>
+      <Switch
+        label="Use Alias"
+        checked={useAlias}
+        onChange={(e) => setUseAlias(e.target.checked)}
+      />
+      <FlexLayout>
+        <FormField label="Alias Collection Name" disabled={!useAlias}>
+          <Input
+            value={aliasCollectionName}
+            onChange={(e) => setAliasCollectionName(e.target.value)}
+          />
+        </FormField>
+        <FormField label="Alias Mode Name" disabled={!useAlias}>
+          <Input
+            value={aliasModeName}
+            onChange={(e) => setAliasModeName(e.target.value)}
+          />
+        </FormField>
+      </FlexLayout>
       <textarea
         value={jsonContent}
         onChange={(e) => setJsonContent(e.target.value)}

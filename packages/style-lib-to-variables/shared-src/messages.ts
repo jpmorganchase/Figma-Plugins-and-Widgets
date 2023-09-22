@@ -33,6 +33,7 @@ export type CreateVariablesFromLibraryToFigmaMessage = {
   selectedLibrary: string;
   collectionName: string;
   modeName: string;
+  useAlias: boolean;
   aliasCollectionName: string;
   aliasModeName: string;
 };

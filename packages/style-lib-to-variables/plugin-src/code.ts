@@ -57,6 +57,7 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
         msg.selectedLibrary,
         msg.collectionName,
         msg.modeName,
+        msg.useAlias,
         msg.aliasCollectionName,
         msg.aliasModeName
       );

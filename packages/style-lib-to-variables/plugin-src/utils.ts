@@ -7,12 +7,12 @@ export const storeLibraryStyles = async () => {
   const styles = figma.getLocalPaintStyles();
   const styleNameToDataMap = styles.reduce((into, current) => {
     const paints = current.paints.filter(({ visible }) => visible);
-    if (paints.length > 1) {
-      // do something different i guess
+    if (paints.length !== 1) {
+      // TODO: warn user
     } else {
       const paint0 = paints[0];
       if (paint0.type !== "SOLID") {
-        // do something different i guess
+        // TODO: warn user
       } else {
         const {
           blendMode,
@@ -183,6 +183,7 @@ export const createVariablesFromLibrary = async (
   libraryName: string,
   collectionName: string,
   modeName: string,
+  useAlias: boolean,
   aliasCollectionName?: string,
   aliasModeName?: string
 ) => {
@@ -200,6 +201,7 @@ export const createVariablesFromLibrary = async (
     storedInfo,
     collectionName,
     modeName,
+    useAlias,
     aliasCollectionName,
     aliasModeName
   );
@@ -209,6 +211,7 @@ function createTokens(
   styleData: StoredColorStyleInfo[],
   collectionName: string,
   modeName: string,
+  useAlias: boolean,
   aliasCollectionName?: string,
   aliasModeName?: string
 ) {
@@ -238,7 +241,7 @@ function createTokens(
    * */
   const aliasData: { [key: string]: string } = {};
 
-  if (aliasCollectionName && aliasModeName) {
+  if (useAlias && aliasCollectionName && aliasModeName) {
     aliasCollection = existingCollections.find(
       (x) => x.name === aliasCollectionName
     );
@@ -297,7 +300,7 @@ function createTokens(
   styleData.forEach(({ name: originalName, color, opacity }) => {
     const name = originalName.replaceAll(".", "-"); // `createVariable` will fail when name contains "."
     // Alias path
-    if (aliasCollectionName && aliasModeName) {
+    if (useAlias && aliasCollectionName && aliasModeName) {
       // Dirty way to check whether the token existed
       const key = rgbToKey({ ...color, a: opacity });
 
