@@ -11,5 +11,11 @@
       "command": "edit-table",
       "name": "Edit table"
     }
-  ]
+  ],
+  "networkAccess": {
+    "allowedDomains": [
+      "https://fonts.gstatic.com",
+      "https://fonts.googleapis.com"
+    ]
+  }
 }

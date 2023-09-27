@@ -12,5 +12,11 @@
       "name": "Review copy revisions",
       "multipleSelection": true
     }
-  ]
+  ],
+  "networkAccess": {
+    "allowedDomains": [
+      "https://fonts.gstatic.com",
+      "https://fonts.googleapis.com"
+    ]
+  }
 }

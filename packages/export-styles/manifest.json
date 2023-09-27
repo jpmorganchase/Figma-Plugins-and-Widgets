@@ -9,5 +9,11 @@
   "menu": [
     { "name": "Export CSS Variable", "command": "export-css-var" },
     { "name": "Export JSON", "command": "export-json" }
-  ]
+  ],
+  "networkAccess": {
+    "allowedDomains": [
+      "https://fonts.gstatic.com",
+      "https://fonts.googleapis.com"
+    ]
+  }
 }
