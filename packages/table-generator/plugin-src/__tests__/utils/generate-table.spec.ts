@@ -1,9 +1,10 @@
 import { updateColumn } from "../../utils/generate-table";
+import { vi, test, expect, describe } from "vitest";
 
 describe("updateColumn", () => {
   test("not adding or removing when config rows stays the same", () => {
-    const mockRemove = jest.fn();
-    const mockAppendChild = jest.fn();
+    const mockRemove = vi.fn();
+    const mockAppendChild = vi.fn();
     const mockColumn = {
       type: "FRAME",
       appendChild: mockAppendChild,
@@ -24,8 +25,8 @@ describe("updateColumn", () => {
   });
 
   test("removes excess cells when new config has less rows", () => {
-    const mockRemove = jest.fn();
-    const mockAppendChild = jest.fn();
+    const mockRemove = vi.fn();
+    const mockAppendChild = vi.fn();
     const mockColumn = {
       type: "FRAME",
       appendChild: mockAppendChild,
@@ -48,8 +49,8 @@ describe("updateColumn", () => {
   });
 
   test("adds missing cells when new config has more rows", () => {
-    const mockRemove = jest.fn();
-    const mockAppendChild = jest.fn();
+    const mockRemove = vi.fn();
+    const mockAppendChild = vi.fn();
     const mockColumn = {
       type: "FRAME",
       appendChild: mockAppendChild,

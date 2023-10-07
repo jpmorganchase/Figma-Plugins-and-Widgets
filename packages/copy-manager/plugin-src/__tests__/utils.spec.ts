@@ -1,3 +1,4 @@
+import { describe, expect, test } from "vitest";
 import { getHeadingLevelNumber, HeadingSettings } from "../utils";
 
 describe("getHeadingLevelNumber", () => {

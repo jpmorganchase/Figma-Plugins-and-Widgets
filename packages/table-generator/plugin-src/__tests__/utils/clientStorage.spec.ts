@@ -3,10 +3,11 @@ import {
   sendUISettingToUI,
   setUiSetting,
 } from "../../utils/clientStorage";
+import { vi, test, expect, describe, afterEach } from "vitest";
 
 describe("sendUISettingToUI", () => {
   test("sends message to UI", () => {
-    const postMessageSpy = jest.spyOn(figma.ui, "postMessage");
+    const postMessageSpy = vi.spyOn(figma.ui, "postMessage");
     const testSetting = {
       syncCsvHeader: true,
       autoPopulateCsvColumns: true,
@@ -23,20 +24,21 @@ describe("sendUISettingToUI", () => {
 
 describe("readUISetting", () => {
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
   test("default settings to false when first launch", async () => {
-    jest.spyOn(figma.clientStorage, "keysAsync").mockResolvedValue([]);
+    vi.spyOn(figma.clientStorage, "keysAsync").mockResolvedValue([]);
     expect(await readUISetting()).toEqual({
       syncCsvHeader: false,
       autoPopulateCsvColumns: false,
     });
   });
   test("reads setting correctly when value set before", async () => {
-    jest
-      .spyOn(figma.clientStorage, "keysAsync")
-      .mockResolvedValue(["SYNC_CSV_HEADER", "AUTO_POPULATE_CSV_COLUMNS"]);
-    jest.spyOn(figma.clientStorage, "getAsync").mockResolvedValue(true);
+    vi.spyOn(figma.clientStorage, "keysAsync").mockResolvedValue([
+      "SYNC_CSV_HEADER",
+      "AUTO_POPULATE_CSV_COLUMNS",
+    ]);
+    vi.spyOn(figma.clientStorage, "getAsync").mockResolvedValue(true);
     expect(await readUISetting()).toEqual({
       autoPopulateCsvColumns: true,
       syncCsvHeader: true,
@@ -47,11 +49,11 @@ describe("readUISetting", () => {
 describe("setUiSetting", () => {
   test("set setting correctly", async () => {
     const mockStore: any = {};
-    jest
-      .spyOn(figma.clientStorage, "setAsync")
-      .mockImplementation(async (key, value) => {
+    vi.spyOn(figma.clientStorage, "setAsync").mockImplementation(
+      async (key, value) => {
         mockStore[key] = value;
-      });
+      }
+    );
     await setUiSetting({ syncCsvHeader: false, autoPopulateCsvColumns: true });
     expect(mockStore).toEqual({
       SYNC_CSV_HEADER: false,

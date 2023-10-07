@@ -1,4 +1,4 @@
-import React, { PointerEventHandler, useState } from "react";
+import { PointerEventHandler, useState } from "react";
 
 import "./CornerResizer.css";
 

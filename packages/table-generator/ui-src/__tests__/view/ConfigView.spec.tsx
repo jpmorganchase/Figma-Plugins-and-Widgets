@@ -1,18 +1,13 @@
-import {
-  render,
-  screen,
-  fireEvent,
-  RenderResult,
-} from "@testing-library/react";
+import { RenderResult, render, screen } from "@testing-library/react";
 import userEvents from "@testing-library/user-event";
-import React from "react";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { DEFAULT_TABLE_CONFIG } from "../../../shared-src";
 import { ConfigView } from "../../view/ConfigView";
 
 describe("ConfigView", () => {
   let renderResult: RenderResult;
   beforeEach(() => {
-    window.parent.postMessage = jest.fn();
+    window.parent.postMessage = vi.fn<any>();
     renderResult = render(
       <ConfigView
         setTableConfig={() => {}}
@@ -22,7 +17,9 @@ describe("ConfigView", () => {
       />
     );
   });
-  afterEach(() => jest.resetAllMocks());
+  afterEach(() => {
+    vi.resetAllMocks();
+  });
   test("renders title", () => {
     expect(screen.getByText("Table Config")).toBeInTheDocument();
   });

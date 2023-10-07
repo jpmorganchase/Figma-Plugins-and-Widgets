@@ -1,11 +1,12 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvents from "@testing-library/user-event";
 import React from "react";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import { ExportCssView } from "../views/ExportCssView";
 
 describe("ExportCssView", () => {
   beforeEach(() => {
-    window.parent.postMessage = jest.fn();
+    window.parent.postMessage = vi.fn<any>();
     render(<ExportCssView />);
   });
   test("renders export button", () => {

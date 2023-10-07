@@ -1,7 +1,6 @@
 import { Button, FlexLayout } from "@salt-ds/core";
 import { CloseSmallIcon, SettingsIcon, SuccessTickIcon } from "@salt-ds/icons";
 import { Dropdown, ListItem, ListItemProps } from "@salt-ds/lab";
-import React from "react";
 
 import "./SettingMenuButton.css";
 

@@ -1,16 +1,14 @@
 import {
   Button,
-  InteractableCard,
   FlexItem,
   FlexLayout,
   H3,
-  Label,
+  InteractableCard,
   StackLayout,
   Text,
   Tooltip,
 } from "@salt-ds/core";
 import { FormField, Input } from "@salt-ds/lab";
-import React from "react";
 import { PostToFigmaMessage } from "../../shared-src";
 import { ViewSharedProps } from "./types";
 

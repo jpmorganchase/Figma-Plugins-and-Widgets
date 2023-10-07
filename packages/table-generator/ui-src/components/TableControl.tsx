@@ -1,4 +1,4 @@
-import { Button, Tooltip, H3 } from "@salt-ds/core";
+import { Button, H3, Tooltip } from "@salt-ds/core";
 import { AddIcon, CsvIcon, DeleteIcon } from "@salt-ds/icons";
 import { Dropdown, Input } from "@salt-ds/lab";
 import { ParseResult } from "papaparse";

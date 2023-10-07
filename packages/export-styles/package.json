@@ -4,7 +4,9 @@
   "description": "Figma plugin exports shared styles to code",
   "main": "dist/code.js",
   "scripts": {
-    "test": "jest",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "test:coverage": "vitest run --coverage",
     "tsc": "npm run tsc:main && npm run tsc:ui && npm run tsc:tests",
     "tsc:main": "tsc --noEmit -p plugin-src",
     "tsc:ui": "tsc --noEmit -p ui-src",
@@ -36,11 +38,5 @@
     "@salt-ds/theme": "^1.5.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
-  },
-  "jest": {
-    "projects": [
-      "plugin-src/jest.config.js",
-      "ui-src/jest.config.js"
-    ]
   }
 }
