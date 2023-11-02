@@ -110,18 +110,22 @@ export function exportVariables(
       figma.variables.getVariableById(variableId)!;
     const value = valuesByMode[mode.modeId];
     if (value !== undefined && ["COLOR", "FLOAT"].includes(resolvedType)) {
-      let obj = file.body;
+      let obj = file.body as any;
       name.split("/").forEach((groupName) => {
         obj[groupName] = obj[groupName] || {};
         obj = obj[groupName];
       });
       obj.$type = resolvedType === "COLOR" ? "color" : "number";
-      if (value.type === "VARIABLE_ALIAS") {
+      if (
+        typeof value === "object" &&
+        "type" in value &&
+        value.type === "VARIABLE_ALIAS"
+      ) {
         obj.$value = `{${figma.variables
-          .getVariableById(value.id)
+          .getVariableById(value.id)!
           .name.replace(/\//g, ".")}}`;
       } else {
-        obj.$value = resolvedType === "COLOR" ? rgbToHex(value) : value;
+        obj.$value = resolvedType === "COLOR" ? rgbToHex(value as RGBA) : value;
       }
     }
   });

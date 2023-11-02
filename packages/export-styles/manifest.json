@@ -16,7 +16,9 @@
     },
     {
       "name": "Export variables",
-      "menu": [{ "name": "JSON", "command": "figma-variable-to-json" }]
+      "menu": [
+        { "name": "JSON (Experimental)", "command": "figma-variable-to-json" }
+      ]
     }
   ],
   "networkAccess": {

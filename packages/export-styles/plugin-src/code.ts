@@ -26,7 +26,11 @@ figma.showUI(__html__, {
   height: CSS_VIEW_HEIGHT,
   width: CSS_WINDOW_WIDTH,
   title:
-    figma.command === "export-css-var" ? "Export CSS Variables" : "Export JSON",
+    figma.command === "export-css-var"
+      ? "Export CSS Variables"
+      : figma.command === "export-json"
+      ? "Export JSON"
+      : "Export Variable To JSON",
 });
 
 figma.ui.onmessage = (msg: PostToFigmaMessage) => {

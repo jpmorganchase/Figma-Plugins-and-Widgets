@@ -6,6 +6,7 @@ import { useFigmaPluginTheme } from "./components/hooks";
 import { FigmaToUIMessageEvent } from "./types";
 import { ExportCssView } from "./views/ExportCssView";
 import { ExportJsonView } from "./views/ExportJsonView";
+import { VariableJsonView } from "./views/VariableJsonView";
 
 import "./App.css";
 
@@ -49,6 +50,7 @@ function App() {
       <div className="appRoot">
         {launchCommand === "export-css-var" && <ExportCssView />}
         {launchCommand === "export-json" && <ExportJsonView />}
+        {launchCommand === "figma-variable-to-json" && <VariableJsonView />}
         <CornerResizer />
       </div>
     </SaltProvider>
