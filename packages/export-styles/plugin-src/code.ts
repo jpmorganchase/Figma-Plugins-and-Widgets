@@ -6,6 +6,7 @@ import {
 import {
   convertNaming,
   convertNamingFromGroup,
+  exportVariables,
   getColorConvertFn,
   splitGroup,
   trimDefaultEnding,
@@ -152,5 +153,50 @@ figma.ui.onmessage = (msg: PostToFigmaMessage) => {
       Math.max(width, JSON_WINDOW_WIDTH),
       Math.max(height, JSON_VIEW_HEIGHT)
     );
+  } else if (msg.type === "get-variable-collections") {
+    const localCollections = figma.variables
+      .getLocalVariableCollections()
+      .map((c) => ({
+        name: c.name,
+        id: c.id,
+      }));
+    figma.ui.postMessage({
+      type: "get-variable-collections-result",
+      collections: localCollections,
+    } satisfies PostToUIMessage);
+  } else if (msg.type === "get-variable-modes") {
+    const { collectionId } = msg;
+    const variableCollection =
+      figma.variables.getVariableCollectionById(collectionId);
+    if (variableCollection) {
+      figma.ui.postMessage({
+        type: "get-variable-modes-result",
+        collectionId,
+        modes: variableCollection.modes,
+      } satisfies PostToUIMessage);
+    } else {
+      figma.notify(`Cannot get collection with id: ${collectionId}`);
+    }
+  } else if (msg.type === "export-variable-to-json") {
+    const { collectionId, modeId } = msg;
+
+    const variableCollection =
+      figma.variables.getVariableCollectionById(collectionId);
+    if (variableCollection) {
+      const exportResult = exportVariables(variableCollection, modeId);
+      if (exportResult) {
+        figma.ui.postMessage({
+          type: "export-variable-to-json-result",
+          fileName: exportResult.fileName,
+          body: JSON.stringify(exportResult.body, null, 2),
+        } satisfies PostToUIMessage);
+      } else {
+        figma.notify(
+          `Cannot export collectionId: ${collectionId}, modeId: ${modeId}`
+        );
+      }
+    } else {
+      figma.notify(`Cannot get collection with id: ${collectionId}`);
+    }
   }
 };

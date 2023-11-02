@@ -15,7 +15,7 @@
     "prettier:ci": "prettier --check . --ignore-path .gitignore"
   },
   "dependencies": {
-    "turbo": "latest"
+    "turbo": "*"
   },
   "devDependencies": {
     "@figma/plugin-typings": "^1.76.0",
