@@ -7,8 +7,19 @@
   "main": "dist/code.js",
   "ui": "dist/index.html",
   "menu": [
-    { "name": "Export CSS Variable", "command": "export-css-var" },
-    { "name": "Export JSON", "command": "export-json" }
+    {
+      "name": "Export color styles",
+      "menu": [
+        { "name": "CSS Variable", "command": "export-css-var" },
+        { "name": "JSON", "command": "export-json" }
+      ]
+    },
+    {
+      "name": "Export variables",
+      "menu": [
+        { "name": "JSON (Experimental)", "command": "figma-variable-to-json" }
+      ]
+    }
   ],
   "networkAccess": {
     "allowedDomains": [

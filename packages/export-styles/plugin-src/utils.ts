@@ -94,3 +94,56 @@ export function getColorConvertFn(format: ExportColorFormat) {
       throw new Error(`${format} not supported by getColorConvertFn`);
   }
 }
+
+export function exportVariables(
+  { name, modes, variableIds }: VariableCollection,
+  modeId: string
+) {
+  const mode = modes.find((m) => m.modeId === modeId);
+  if (!mode) {
+    return null;
+  }
+
+  const file = { fileName: `${name}.${mode.name}.tokens.json`, body: {} };
+  variableIds.forEach((variableId) => {
+    const { name, resolvedType, valuesByMode } =
+      figma.variables.getVariableById(variableId)!;
+    const value = valuesByMode[mode.modeId];
+    if (value !== undefined && ["COLOR", "FLOAT"].includes(resolvedType)) {
+      let obj = file.body as any;
+      name.split("/").forEach((groupName) => {
+        obj[groupName] = obj[groupName] || {};
+        obj = obj[groupName];
+      });
+      obj.$type = resolvedType === "COLOR" ? "color" : "number";
+      if (
+        typeof value === "object" &&
+        "type" in value &&
+        value.type === "VARIABLE_ALIAS"
+      ) {
+        obj.$value = `{${figma.variables
+          .getVariableById(value.id)!
+          .name.replace(/\//g, ".")}}`;
+      } else {
+        obj.$value = resolvedType === "COLOR" ? rgbToHex(value as RGBA) : value;
+      }
+    }
+  });
+
+  return file;
+}
+
+function rgbToHex({ r, g, b, a }: RGBA) {
+  if (a !== 1) {
+    return `rgba(${[r, g, b]
+      .map((n) => Math.round(n * 255))
+      .join(", ")}, ${a.toFixed(4)})`;
+  }
+  const toHex = (value: number) => {
+    const hex = Math.round(value * 255).toString(16);
+    return hex.length === 1 ? "0" + hex : hex;
+  };
+
+  const hex = [toHex(r), toHex(g), toHex(b)].join("");
+  return `#${hex}`;
+}
