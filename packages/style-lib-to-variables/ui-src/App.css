@@ -1,0 +1,22 @@
+#root,
+.appRoot {
+  height: 100%;
+}
+
+body {
+  background: var(--figma-color-bg);
+  font-family: "Open Sans";
+}
+
+.figma-light {
+  color-scheme: light;
+}
+
+.figma-dark {
+  color-scheme: dark;
+}
+
+.appRoot textarea {
+  resize: none;
+  flex: 1;
+}

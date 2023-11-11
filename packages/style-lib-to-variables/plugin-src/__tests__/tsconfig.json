@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "lib": ["ESNext"],
+    "strict": true,
+    "types": ["jest", "@figma/plugin-typings"],
+    "typeRoots": [
+      "../../../../node_modules/@figma",
+      "../../../../node_modules/@jest",
+      "../../../../node_modules/@types"
+    ],
+    "esModuleInterop": true,
+    "moduleResolution": "node"
+  },
+  "include": ["./**/*.ts"]
+}

@@ -1,0 +1,45 @@
+{
+  "name": "figma-style-lib-to-variables",
+  "version": "0.0.1",
+  "description": "Figma plugin converts library styles to variables",
+  "main": "dist/code.js",
+  "scripts": {
+    "test": "jest",
+    "tsc": "npm run tsc:main && npm run tsc:ui",
+    "tsc:main": "tsc --noEmit -p plugin-src",
+    "tsc:ui": "tsc --noEmit -p ui-src",
+    "tsc:watch": "concurrently -n widget,iframe,tests \"npm run tsc:main -- --watch --preserveWatchOutput\" \"npm run tsc:ui -- --watch --preserveWatchOutput\" \"npm run tsc:tests -- --watch --preserveWatchOutput\"",
+    "build": "npm run build:ui && npm run build:main -- --minify",
+    "build:main": "esbuild plugin-src/code.ts --bundle --outfile=dist/code.js --target=es6",
+    "build:ui": "npx vite build --minify esbuild --emptyOutDir=false",
+    "build:watch": "concurrently -n widget,iframe \"npm run build:main -- --watch\" \"npm run build:ui -- --watch\"",
+    "dev": "concurrently -n tsc,build,vite 'npm:tsc:watch' 'npm:build:watch' 'vite'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jpmorganchase/Figma-Plugins-and-Widgets.git"
+  },
+  "keywords": [
+    "figma-plugin"
+  ],
+  "author": "JPMC",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/jpmorganchase/Figma-Plugins-and-Widgets/issues"
+  },
+  "homepage": "https://github.com/jpmorganchase/Figma-Plugins-and-Widgets#readme",
+  "dependencies": {
+    "@salt-ds/core": "^1.7.1",
+    "@salt-ds/icons": "^1.3.1",
+    "@salt-ds/lab": "^1.0.0-alpha.9",
+    "@salt-ds/theme": "^1.5.0",
+    "lz-string": "^1.5.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "jest": {
+    "projects": [
+      "plugin-src/jest.config.js"
+    ]
+  }
+}
