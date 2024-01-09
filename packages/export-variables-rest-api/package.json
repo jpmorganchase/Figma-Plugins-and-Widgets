@@ -1,0 +1,28 @@
+{
+  "name": "figma-variables-rest-api",
+  "type": "module",
+  "version": "0.0.1",
+  "description": "Script to export Figma variables using REST API",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "node index.js",
+    "clean": "rimraf build tokens"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jpmorganchase/Figma-Plugins-and-Widgets.git"
+  },
+  "author": "JPMC",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/jpmorganchase/Figma-Plugins-and-Widgets/issues"
+  },
+  "homepage": "https://github.com/jpmorganchase/Figma-Plugins-and-Widgets#readme",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "proxy-agent": "^6.3.1",
+    "rimraf": "^5.0.5",
+    "style-dictionary": "^3.9.1",
+    "style-dictionary-utils": "^2.0.7"
+  }
+}
