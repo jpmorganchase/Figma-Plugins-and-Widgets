@@ -3,6 +3,10 @@ import userEvents from "@testing-library/user-event";
 import React from "react";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { VariableJsonView } from "../views/VariableJsonView";
+import * as utilExports from "../components/utils";
+
+// Mock out download, `URL.createObjectURL` not supported in test env
+vi.spyOn(utilExports, "downloadBlob").mockImplementation(() => {});
 
 describe("VariableJsonView", () => {
   beforeEach(() => {
@@ -160,5 +164,31 @@ describe("VariableJsonView", () => {
         .innerHTML
     ).toEqual("");
     expect(screen.getByRole("button", { name: "Export" })).toBeDisabled();
+  });
+  test("download JSON button is disabled until export text is available", async () => {
+    const downloadJsonButton = screen.getByRole("button", {
+      name: "Download JSON",
+    });
+    expect(downloadJsonButton).toHaveAttribute("aria-disabled", "true");
+
+    const fileName = "filename.json";
+    const expectedText = "text to be filled in";
+    fireEvent(
+      window,
+      new MessageEvent("message", {
+        data: {
+          pluginMessage: {
+            type: "export-variable-to-json-result",
+            body: expectedText,
+            fileName: fileName,
+          },
+        },
+      })
+    );
+    expect(downloadJsonButton).not.toHaveAttribute("aria-disabled", "true");
+
+    await userEvents.click(downloadJsonButton);
+
+    expect(utilExports.downloadBlob).toHaveBeenCalledOnce();
   });
 });

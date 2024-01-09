@@ -55,7 +55,7 @@ export const ExportJsonView = () => {
   }, []);
 
   return (
-    <StackLayout gap={1}>
+    <StackLayout gap={1} className="viewRoot">
       <FormField label="Format" labelPlacement="left">
         <Dropdown
           source={ExportColorAllFormats}

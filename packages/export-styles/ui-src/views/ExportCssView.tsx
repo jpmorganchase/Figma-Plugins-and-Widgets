@@ -67,7 +67,7 @@ export const ExportCssView = () => {
   }, []);
 
   return (
-    <StackLayout gap={1}>
+    <StackLayout gap={1} className="viewRoot">
       <FormField label="Prefix" labelPlacement="left">
         <Input
           value={prefix}
