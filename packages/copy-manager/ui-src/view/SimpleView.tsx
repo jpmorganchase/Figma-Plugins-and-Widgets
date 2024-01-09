@@ -1,5 +1,11 @@
-import { Button, StackLayout, Checkbox } from "@salt-ds/core";
-import { Dropdown, FileDropZone, FormField } from "@salt-ds/lab";
+import { Button, StackLayout, Checkbox, Text } from "@salt-ds/core";
+import {
+  Dropdown,
+  FileDropZone,
+  FileDropZoneIcon,
+  FileDropZoneTrigger,
+  FormField,
+} from "@salt-ds/lab";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   DEFAULT_LANG,
@@ -72,7 +78,10 @@ export const SimpleView = () => {
     );
   };
 
-  const onFileAccepted = (files: readonly File[]) => {
+  const onFileDrop = (
+    _: React.DragEvent<HTMLDivElement>,
+    files: readonly File[]
+  ) => {
     if (files.length && files[0] !== null) {
       const csv = files[0];
       setCsvFile(csv);
@@ -106,11 +115,11 @@ export const SimpleView = () => {
     <StackLayout className="simple-view" align="center">
       <Button onClick={onExportCsv}>Export CSV</Button>
       {csvFile === null ? (
-        <FileDropZone
-          accept=".csv"
-          onFilesRejected={() => setCsvFile(null)}
-          onFilesAccepted={onFileAccepted}
-        />
+        <FileDropZone style={{ width: 300 }} onDrop={onFileDrop}>
+          <FileDropZoneIcon />
+          <strong>Drop files here or</strong>
+          <FileDropZoneTrigger accept=".csv" />
+        </FileDropZone>
       ) : (
         <StackLayout gap={1}>
           <p>{csvFile.name}</p>
