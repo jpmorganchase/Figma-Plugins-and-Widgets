@@ -1,13 +1,13 @@
-import { Button, StackLayout, Text } from "@salt-ds/core";
+import { Button, FlexLayout, StackLayout, Text, Tooltip } from "@salt-ds/core";
+import { DownloadIcon } from "@salt-ds/icons";
 import { Dropdown, FormField } from "@salt-ds/lab";
 import React, { useEffect, useId, useRef, useState } from "react";
 import {
-  ExportColorAllFormats,
-  ExportColorFormat,
   FigmaVariableCollection,
   FigmaVariableMode,
   PostToFigmaMessage,
 } from "../../shared-src";
+import { downloadBlob } from "../components/utils";
 import { FigmaToUIMessageEvent } from "../types";
 
 export const VariableJsonView = () => {
@@ -87,8 +87,14 @@ export const VariableJsonView = () => {
     };
   }, []);
 
+  const onDownload = () => {
+    var blob = new Blob([text], { type: "application/json" });
+    // Use blob instead of plain text downloadDataUri, as Safari wipes out new line
+    downloadBlob(blob, fileName);
+  };
+
   return (
-    <StackLayout gap={1}>
+    <StackLayout gap={1} className="viewRoot">
       <FormField label="Collection">
         <Dropdown
           source={collections}
@@ -137,9 +143,22 @@ export const VariableJsonView = () => {
         spellCheck={false}
         aria-labelledby={exportLabel}
       ></textarea>
-      <Button onClick={onCopy} ref={copyButtonRef}>
-        Copy
-      </Button>
+      <FlexLayout gap={1}>
+        <Button onClick={onCopy} ref={copyButtonRef} style={{ flex: 1 }}>
+          Copy
+        </Button>
+
+        <Tooltip placement="top" content="Download data as JSON">
+          <Button
+            focusableWhenDisabled
+            onClick={onDownload}
+            disabled={!fileName}
+            aria-label="Download JSON"
+          >
+            <DownloadIcon />
+          </Button>
+        </Tooltip>
+      </FlexLayout>
     </StackLayout>
   );
 };
