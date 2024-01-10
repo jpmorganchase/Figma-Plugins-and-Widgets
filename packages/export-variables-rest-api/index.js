@@ -97,8 +97,6 @@ function processData(data) {
   console.log("processData", data);
   const tokens = extractTokenFromVariables(data.variables);
   console.log("extracted full tokens:", tokens);
-  // const defaultTransformed = addDefaultToNestedTokens(tokens);
-  // TODO: we can add default to tokens, what about references?
   writeTokensToFile(data, tokens);
 
   buildUsingStyleDictionary();
@@ -162,6 +160,26 @@ function addDefaultToNestedTokens(tokens) {
   return newTokens;
 }
 
+function addDefaultToVariableNameFromApiResponse(data) {
+  // New data object, prep for non-mutate
+
+  // Find all non-remote collections
+
+  // Filter and group non-remote variables by collections
+  // Add collection to new object.variableCollections
+
+  // In each collection group
+
+  // Sort variables by name
+
+  // Iterate variables, compare name with previous name
+
+  // If name has exactly one more "/", previous one needs to be appended a "default"
+  // Add variable (with new modified name) to new object.variables
+
+  // return new object
+}
+
 function writeTokensToFile(data, tokens) {
   const allCollections = data.variableCollections;
 
@@ -181,6 +199,10 @@ function writeTokensToFile(data, tokens) {
         (m) => m.modeId === modeId
       ).name;
       const tokenFilePath = join(dirPath, modeName + ".json");
+
+      // const defaultTransformed = addDefaultToNestedTokens(tokens);
+      // TODO: we can add default to tokens, what about reference names?
+
       writeFileSync(tokenFilePath, JSON.stringify(modeTokens));
       console.log("Written token to", tokenFilePath);
     }
