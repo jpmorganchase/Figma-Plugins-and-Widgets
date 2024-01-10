@@ -17,7 +17,7 @@ const OUTPUT_FOLDER = "./tokens";
 const SD_BUILD_DIR = "build";
 const LOCAL_EXAMPLE_FILE = "salt-example.json";
 // Leave blank if you don't want to save the response from REST API call. Give it a name so API response will be saved to be used in `loadLocalMockData`, e.g. LOCAL_EXAMPLE_FILE
-const SAVE_API_RESPONSE_PATH = "";
+const SAVE_API_RESPONSE_PATH = LOCAL_EXAMPLE_FILE;
 
 /** Either call API or use local mock data */
 // callFigmaAPI(processData);
@@ -97,16 +97,80 @@ function processData(data) {
   console.log("processData", data);
   const tokens = extractTokenFromVariables(data.variables);
   console.log("extracted full tokens:", tokens);
-
+  // const defaultTransformed = addDefaultToNestedTokens(tokens);
+  // TODO: we can add default to tokens, what about references?
   writeTokensToFile(data, tokens);
 
   buildUsingStyleDictionary();
+}
+
+/**
+ * StyleDictionary doesn't support tokens nested within another which has value ($value in our case),
+ * e.g.
+ * ```
+ *   color: {
+ *     white: {
+ *       $value: '#fff',
+ *       alpha: {
+ *         $value: 'rgba(1,1,1,0.8)',
+ *       },
+ *     },
+ *   }
+ * ```
+ * So we will add `default` to the token structure
+ * ```
+ *   color: {
+ *     white: {
+ *       default: {
+ *         $value: "#fff",
+ *       },
+ *       alpha: {
+ *         $value: 'rgba(1,1,1,0.8)',
+ *       },
+ *     },
+ *   }
+ * ```
+ * See more at https://github.com/amzn/style-dictionary/issues/643#issuecomment-857105609
+ */
+function addDefaultToNestedTokens(tokens) {
+  const newTokens = {};
+
+  const allKeys = Object.keys(tokens);
+  const nonDollarKeys = allKeys.filter((k) => !k.startsWith("$"));
+  if (tokens.$value !== undefined) {
+    // Any property with $value and other nested names, create a default object hosting all keys with $ prefix
+    if (nonDollarKeys.length > 0) {
+      const defaultToken = {};
+      for (const key of allKeys.filter((k) => k.startsWith("$"))) {
+        defaultToken[key] = tokens[key];
+      }
+      newTokens.default = defaultToken;
+    } else {
+      for (const key of allKeys.filter((k) => k.startsWith("$"))) {
+        newTokens[key] = tokens[key];
+      }
+    }
+  }
+
+  // copy over all nested tokens (i.e. not $)
+  for (const key of nonDollarKeys) {
+    const value = tokens[key];
+    newTokens[key] =
+      typeof value === "object" ? addDefaultToNestedTokens(value) : value;
+  }
+
+  return newTokens;
 }
 
 function writeTokensToFile(data, tokens) {
   const allCollections = data.variableCollections;
 
   for (const [collectionId, collectionTokens] of Object.entries(tokens)) {
+    // skip remote collections
+    if (allCollections[collectionId].remote) {
+      continue;
+    }
+
     const collectionName = allCollections[collectionId].name;
     const dirPath = join(OUTPUT_FOLDER, collectionName);
     if (!existsSync(dirPath)) {
