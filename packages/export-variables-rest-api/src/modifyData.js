@@ -59,3 +59,61 @@ export function updateApiResponse(data) {
   // return new object
   return newData;
 }
+
+/**
+ * StyleDictionary doesn't support tokens nested within another which has value ($value in our case),
+ * e.g.
+ * ```
+ *   color: {
+ *     white: {
+ *       $value: '#fff',
+ *       alpha: {
+ *         $value: 'rgba(1,1,1,0.8)',
+ *       },
+ *     },
+ *   }
+ * ```
+ * So we will add `default` to the token structure
+ * ```
+ *   color: {
+ *     white: {
+ *       default: {
+ *         $value: "#fff",
+ *       },
+ *       alpha: {
+ *         $value: 'rgba(1,1,1,0.8)',
+ *       },
+ *     },
+ *   }
+ * ```
+ * See more at https://github.com/amzn/style-dictionary/issues/643#issuecomment-857105609
+ */
+export function addDefaultToNestedTokens(tokens) {
+  const newTokens = {};
+
+  const allKeys = Object.keys(tokens);
+  const nonDollarKeys = allKeys.filter((k) => !k.startsWith("$"));
+  if (tokens.$value !== undefined) {
+    // Any property with $value and other nested names, create a default object hosting all keys with $ prefix
+    if (nonDollarKeys.length > 0) {
+      const defaultToken = {};
+      for (const key of allKeys.filter((k) => k.startsWith("$"))) {
+        defaultToken[key] = tokens[key];
+      }
+      newTokens.default = defaultToken;
+    } else {
+      for (const key of allKeys.filter((k) => k.startsWith("$"))) {
+        newTokens[key] = tokens[key];
+      }
+    }
+  }
+
+  // copy over all nested tokens (i.e. not $)
+  for (const key of nonDollarKeys) {
+    const value = tokens[key];
+    newTokens[key] =
+      typeof value === "object" ? addDefaultToNestedTokens(value) : value;
+  }
+
+  return newTokens;
+}
