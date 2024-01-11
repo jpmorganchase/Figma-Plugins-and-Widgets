@@ -5,8 +5,11 @@
   "description": "Script to export Figma variables using REST API",
   "main": "dist/index.js",
   "scripts": {
-    "build": "node index.js",
-    "clean": "rimraf build tokens"
+    "dev": "node src/index.js",
+    "clean": "rimraf build tokens",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "test:coverage": "vitest run --coverage"
   },
   "repository": {
     "type": "git",
