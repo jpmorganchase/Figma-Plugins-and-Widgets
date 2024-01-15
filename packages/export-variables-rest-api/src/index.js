@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { ProxyAgent } from "proxy-agent";
 import "dotenv/config";
 
-import { updateApiResponse } from "./modifyData";
+import { updateApiResponse } from "./modifyData.js";
 
 import StyleDictionary from "style-dictionary-utils";
 import { w3cTokenJsonParser } from "style-dictionary-utils/dist/parser/w3c-token-json-parser.js";
