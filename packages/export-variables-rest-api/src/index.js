@@ -1,6 +1,12 @@
 import * as https from "node:https";
-import { readFile, existsSync, mkdirSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import {
+  readFile,
+  existsSync,
+  mkdirSync,
+  writeFileSync,
+  readdirSync,
+} from "node:fs";
+import { join, basename, extname } from "node:path";
 import { ProxyAgent } from "proxy-agent";
 import "dotenv/config";
 
@@ -195,13 +201,8 @@ function buildUsingStyleDictionary() {
   // Example: https://dbanks.design/blog/dark-mode-with-style-dictionary/#Token-structure
   // https://github.com/lukasoppermann/style-dictionary-utils?tab=readme-ov-file#-parsers
 
-  const commonSource = [
-    `${OUTPUT_FOLDER}/Raw/*.json`,
-    `${OUTPUT_FOLDER}/Foundations/*.json`,
-  ];
-
-  const getPlatform = (mode) => ({
-    web: {
+  const getModePlatform = (mode) => ({
+    web_mode: {
       transformGroup: "web",
       buildPath: `${SD_BUILD_DIR}/web/${mode}/`,
       files: [
@@ -214,7 +215,7 @@ function buildUsingStyleDictionary() {
         },
       ],
     },
-    ios: {
+    ios_mode: {
       transformGroup: "ios",
       buildPath: `${SD_BUILD_DIR}/ios/${mode}/`,
       files: [
@@ -228,14 +229,63 @@ function buildUsingStyleDictionary() {
       ],
     },
   });
+  const getDensityPlatform = (density, subfolder, cornerRadiusMode) => ({
+    web_density: {
+      // WARNING: `web` includes 'size/px' transform, but it only matches when: token.attributes.category === 'size'
+      // TODO: find out why size tokens, e.g. `--size-unit` is not getting `px`
+      transformGroup: "web",
+      buildPath: `${SD_BUILD_DIR}/web/${density}/${subfolder}/`,
+      files: [
+        {
+          destination: `${cornerRadiusMode}.css`,
+          format: "css/variables",
+          options: {
+            outputReferences: true,
+          },
+        },
+      ],
+    },
+    ios_density: {
+      transformGroup: "ios",
+      buildPath: `${SD_BUILD_DIR}/ios/${density}/${subfolder}/`,
+      files: [
+        {
+          destination: `${cornerRadiusMode}.swift`,
+          format: "ios-swift/enum.swift",
+          options: {
+            outputReferences: true,
+          },
+        },
+      ],
+    },
+  });
   console.log("Build using StyleDictionary into directory:", SD_BUILD_DIR);
 
   // Build both light and dark modes
   ["Light", "Dark"].forEach((mode) => {
     StyleDictionary.extend({
-      source: [`${OUTPUT_FOLDER}/Mode/${mode}.json`, ...commonSource],
-      platforms: getPlatform(mode),
+      source: [
+        `${OUTPUT_FOLDER}/Mode/${mode}.json`,
+        // `${OUTPUT_FOLDER}/Raw/*.json`,
+        `${OUTPUT_FOLDER}/Foundations/*.json`,
+      ],
+      platforms: getModePlatform(mode),
     }).buildAllPlatforms();
+  });
+  const subfolder = "Corner Radius";
+  const subfolderModes = readdirSync(`${OUTPUT_FOLDER}/${subfolder}/`).map(
+    (f) => basename(f, extname(f))
+  );
+  ["HD", "MD", "LD", "TD"].forEach((density) => {
+    subfolderModes.forEach((sfMode) => {
+      StyleDictionary.extend({
+        source: [
+          `${OUTPUT_FOLDER}/Density/${density}.json`,
+          `${OUTPUT_FOLDER}/${subfolder}/${sfMode}.json`,
+        ],
+        platforms: getDensityPlatform(density, subfolder, sfMode),
+      }).buildAllPlatforms();
+    });
   });
   console.log("StyleDictionary build done");
 }
