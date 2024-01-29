@@ -10,7 +10,7 @@ import { join, basename, extname } from "node:path";
 import { ProxyAgent } from "proxy-agent";
 import "dotenv/config";
 
-import { updateApiResponse } from "./modifyData.js";
+import { updateApiResponse, toCamelCase } from "./modifyData.js";
 
 import StyleDictionary from "style-dictionary-utils";
 import { w3cTokenJsonParser } from "style-dictionary-utils/dist/parser/w3c-token-json-parser.js";
@@ -21,11 +21,14 @@ StyleDictionary.registerParser(w3cTokenJsonParser);
 const figmaFileId = process.env.FIGMA_FILE_ID;
 const figmaAccessToken = process.env.FIGMA_ACCESS_TOKEN;
 
+const TOKEN_PREFIX = "salt";
 const OUTPUT_FOLDER = "./tokens";
 const SD_BUILD_DIR = "build";
 const LOCAL_EXAMPLE_FILE = "salt-example.json";
 // Leave blank if you don't want to save the response from REST API call. Give it a name so API response will be saved to be used in `loadLocalMockData`, e.g. LOCAL_EXAMPLE_FILE
 const SAVE_API_RESPONSE_PATH = LOCAL_EXAMPLE_FILE;
+
+const processData = processWithStyleDictionary;
 
 /** Either call API or use local mock data */
 // callFigmaAPI(processData);
@@ -101,10 +104,10 @@ function callFigmaAPI(successCallback) {
   );
 }
 
-function processData(data) {
-  console.log("processData", data);
+function processWithStyleDictionary(data) {
+  console.log("processWithStyleDictionary", data);
 
-  const newData = updateApiResponse(data);
+  const newData = updateApiResponse(data, { addDefault: true });
   console.log("data with default name suffix", newData);
 
   const tokens = extractTokenFromVariables(newData.variables);
@@ -138,7 +141,7 @@ function writeTokensToFile(data, tokens) {
       // const defaultTransformed = addDefaultToNestedTokens(tokens);
       // TODO: we can add default to tokens, what about reference names?
 
-      writeFileSync(tokenFilePath, JSON.stringify(modeTokens));
+      writeFileSync(tokenFilePath, JSON.stringify(modeTokens, null, 2));
       console.log("Written token to", tokenFilePath);
     }
   }
@@ -162,8 +165,9 @@ function extractTokenFromVariables(allVariablesObj) {
           modeId
         );
         name.split("/").forEach((groupName) => {
-          obj[groupName] = obj[groupName] || {};
-          obj = obj[groupName];
+          const camelGroupName = toCamelCase(groupName);
+          obj[camelGroupName] = obj[camelGroupName] || {};
+          obj = obj[camelGroupName];
         });
         obj.$type = resolvedType === "COLOR" ? "color" : "number";
         if (
@@ -171,12 +175,12 @@ function extractTokenFromVariables(allVariablesObj) {
           "type" in value &&
           value.type === "VARIABLE_ALIAS"
         ) {
-          obj.$value = `{${allVariablesObj[value.id].name.replace(
-            /\//g,
-            "."
-          )}}`;
+          obj.$value = `{${allVariablesObj[value.id].name
+            .split("/")
+            .map(toCamelCase)
+            .join(".")}}`;
         } else {
-          obj.$value = resolvedType === "COLOR" ? rgbToHex(value) : value;
+          obj.$value = resolvedType === "COLOR" ? stringifyRGBA(value) : value;
         }
       }
     }
@@ -205,6 +209,7 @@ function buildUsingStyleDictionary() {
     web_mode: {
       transformGroup: "web",
       buildPath: `${SD_BUILD_DIR}/web/${mode}/`,
+      prefix: TOKEN_PREFIX,
       files: [
         {
           destination: `${mode}.css`,
@@ -218,6 +223,7 @@ function buildUsingStyleDictionary() {
     ios_mode: {
       transformGroup: "ios",
       buildPath: `${SD_BUILD_DIR}/ios/${mode}/`,
+      prefix: TOKEN_PREFIX,
       files: [
         {
           destination: `${mode}.swift`,
@@ -235,6 +241,7 @@ function buildUsingStyleDictionary() {
       // TODO: find out why size tokens, e.g. `--size-unit` is not getting `px`
       transformGroup: "web",
       buildPath: `${SD_BUILD_DIR}/web/${density}/${subfolder}/`,
+      prefix: TOKEN_PREFIX,
       files: [
         {
           destination: `${cornerRadiusMode}.css`,
@@ -248,6 +255,7 @@ function buildUsingStyleDictionary() {
     ios_density: {
       transformGroup: "ios",
       buildPath: `${SD_BUILD_DIR}/ios/${density}/${subfolder}/`,
+      prefix: TOKEN_PREFIX,
       files: [
         {
           destination: `${cornerRadiusMode}.swift`,
@@ -267,7 +275,7 @@ function buildUsingStyleDictionary() {
       source: [
         `${OUTPUT_FOLDER}/Mode/${mode}.json`,
         // `${OUTPUT_FOLDER}/Raw/*.json`,
-        `${OUTPUT_FOLDER}/Foundations/*.json`,
+        `${OUTPUT_FOLDER}/Foundation/*.json`,
       ],
       platforms: getModePlatform(mode),
     }).buildAllPlatforms();
@@ -290,12 +298,16 @@ function buildUsingStyleDictionary() {
   console.log("StyleDictionary build done");
 }
 
-function rgbToHex({ r, g, b, a }) {
+function stringifyRGBA({ r, g, b, a }) {
   if (a !== 1) {
     return `rgba(${[r, g, b]
       .map((n) => Math.round(n * 255))
       .join(", ")}, ${a.toFixed(4)})`;
   }
+  // To RGB
+  return `rgb(${[r, g, b].map((n) => Math.round(n * 255)).join(", ")})`;
+
+  // To HEX
   const toHex = (value) => {
     const hex = Math.round(value * 255).toString(16);
     return hex.length === 1 ? "0" + hex : hex;

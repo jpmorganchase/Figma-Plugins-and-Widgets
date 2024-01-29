@@ -1,3 +1,10 @@
+export function toCamelCase(str) {
+  return str.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function (match, index) {
+    if (+match === 0) return ""; // or if (/\s+/.test(match)) for white spaces
+    return index === 0 ? match.toLowerCase() : match.toUpperCase();
+  });
+}
+
 /**
  * Filter out remote variables and collections, add "/default" suffix to any
  * variable (in the same collection group) which also served as group name.
@@ -8,7 +15,8 @@
  * @param {*} data Figma variables REST API response's `meta` data
  * @returns new data with remote filtered out and variable name modified
  */
-export function updateApiResponse(data) {
+export function updateApiResponse(data, options = { addDefault: true }) {
+  const { addDefault } = options;
   // New data object
   const newData = { variableCollections: {}, variables: {} };
 
@@ -43,7 +51,7 @@ export function updateApiResponse(data) {
       const element = variablesInCollection[index];
       newData.variables[element.id] = element;
 
-      if (prevVariable !== undefined) {
+      if (addDefault && prevVariable !== undefined) {
         // If name has exactly one more "/", previous one needs to be appended a "default"
         const lastSlashIndex = element.name.lastIndexOf("/");
         if (lastSlashIndex !== -1) {

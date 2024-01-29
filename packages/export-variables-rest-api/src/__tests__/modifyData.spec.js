@@ -1,5 +1,11 @@
 import { describe, expect, test } from "vitest";
-import { updateApiResponse } from "../modifyData";
+import { updateApiResponse, toCamelCase } from "../modifyData";
+
+describe("toCamelCase", () => {
+  test("make camel cases", () => {
+    expect(toCamelCase("Corner Radius")).toEqual("cornerRadius");
+  });
+});
 
 describe("updateApiResponse", () => {
   test("filter out remote collections and variables", () => {
@@ -188,7 +194,7 @@ describe("updateApiResponse", () => {
       )
     ).toBeTruthy();
 
-    const output = updateApiResponse(input);
+    const output = updateApiResponse(input, { addDefault: true });
     expect(output.variables["VariableID:1"].name).toEqual("Color/default");
     expect(output.variables["VariableID:3"].name).not.toEqual("Color/default");
   });
