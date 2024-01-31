@@ -74,7 +74,7 @@ describe("updateApiResponse", () => {
           codeSyntax: {},
         },
       },
-    };
+    } as const;
     expect(
       Object.values(input.variableCollections).every((c) => c.remote === false)
     ).toBeFalsy();
@@ -176,7 +176,7 @@ describe("updateApiResponse", () => {
           codeSyntax: {},
         },
       },
-    };
+    } as const;
     expect(input.variables["VariableID:1"].variableCollectionId).toEqual(
       input.variables["VariableID:2"].variableCollectionId
     );

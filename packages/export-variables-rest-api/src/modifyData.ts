@@ -1,4 +1,6 @@
-export function toCamelCase(str) {
+import { GetVariableResponse, Variable } from "./types";
+
+export function toCamelCase(str: string): string {
   return str.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function (match, index) {
     if (+match === 0) return ""; // or if (/\s+/.test(match)) for white spaces
     return index === 0 ? match.toLowerCase() : match.toUpperCase();
@@ -15,10 +17,16 @@ export function toCamelCase(str) {
  * @param {*} data Figma variables REST API response's `meta` data
  * @returns new data with remote filtered out and variable name modified
  */
-export function updateApiResponse(data, options = { addDefault: true }) {
+export function updateApiResponse(
+  data: GetVariableResponse["meta"],
+  options = { addDefault: true }
+) {
   const { addDefault } = options;
   // New data object
-  const newData = { variableCollections: {}, variables: {} };
+  const newData: GetVariableResponse["meta"] = {
+    variableCollections: {},
+    variables: {},
+  };
 
   // Find all non-remote collections
   const nonRemoteCollections = Object.values(data.variableCollections).filter(
@@ -28,7 +36,7 @@ export function updateApiResponse(data, options = { addDefault: true }) {
   nonRemoteCollections.forEach((c) => (newData.variableCollections[c.id] = c));
 
   // Filter and group non-remote variables by collections
-  const variablesByGroup = {};
+  const variablesByGroup: Record<string, Variable[]> = {};
   for (const v of Object.values(data.variables)) {
     if (v.remote) {
       continue;
@@ -96,15 +104,15 @@ export function updateApiResponse(data, options = { addDefault: true }) {
  * ```
  * See more at https://github.com/amzn/style-dictionary/issues/643#issuecomment-857105609
  */
-export function addDefaultToNestedTokens(tokens) {
-  const newTokens = {};
+export function addDefaultToNestedTokens(tokens: any) {
+  const newTokens: Record<string, any> = {};
 
   const allKeys = Object.keys(tokens);
   const nonDollarKeys = allKeys.filter((k) => !k.startsWith("$"));
   if (tokens.$value !== undefined) {
     // Any property with $value and other nested names, create a default object hosting all keys with $ prefix
     if (nonDollarKeys.length > 0) {
-      const defaultToken = {};
+      const defaultToken: Record<string, any> = {};
       for (const key of allKeys.filter((k) => k.startsWith("$"))) {
         defaultToken[key] = tokens[key];
       }

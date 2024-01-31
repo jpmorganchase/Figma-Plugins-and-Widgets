@@ -1,11 +1,10 @@
 {
   "name": "figma-variables-rest-api",
-  "type": "module",
   "version": "0.0.1",
   "description": "Script to export Figma variables using REST API",
-  "main": "dist/index.js",
+  "module": "src/index.ts",
   "scripts": {
-    "dev": "node src/index.js",
+    "dev": "vite-node src/index.ts",
     "clean": "rimraf build tokens",
     "test": "vitest run",
     "test:watch": "vitest watch",
@@ -26,6 +25,7 @@
     "proxy-agent": "^6.3.1",
     "rimraf": "^5.0.5",
     "style-dictionary": "^3.9.1",
-    "style-dictionary-utils": "^2.0.7"
+    "style-dictionary-utils": "^2.0.7",
+    "zod": "^3.22.4"
   }
 }
