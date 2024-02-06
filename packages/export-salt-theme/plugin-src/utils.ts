@@ -42,13 +42,17 @@ export const fixPathForSalt = (path: string[]) => {
     (prev, current, index, fullArray) => {
       const key = current.toLowerCase();
 
-      const mappedKey = camelize(KEY_MAP.get(key) || key);
+      const mappedKeys = key.split(" ").map((x) => KEY_MAP.get(x) || x);
 
       // Ignore default when at last position
-      if (mappedKey === "default" && fullArray.length - 1 === index) {
+      if (
+        mappedKeys.length === 1 &&
+        mappedKeys[0] === "default" &&
+        fullArray.length - 1 === index
+      ) {
         return prev;
       } else {
-        return [...prev, mappedKey];
+        return [...prev, ...mappedKeys];
       }
     },
     // prefix salt as top level namespace if not existed
@@ -65,7 +69,7 @@ export const updateTheme = (
 
   const newPath = fixPathForSalt(path);
 
-  // console.log({ newPath });
+  console.log({ newPath });
 
   newTheme = setNestedKey(newTheme, newPath, newToken);
 
