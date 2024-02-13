@@ -28,6 +28,7 @@ import {
   sendTextNodesInfoToUI,
   sortNodeByPosition,
 } from "./utils";
+import { scanTextNodesInfo } from "./processors/textNodeInfoProcessor";
 
 let parsedCsv: ParseResult<CsvNodeInfoWithLang> | null = null;
 
