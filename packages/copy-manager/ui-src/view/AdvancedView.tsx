@@ -1,22 +1,22 @@
 import {
   Button,
+  Checkbox,
   FlexItem,
   FlexLayout,
   StackLayout,
-  Checkbox,
 } from "@salt-ds/core";
 import { ExportIcon, RefreshIcon, TargetIcon } from "@salt-ds/icons";
 import { Dropdown, FormField, Input } from "@salt-ds/lab";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  PostToFigmaMessage,
-  PostToUIMessage,
-  SelectableTextNodeInfo,
-} from "../../shared-src";
-import {
   convertToCsvDataUri,
   convertToJsonDataUri,
 } from "../../shared-src/export-utils";
+import {
+  PostToFigmaMessage,
+  PostToUIMessage,
+  SelectableTextNodeInfo,
+} from "../../shared-src/messages";
 import { NodeKeyInput } from "../components/NodeKeyInput";
 import { downloadDataUri } from "../components/utils";
 

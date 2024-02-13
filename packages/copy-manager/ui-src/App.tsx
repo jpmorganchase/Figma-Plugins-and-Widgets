@@ -1,8 +1,8 @@
 import { SaltProvider } from "@salt-ds/core";
 import React, { useEffect } from "react";
-import { PostToFigmaMessage } from "../shared-src";
-import { useFigmaPluginTheme } from "./components/useFigmaPluginTheme";
+import { PostToFigmaMessage } from "../shared-src/messages";
 import { CornerResizer } from "./components/CornerResizer";
+import { useFigmaPluginTheme } from "./components/useFigmaPluginTheme";
 import { TabsView } from "./view/TabsView";
 
 import "./App.css";
