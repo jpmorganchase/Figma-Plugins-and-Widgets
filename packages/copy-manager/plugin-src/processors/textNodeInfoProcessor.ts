@@ -1,7 +1,25 @@
-import { SelectableTextNodeInfo } from "../../shared-src";
+import { SelectableTextNodeInfo } from "../../shared-src/messages";
 import { getNodeKey, getSelected } from "../pluginDataUtils";
 import { sortNodeByPosition } from "../utils";
 import { iterate } from "./iterate";
+
+export async function scanTextNodesInfo(autoTrigger: boolean) {
+  if (figma.currentPage.selection.length === 0) {
+    if (!autoTrigger) {
+      figma.notify(`Please select something for scanning`);
+    }
+    return [];
+  }
+
+  const textNodesInfo: SelectableTextNodeInfo[] = [];
+
+  for (const selectedNode of figma.currentPage.selection) {
+    const info = await textNodeInfoProcessor(selectedNode, {});
+    textNodesInfo.push(...info);
+  }
+
+  return textNodesInfo;
+}
 
 export const textNodeInfoTextNodeProcess = (
   node: TextNode,

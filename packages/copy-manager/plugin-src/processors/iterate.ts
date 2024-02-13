@@ -1,4 +1,4 @@
-import { CsvNodeInfoWithProperId } from "../../shared-src";
+import { CsvNodeInfoWithProperId } from "../../shared-src/messages";
 import { HeadingSettings, isChildrenMixin, isRectNodeImage } from "../utils";
 
 export type NodeProcessors<T> = {

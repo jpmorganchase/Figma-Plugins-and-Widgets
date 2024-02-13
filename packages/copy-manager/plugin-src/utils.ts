@@ -1,9 +1,8 @@
-import { PostToUIMessage, SelectableTextNodeInfo } from "../shared-src";
 import {
-  PLUGIN_DATA_KEY_PERSISTED_DATA,
-  PLUGIN_DATA_SHARED_NAMESPACE,
-  PLUGIN_RELAUNCH_KEY_REVIEW_REVISION,
-} from "./pluginDataUtils";
+  PostToUIMessage,
+  SelectableTextNodeInfo,
+} from "../shared-src/messages";
+import { PLUGIN_RELAUNCH_KEY_REVIEW_REVISION } from "./pluginDataUtils";
 import { textNodeInfoProcessor } from "./processors/textNodeInfoProcessor";
 
 export type HeadingSettings = {
@@ -87,24 +86,6 @@ export const setRelaunchButton = (node: SceneNode) => {
   // Empty string to just show the button
   node.setRelaunchData({ [PLUGIN_RELAUNCH_KEY_REVIEW_REVISION]: "" });
 };
-
-export async function scanTextNodesInfo(autoTrigger: boolean) {
-  if (figma.currentPage.selection.length === 0) {
-    if (!autoTrigger) {
-      figma.notify(`Please select something for scanning`);
-    }
-    return [];
-  }
-
-  const textNodesInfo: SelectableTextNodeInfo[] = [];
-
-  for (const selectedNode of figma.currentPage.selection) {
-    const info = await textNodeInfoProcessor(selectedNode, {});
-    textNodesInfo.push(...info);
-  }
-
-  return textNodesInfo;
-}
 
 export function sendTextNodesInfoToUI(nodesInfo: SelectableTextNodeInfo[]) {
   figma.ui.postMessage({
