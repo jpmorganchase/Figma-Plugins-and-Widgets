@@ -1,15 +1,15 @@
 import { ParseResult } from "papaparse";
 import {
+  CSV_HEADER_FIELDS,
   CsvNodeInfo,
   CsvNodeInfoWithLang,
-  CSV_HEADER_FIELDS,
   DEFAULT_LANG,
   PostToFigmaMessage,
   PostToUIMessage,
 } from "../shared-src/messages";
 import {
-  persistInFigma,
   PLUGIN_RELAUNCH_KEY_REVIEW_REVISION,
+  persistInFigma,
   readPersistedData,
   updateNodeKey,
   updateNodeSelected,
@@ -21,10 +21,10 @@ import {
   getNodeInfoMap,
   parseCsvString,
 } from "./processors/csvProcessor";
+import { scanTextNodesInfo } from "./processors/textNodeInfoProcessor";
 import {
   DEFAULT_HEADING_SETTINGS,
   focusNode,
-  scanTextNodesInfo,
   sendTextNodesInfoToUI,
   sortNodeByPosition,
 } from "./utils";
