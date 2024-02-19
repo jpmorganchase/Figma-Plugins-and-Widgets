@@ -67,6 +67,18 @@ describe("generateCssFromJson", () => {
 --prefix-c-withReferenceValue: var(--prefix-a-with6DigitHex);`
       );
     });
+
+    test("generates css with rgbaFormat when provided", () => {
+      const generatedCss = generateCssFromJson(
+        JSON.stringify(sampleValidColorToken),
+        { rgbaFormat: true }
+      );
+      expect(generatedCss).toEqual(
+        `--a-with6DigitHex: rgb(18, 52, 86);
+--b-withAlphaHex: rgba(18, 52, 86, 0.47);
+--c-withReferenceValue: var(--a-with6DigitHex);`
+      );
+    });
   });
 
   describe("number tokens", () => {

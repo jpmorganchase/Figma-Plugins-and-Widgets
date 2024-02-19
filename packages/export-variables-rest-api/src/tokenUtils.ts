@@ -61,7 +61,7 @@ export function parseTokenObject(tokenObj: object) {
   return parseResult;
 }
 
-type CssGenOption = { prefix?: string };
+type CssGenOption = { prefix?: string; rgbaFormat?: boolean };
 export function generateCssFromJson(
   inputJson: string,
   option: CssGenOption = {}
@@ -78,7 +78,7 @@ export function generateCssFromJson(
         if ($type === "color") {
           const css = formatCssLine(
             formatCssVarDeclaration(keys, prefix),
-            formatCssVarColorValue($value, prefix, true)
+            formatCssVarColorValue($value, prefix, option.rgbaFormat)
           );
           // console.debug("new color css", keys, css);
           allCss.push(css);
