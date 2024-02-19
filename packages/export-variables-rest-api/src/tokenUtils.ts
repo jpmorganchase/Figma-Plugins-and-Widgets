@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { toCamelCase } from "./modifyData";
+import { hexToRGBA } from "./colorUtils";
 
 export type TokenReservedKey = "$value" | "$type";
 const ReferenceToken = z
@@ -77,7 +78,7 @@ export function generateCssFromJson(
         if ($type === "color") {
           const css = formatCssLine(
             formatCssVarDeclaration(keys, prefix),
-            formatCssVarColorValue($value, prefix)
+            formatCssVarColorValue($value, prefix, true)
           );
           // console.debug("new color css", keys, css);
           allCss.push(css);
@@ -119,12 +120,20 @@ export function formatCssVarDeclaration(
   return `--${keysWithPrefix.map(toCamelCase).join("-")}`;
 }
 
-export function formatCssVarColorValue(value: string, prefix?: string): string {
+export function formatCssVarColorValue(
+  value: string,
+  prefix?: string,
+  rgbaFormat?: boolean
+): string {
   if (isTokenValueReference(value)) {
     return formatCssVarValueReference(value, prefix);
   } else {
     // assuming hex value already, defined by `ColorToken` regex
-    return value;
+    if (rgbaFormat) {
+      return hexToRGBA(value);
+    } else {
+      return value;
+    }
   }
 }
 
