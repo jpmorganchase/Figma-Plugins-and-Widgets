@@ -1,9 +1,18 @@
 import { describe, expect, test } from "vitest";
-import { updateApiResponse, toCamelCase } from "../modifyData";
+import { updateApiResponse, toCamelCase, toKebabCase } from "../modifyData";
 
 describe("toCamelCase", () => {
   test("make camel cases", () => {
     expect(toCamelCase("Corner Radius")).toEqual("cornerRadius");
+  });
+});
+
+describe("toKebabCase", () => {
+  test("make kebab case", () => {
+    expect(toKebabCase("wordAnother")).toEqual("word-another");
+  });
+  test("lower case when number prefixed", () => {
+    expect(toKebabCase("40A")).toEqual("40a");
   });
 });
 

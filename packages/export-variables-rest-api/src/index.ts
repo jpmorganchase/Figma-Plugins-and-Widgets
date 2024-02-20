@@ -15,7 +15,11 @@ import { updateApiResponse, toCamelCase } from "./modifyData.js";
 
 import StyleDictionary from "style-dictionary-utils";
 import { w3cTokenJsonParser } from "style-dictionary-utils/dist/parser/w3c-token-json-parser.js";
-import { ThemeRoot, generateCssFromJson } from "./tokenUtils.js";
+import {
+  SALT_SPECIAL_PREFIX_MAP,
+  ThemeRoot,
+  generateCssFromJson,
+} from "./tokenUtils.js";
 import { Color, GetVariableResponse, RGBA, Variable } from "./types.js";
 import { stringifyRGBA } from "./colorUtils.js";
 
@@ -257,7 +261,12 @@ function generateCustomCSS() {
       const tokenInput = readFileSync(join(tokenFolder, tokenFileName), {
         encoding: "utf-8",
       });
-      const outputCss = generateCssFromJson(tokenInput, { prefix: "salt" });
+      const outputCss = generateCssFromJson(tokenInput, {
+        prefix: "salt",
+        specialPrefixMap: SALT_SPECIAL_PREFIX_MAP,
+        removeSuffixDefault: true,
+        kebabCase: true,
+      });
       // console.debug({ outputCss });
       const outputFilePath = join(
         outputFolder,

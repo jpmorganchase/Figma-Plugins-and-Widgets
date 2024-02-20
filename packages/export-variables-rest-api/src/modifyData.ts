@@ -7,6 +7,17 @@ export function toCamelCase(str: string): string {
   });
 }
 
+export function toKebabCase(str: string): string {
+  const withoutSpace = str.replace(/\s/g, "-");
+  if (withoutSpace.match(/^\d+/)) {
+    return withoutSpace.toLowerCase();
+  }
+  return withoutSpace.replace(
+    /[A-Z]+(?![a-z])|[A-Z]/g,
+    ($, ofs) => (ofs ? "-" : "") + $.toLowerCase()
+  );
+}
+
 /**
  * Filter out remote variables and collections, add "/default" suffix to any
  * variable (in the same collection group) which also served as group name.

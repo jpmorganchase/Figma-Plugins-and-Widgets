@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { toCamelCase } from "./modifyData";
+import { toCamelCase, toKebabCase } from "./modifyData";
 import { hexToRGBA } from "./colorUtils";
 
 export type TokenReservedKey = "$value" | "$type";
@@ -61,14 +61,68 @@ export function parseTokenObject(tokenObj: object) {
   return parseResult;
 }
 
-type CssGenOption = { prefix?: string; rgbaFormat?: boolean };
+export const SALT_SPECIAL_PREFIX_MAP: CssGenOption["specialPrefixMap"] = {
+  // foundation colors
+  aqua: "color",
+  asphalt: "color",
+  autumn: "color",
+  black: "color",
+  blue: "color",
+  cider: "color",
+  citrine: "color",
+  cobalt: "color",
+  forest: "color",
+  fuchsia: "color",
+  fur: "color",
+  gray: "color",
+  green: "color",
+  indigo: "color",
+  jade: "color",
+  lavender: "color",
+  lime: "color",
+  mist: "color",
+  ocean: "color",
+  oil: "color",
+  olive: "color",
+  orange: "color",
+  plum: "color",
+  purple: "color",
+  red: "color",
+  rose: "color",
+  salmon: "color",
+  slate: "color",
+  smoke: "color",
+  snow: "color",
+  teal: "color",
+  transparent: "color",
+  violet: "color",
+  white: "color",
+  // palette
+  accent: "palette",
+  background: "palette",
+  category: "palette",
+  foreground: "palette",
+  info: "palette",
+  negative: "palette",
+  neutral: "palette",
+  positive: "palette",
+  warning: "palette",
+};
+
+type CssGenOption = {
+  prefix?: string;
+  rgbaFormat?: boolean;
+  /** map of additional prefix needed when first part of keys matches */
+  specialPrefixMap?: Record<string, string>;
+  removeSuffixDefault?: boolean;
+  kebabCase?: boolean;
+};
 export function generateCssFromJson(
   inputJson: string,
   option: CssGenOption = {}
 ): string {
   const inputObj = JSON.parse(inputJson);
   const parseResult = parseTokenObject(inputObj);
-  const { prefix } = option;
   if (parseResult.success) {
     function innerLoop(obj: any, keys: string[], allCss: string[]) {
       if (NestedToken.safeParse(obj).success) {
@@ -77,15 +131,15 @@ export function generateCssFromJson(
 
         if ($type === "color") {
           const css = formatCssLine(
-            formatCssVarDeclaration(keys, prefix),
-            formatCssVarColorValue($value, prefix, option.rgbaFormat)
+            formatCssVarDeclaration(keys, option),
+            formatCssVarColorValue($value, option)
           );
           // console.debug("new color css", keys, css);
           allCss.push(css);
         } else if ($type === "number") {
           const css = formatCssLine(
-            formatCssVarDeclaration(keys, prefix),
-            formatCssVarNumberValue($value, prefix)
+            formatCssVarDeclaration(keys, option),
+            formatCssVarNumberValue($value, option)
           );
           // console.debug("new color css", keys, css);
           allCss.push(css);
@@ -112,22 +166,51 @@ export function formatCssLine(declaration: string, value: string): string {
   return `${declaration}: ${value};`;
 }
 
+export function updateKeysWithOption(
+  inputKeys: string[],
+  option: CssGenOption = {}
+): string[] {
+  if (inputKeys.length === 0) {
+    return inputKeys;
+  }
+  const { prefix, specialPrefixMap, removeSuffixDefault } = option;
+  const keys =
+    removeSuffixDefault && inputKeys[inputKeys.length - 1] === "default"
+      ? inputKeys.slice(0, -1)
+      : [...inputKeys];
+  const additionalPrefix = specialPrefixMap?.[keys[0]];
+
+  if (additionalPrefix) {
+    return prefix
+      ? [prefix, additionalPrefix, ...keys]
+      : [additionalPrefix, ...keys];
+  }
+  return prefix ? [prefix, ...keys] : keys;
+}
+
+export function updateCasing(
+  keys: string[],
+  option: CssGenOption = {}
+): string[] {
+  return keys.map(option.kebabCase ? toKebabCase : toCamelCase);
+}
+
 export function formatCssVarDeclaration(
   keys: string[],
-  prefix?: string
+  option: CssGenOption = {}
 ): string {
-  const keysWithPrefix = prefix ? [prefix, ...keys] : keys;
-  return `--${keysWithPrefix.map(toCamelCase).join("-")}`;
+  const keysWithPrefix = updateKeysWithOption(keys, option);
+  return `--${updateCasing(keysWithPrefix, option).join("-")}`;
 }
 
 export function formatCssVarColorValue(
   value: string,
-  prefix?: string,
-  rgbaFormat?: boolean
+  option: CssGenOption = {}
 ): string {
   if (isTokenValueReference(value)) {
-    return formatCssVarValueReference(value, prefix);
+    return formatCssVarValueReference(value, option);
   } else {
+    const { rgbaFormat } = option;
     // assuming hex value already, defined by `ColorToken` regex
     if (rgbaFormat) {
       return hexToRGBA(value);
@@ -139,10 +222,10 @@ export function formatCssVarColorValue(
 
 export function formatCssVarNumberValue(
   value: string | number,
-  prefix?: string
+  option: CssGenOption = {}
 ): string {
   if (isTokenValueReference(value)) {
-    return formatCssVarValueReference(value, prefix);
+    return formatCssVarValueReference(value, option);
   } else {
     // assume all number will become px for now
     return `${value}px`;
@@ -151,13 +234,11 @@ export function formatCssVarNumberValue(
 
 export function formatCssVarValueReference(
   value: ReferenceValue,
-  prefix?: string
+  option: CssGenOption = {}
 ): string {
-  return `var(--${prefix ? prefix + "-" : ""}${value
-    .substring(1, value.length - 1)
-    .split(".")
-    .map(toCamelCase)
-    .join("-")})`;
+  const keys = value.substring(1, value.length - 1).split(".");
+  const prefixedKeys = updateKeysWithOption(keys, option);
+  return `var(--${updateCasing(prefixedKeys, option).join("-")})`;
 }
 
 /**
