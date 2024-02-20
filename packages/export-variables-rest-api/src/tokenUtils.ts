@@ -114,6 +114,8 @@ type CssGenOption = {
   rgbaFormat?: boolean;
   /** map of additional prefix needed when first part of keys matches */
   specialPrefixMap?: Record<string, string>;
+  /** When true, `specialPrefixMap` will be ignored for token keys, still work for values. */
+  ignoreNameSpecialPrefix?: boolean;
   removeSuffixDefault?: boolean;
   kebabCase?: boolean;
 };
@@ -199,7 +201,13 @@ export function formatCssVarDeclaration(
   keys: string[],
   option: CssGenOption = {}
 ): string {
-  const keysWithPrefix = updateKeysWithOption(keys, option);
+  const { ignoreNameSpecialPrefix, specialPrefixMap, ...restOption } = option;
+  const keysWithPrefix = updateKeysWithOption(
+    keys,
+    ignoreNameSpecialPrefix
+      ? { ignoreNameSpecialPrefix, ...restOption }
+      : option
+  );
   return `--${updateCasing(keysWithPrefix, option).join("-")}`;
 }
 
