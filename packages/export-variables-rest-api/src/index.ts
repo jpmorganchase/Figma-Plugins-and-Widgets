@@ -263,6 +263,7 @@ function generateCustomCSS() {
       });
       const outputCss = generateCssFromJson(tokenInput, {
         prefix: "salt",
+        rgbaFormat: true,
         specialPrefixMap: SALT_SPECIAL_PREFIX_MAP,
         removeSuffixDefault: true,
         kebabCase: true,
