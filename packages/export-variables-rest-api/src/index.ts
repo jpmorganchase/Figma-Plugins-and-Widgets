@@ -402,10 +402,10 @@ function generateCustomCSS() {
         ignoreNameSpecialPrefix: true,
       });
 
-      const transformedOutputCss = outputCss.replace(
-        /(-border)([-:])/g,
-        "$1Color$2"
-      );
+      const transformedOutputCss = outputCss
+        .replace(/(-border)([-:])/g, "$1Color$2")
+        .replace(/-blur-selected/g, "-blurSelected")
+        .replace(/-selected-disabled/g, "-selectedDisabled");
 
       const outputFilePath = join(
         CODE_OUTPUT_FOLDER,
