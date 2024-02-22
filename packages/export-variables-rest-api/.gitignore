@@ -1,0 +1,5 @@
+# Output files
+tokens
+build
+# Example files
+*example.json
