@@ -1,6 +1,10 @@
 import { GetVariableResponse, Variable } from "./types";
 
 export function toCamelCase(str: string): string {
+  // E.g. CTA => cta
+  if (str.toUpperCase() === str) {
+    return str.toLowerCase();
+  }
   return str.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function (match, index) {
     if (+match === 0) return ""; // or if (/\s+/.test(match)) for white spaces
     return index === 0 ? match.toLowerCase() : match.toUpperCase();
@@ -9,6 +13,7 @@ export function toCamelCase(str: string): string {
 
 export function toKebabCase(str: string): string {
   const withoutSpace = str.replace(/\s/g, "-");
+  // Ignore name begin with digits
   if (withoutSpace.match(/^\d+/)) {
     return withoutSpace.toLowerCase();
   }

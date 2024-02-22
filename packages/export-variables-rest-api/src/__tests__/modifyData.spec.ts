@@ -5,6 +5,10 @@ describe("toCamelCase", () => {
   test("make camel cases", () => {
     expect(toCamelCase("Corner Radius")).toEqual("cornerRadius");
   });
+
+  test("lower case CTA name", () => {
+    expect(toCamelCase("CTA")).toEqual("cta");
+  });
 });
 
 describe("toKebabCase", () => {
