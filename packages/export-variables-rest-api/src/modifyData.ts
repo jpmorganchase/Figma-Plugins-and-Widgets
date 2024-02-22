@@ -35,9 +35,12 @@ export function toKebabCase(str: string): string {
  */
 export function updateApiResponse(
   data: GetVariableResponse["meta"],
-  options = { addDefault: true }
+  options: {
+    addDefault: boolean;
+    tokenNameTransform?: (name: string) => string;
+  } = { addDefault: true }
 ) {
-  const { addDefault } = options;
+  const { addDefault, tokenNameTransform } = options;
   // New data object
   const newData: GetVariableResponse["meta"] = {
     variableCollections: {},
@@ -73,6 +76,9 @@ export function updateApiResponse(
     let prevVariable = undefined;
     for (let index = 0; index < variablesInCollection.length; index++) {
       const element = variablesInCollection[index];
+      if (tokenNameTransform) {
+        element.name = tokenNameTransform(element.name);
+      }
       newData.variables[element.id] = element;
 
       if (addDefault && prevVariable !== undefined) {

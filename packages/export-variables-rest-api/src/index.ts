@@ -174,7 +174,9 @@ function processWithCustomCSSGeneration(
   console.debug("processWithCustomCSSGeneration", { data, styleNodes });
 
   // No need to add default to grouping using custom implementation
-  const newData = updateApiResponse(data, { addDefault: false });
+  const newData = updateApiResponse(data, {
+    addDefault: false,
+  });
 
   const charTokens = extractTokenFromStyles(newData, styleNodes);
 
@@ -400,14 +402,23 @@ function generateCustomCSS() {
         ignoreNameSpecialPrefix: true,
       });
 
+      const transformedOutputCss = outputCss.replace(
+        /-border-/g,
+        "-borderColor-"
+      );
+
       const outputFilePath = join(
         CODE_OUTPUT_FOLDER,
         basename(dirContent.name, extname(dirContent.name)) + ".css"
       );
       // TODO: prettier
-      writeFileSync(outputFilePath, ":root {\n" + outputCss + "\n}\n", {
-        encoding: "utf8",
-      });
+      writeFileSync(
+        outputFilePath,
+        ":root {\n" + transformedOutputCss + "\n}\n",
+        {
+          encoding: "utf8",
+        }
+      );
       console.log("CSS output written to", outputFilePath);
     }
   }

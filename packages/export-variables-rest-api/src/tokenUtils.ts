@@ -118,6 +118,7 @@ type CssGenOption = {
   ignoreNameSpecialPrefix?: boolean;
   removeSuffixDefault?: boolean;
   kebabCase?: boolean;
+  keyTransform?: (name: string) => string;
 };
 export function generateCssFromJson(
   inputJson: string,
@@ -175,11 +176,14 @@ export function updateKeysWithOption(
   if (inputKeys.length === 0) {
     return inputKeys;
   }
-  const { prefix, specialPrefixMap, removeSuffixDefault } = option;
-  const keys =
+  const { prefix, specialPrefixMap, removeSuffixDefault, keyTransform } =
+    option;
+  const b4keys =
     removeSuffixDefault && inputKeys[inputKeys.length - 1] === "default"
       ? inputKeys.slice(0, -1)
       : [...inputKeys];
+
+  const keys = keyTransform ? b4keys.map(keyTransform) : b4keys;
   const additionalPrefix = specialPrefixMap?.[keys[0]];
 
   if (additionalPrefix) {
