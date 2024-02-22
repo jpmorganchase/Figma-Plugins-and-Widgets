@@ -403,8 +403,8 @@ function generateCustomCSS() {
       });
 
       const transformedOutputCss = outputCss.replace(
-        /-border-/g,
-        "-borderColor-"
+        /(-border)([-:])/g,
+        "$1Color$2"
       );
 
       const outputFilePath = join(
