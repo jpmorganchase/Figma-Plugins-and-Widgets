@@ -1,10 +1,5 @@
 type Id = string;
 
-type StoredCopyVersion = {
-  name: string;
-  characters: string;
-};
-
 // We need to keep an array so that additional headers being added by the user can be detected
 export const CSV_HEADER_FIELDS = [
   "id",

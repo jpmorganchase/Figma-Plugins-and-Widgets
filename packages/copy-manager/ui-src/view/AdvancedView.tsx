@@ -144,7 +144,7 @@ export const AdvancedView = () => {
   const checkedRows = textNodesInfo.filter((x) => x.checked);
   // Every checked row should have key filled in
   const exportButtonDisabled =
-    checkedRows.length == 0 || checkedRows.some((x) => !!!x.key);
+    checkedRows.length == 0 || checkedRows.some((x) => !x.key);
 
   const onExportButtonClicked = () => {
     const exportContent = textNodesInfo

@@ -21,5 +21,15 @@ module.exports = {
   ],
   rules: {
     "@typescript-eslint/no-explicit-any": 1,
+    "@typescript-eslint/no-floating-promises": ["error"],
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "warn", // or "error"
+      {
+        argsIgnorePattern: "^_",
+        varsIgnorePattern: "^_",
+        caughtErrorsIgnorePattern: "^_",
+      },
+    ],
   },
 };

@@ -88,7 +88,7 @@ export const VariableJsonView = () => {
   }, []);
 
   const onDownload = () => {
-    var blob = new Blob([text], { type: "application/json" });
+    const blob = new Blob([text], { type: "application/json" });
     // Use blob instead of plain text downloadDataUri, as Safari wipes out new line
     downloadBlob(blob, fileName);
   };

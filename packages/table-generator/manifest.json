@@ -17,5 +17,6 @@
       "https://fonts.gstatic.com",
       "https://fonts.googleapis.com"
     ]
-  }
+  },
+  "documentAccess": "dynamic-page"
 }

@@ -14,7 +14,6 @@ import {
   getComponentFromSelection,
   getValidTableFromSelection,
 } from "./utils/guard";
-import { readConfigFromPluginData } from "./utils/pluginData";
 
 let notifyHandler: NotificationHandler | null;
 
@@ -41,7 +40,7 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
   try {
     switch (msg.type) {
       case "ui-finish-loading": {
-        loadLocalComponent();
+        await loadLocalComponent();
         detectGridSelection();
         break;
       }
@@ -54,7 +53,7 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
         break;
       }
       case "set-table-header-cell": {
-        const comp = getComponentFromSelection(notify);
+        const comp = await getComponentFromSelection(notify);
         if (comp) {
           figma.ui.postMessage({
             type: "update-header-cell",
@@ -67,7 +66,7 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
         break;
       }
       case "set-table-body-cell": {
-        const comp = getComponentFromSelection(notify);
+        const comp = await getComponentFromSelection(notify);
         if (comp) {
           figma.ui.postMessage({
             type: "update-body-cell",

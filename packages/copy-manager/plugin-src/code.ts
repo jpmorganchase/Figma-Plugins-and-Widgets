@@ -54,7 +54,7 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
       persistDataInFigma();
     }
   } else if (msg.type === "focus-node") {
-    focusNode(msg.id);
+    await focusNode(msg.id);
   } else if (msg.type === "scan-text-node-info") {
     const nodesInfo = await scanTextNodesInfo(msg.autoTrigger);
     // console.log({ nodesInfo });
@@ -133,7 +133,7 @@ async function updateWithLang(lang: string) {
 
   const totalTopLvlNodes = topLvlNodes.length;
 
-  const { data, meta } = parsedCsv;
+  const { data } = parsedCsv;
 
   let notificationHandle: NotificationHandler = figma.notify("Update start...");
 
@@ -159,8 +159,8 @@ async function updateWithLang(lang: string) {
       })) || 0;
 
     if (nodes.length > 1) {
-      setTimeout(() => {
-        processFirstNode(nodes.slice(1));
+      setTimeout(async () => {
+        await processFirstNode(nodes.slice(1));
       }, 20);
     } else {
       notificationHandle?.cancel();
@@ -175,7 +175,7 @@ async function updateWithLang(lang: string) {
     }
   }
 
-  processFirstNode(topLvlNodes);
+  await processFirstNode(topLvlNodes);
 }
 
 async function parseCsvAndDetectRevision(csvString: string) {
@@ -241,8 +241,8 @@ async function exportCsvFile() {
     processedInfo.push(processResult);
 
     if (nodes.length > 1) {
-      setTimeout(() => {
-        processFirstNode(nodes.slice(1));
+      setTimeout(async () => {
+        await processFirstNode(nodes.slice(1));
       }, 20);
     } else {
       notificationHandle?.cancel();
@@ -264,5 +264,5 @@ async function exportCsvFile() {
       }, 20);
     }
   }
-  processFirstNode(topLvlNodes);
+  await processFirstNode(topLvlNodes);
 }

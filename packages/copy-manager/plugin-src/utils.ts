@@ -90,7 +90,9 @@ export function sendTextNodesInfoToUI(nodesInfo: SelectableTextNodeInfo[]) {
   } satisfies PostToUIMessage);
 }
 
-export function focusNode(id: string) {
+export async function focusNode(id: string) {
+  await figma.loadAllPagesAsync();
+  // eslint-disable-next-line @figma/figma-plugins/dynamic-page-find-method-advice
   const nodeToFocus = figma.root.findOne((x) => x.id === id);
   if (nodeToFocus !== null) {
     // TODO: Switch current page first

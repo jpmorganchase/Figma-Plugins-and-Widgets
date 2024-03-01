@@ -80,7 +80,7 @@ export type TableReducerAction =
   | ResetRows
   | UpdateAllValues;
 
-function assertUnreachable(x: never): never {
+function assertUnreachable(_x: never): never {
   throw new Error("Didn't expect to get here");
 }
 
@@ -106,7 +106,6 @@ export const tableReducer: Reducer<TableState, TableReducerAction> = (
         pasteValue: rawValue,
         disableNewRowFromCsv,
         selectStart,
-        selectEnd,
       } = action;
       const oldValues = state.cellValues;
 

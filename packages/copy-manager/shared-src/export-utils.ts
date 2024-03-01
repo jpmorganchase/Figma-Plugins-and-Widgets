@@ -1,4 +1,4 @@
-import { unparse, parse } from "papaparse";
+import { unparse } from "papaparse";
 
 export const convertToCsvDataUri = <T extends unknown[]>(data: T): string => {
   const rowsString = unparse(data, { header: true });

@@ -1,11 +1,13 @@
+import { parse } from "papaparse";
+import { convertToCsvDataUri } from "../../shared-src/export-utils";
 import {
   CsvNodeInfo,
   CsvNodeInfoWithProperId,
 } from "../../shared-src/messages";
 import {
   DEFAULT_HEADING_SETTINGS,
-  getHeadingLevelNumber,
   HeadingSettings,
+  getHeadingLevelNumber,
   loadAllFonts,
   replaceTextInTextNode,
   setRelaunchButton,
@@ -14,12 +16,10 @@ import {
 import {
   CsvExportSettings,
   CsvNodeInfoMap,
+  UpdaterSettings,
   iterate,
   iterateUpdate,
-  UpdaterSettings,
 } from "./iterate";
-import { unparse, parse } from "papaparse";
-import { convertToCsvDataUri } from "../../shared-src/export-utils";
 
 const getListOption = (node: TextNode): string => {
   const fullListOption = node.getRangeListOptions(0, node.characters.length);
@@ -125,7 +125,7 @@ export const parseCsvString = <T extends CsvNodeInfo>(input: string) => {
 export const getNodeInfoMap = <T extends CsvNodeInfo>(
   nodeInfos: T[]
 ): CsvNodeInfoMap => {
-  let map: CsvNodeInfoMap = {};
+  const map: CsvNodeInfoMap = {};
   nodeInfos.forEach((x) => {
     const nodeInfoWithNormalId = {
       ...x,
