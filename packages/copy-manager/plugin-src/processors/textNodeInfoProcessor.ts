@@ -23,7 +23,7 @@ export async function scanTextNodesInfo(autoTrigger: boolean) {
 
 export const textNodeInfoTextNodeProcess = (
   node: TextNode,
-  settings: any
+  _settings: any
 ): SelectableTextNodeInfo[] => {
   if (!node.visible || node.characters.length === 0) {
     return [];

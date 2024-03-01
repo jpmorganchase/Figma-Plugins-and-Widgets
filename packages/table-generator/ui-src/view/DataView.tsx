@@ -39,7 +39,7 @@ export const DataView = ({
 
   const [csvResults, setCsvResults] = useState<ParseResult<File> | undefined>();
   // This would contain CSV file name if needed
-  const [csvFile, setCsvFile] = useState<File | null>(null);
+  const [_csvFile, setCsvFile] = useState<File | null>(null);
 
   const [csvSyncHeader, setCsvSyncHeader] = useState<boolean>(false);
   const [autoPopulateCsvColumns, setAutoPopulateCsvColumns] =

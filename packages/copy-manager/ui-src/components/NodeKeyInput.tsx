@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Input } from "@salt-ds/lab";
-import { SelectableTextNodeInfo } from "../../shared-src";
 import { Button } from "@salt-ds/core";
 import { CloseSmallIcon, WarningIcon } from "@salt-ds/icons";
+import { Input } from "@salt-ds/lab";
+import React from "react";
+import { SelectableTextNodeInfo } from "../../shared-src";
 
 export const NodeKeyInput = ({
   nodeInfo,

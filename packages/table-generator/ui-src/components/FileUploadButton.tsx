@@ -15,7 +15,6 @@ export interface FileUploadButtonProps
 }
 
 export const FileUploadButton = ({
-  onClick,
   disabled,
   accept,
   onFilesChanged,

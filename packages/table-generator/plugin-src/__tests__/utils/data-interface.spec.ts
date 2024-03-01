@@ -1,5 +1,5 @@
+import { describe, expect, test } from "vitest";
 import { getPreferredTextInChild } from "../../utils/data-interface";
-import { vi, test, expect, describe } from "vitest";
 
 describe("getPreferredTextInChild", () => {
   test("returns empty string when no nested TextNode", () => {

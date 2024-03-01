@@ -33,7 +33,7 @@ figma.showUI(__html__, {
       : "Export Variable To JSON",
 });
 
-figma.ui.onmessage = (msg: PostToFigmaMessage) => {
+figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
   if (msg.type === "ui-ready") {
     const command = figma.command as PluginCommandType;
     figma.ui.resize(
@@ -45,10 +45,12 @@ figma.ui.onmessage = (msg: PostToFigmaMessage) => {
       command: command,
     } satisfies PostToUIMessage);
   } else if (msg.type === "export-css") {
-    const solidPaints = figma.getLocalPaintStyles().filter((paintStyle) => {
-      let color = paintStyle.paints[0];
-      return color.type === "SOLID";
-    });
+    const solidPaints = (await figma.getLocalPaintStylesAsync()).filter(
+      (paintStyle) => {
+        const color = paintStyle.paints[0];
+        return color.type === "SOLID";
+      }
+    );
 
     // Alpha channel is ignored in certain format
     const colorConvertFn = getColorConvertFn(msg.format);
@@ -112,10 +114,12 @@ figma.ui.onmessage = (msg: PostToFigmaMessage) => {
       data: outputText.join("\n"),
     } satisfies PostToUIMessage);
   } else if (msg.type === "export-json") {
-    const solidPaints = figma.getLocalPaintStyles().filter((paintStyle) => {
-      let color = paintStyle.paints[0];
-      return color.type === "SOLID";
-    });
+    const solidPaints = (await figma.getLocalPaintStylesAsync()).filter(
+      (paintStyle) => {
+        const color = paintStyle.paints[0];
+        return color.type === "SOLID";
+      }
+    );
 
     // Alpha channel is ignored in certain format
     const colorConvertFn = getColorConvertFn(msg.format);
@@ -131,6 +135,7 @@ figma.ui.onmessage = (msg: PostToFigmaMessage) => {
       while (parts.length > 1) {
         const part = parts.shift();
 
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
         target = target[part!] = target[part!] || {};
       }
@@ -158,12 +163,12 @@ figma.ui.onmessage = (msg: PostToFigmaMessage) => {
       Math.max(height, JSON_VIEW_HEIGHT)
     );
   } else if (msg.type === "get-variable-collections") {
-    const localCollections = figma.variables
-      .getLocalVariableCollections()
-      .map((c) => ({
-        name: c.name,
-        id: c.id,
-      }));
+    const localCollections = (
+      await figma.variables.getLocalVariableCollectionsAsync()
+    ).map((c) => ({
+      name: c.name,
+      id: c.id,
+    }));
     figma.ui.postMessage({
       type: "get-variable-collections-result",
       collections: localCollections,
@@ -171,7 +176,7 @@ figma.ui.onmessage = (msg: PostToFigmaMessage) => {
   } else if (msg.type === "get-variable-modes") {
     const { collectionId } = msg;
     const variableCollection =
-      figma.variables.getVariableCollectionById(collectionId);
+      await figma.variables.getVariableCollectionByIdAsync(collectionId);
     if (variableCollection) {
       figma.ui.postMessage({
         type: "get-variable-modes-result",
@@ -185,9 +190,9 @@ figma.ui.onmessage = (msg: PostToFigmaMessage) => {
     const { collectionId, modeId } = msg;
 
     const variableCollection =
-      figma.variables.getVariableCollectionById(collectionId);
+      await figma.variables.getVariableCollectionByIdAsync(collectionId);
     if (variableCollection) {
-      const exportResult = exportVariables(variableCollection, modeId);
+      const exportResult = await exportVariables(variableCollection, modeId);
       if (exportResult) {
         figma.ui.postMessage({
           type: "export-variable-to-json-result",

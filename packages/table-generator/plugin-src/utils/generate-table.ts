@@ -116,7 +116,7 @@ export const updateTable = async (
 
 export const generateTableWrapper = (
   config: TableConfig,
-  notify?: (message: string, options?: NotificationOptions) => void
+  _notify?: (message: string, options?: NotificationOptions) => void
 ): FrameNode => {
   const frame = figma.createFrame();
   frame.name = "Table";
@@ -137,7 +137,7 @@ export const generateColumn = (
   rows: number,
   headerComponent: ComponentNode,
   bodyComponent: ComponentNode,
-  notify?: (message: string, options?: NotificationOptions) => void
+  _notify?: (message: string, options?: NotificationOptions) => void
 ) => {
   const column = figma.createFrame();
   column.name = "Column";
@@ -162,7 +162,7 @@ export const updateColumn = (
   column: FrameNode,
   rowsConfig: number,
   bodyComponent: ComponentNode,
-  notify?: (message: string, options?: NotificationOptions) => void
+  _notify?: (message: string, options?: NotificationOptions) => void
 ) => {
   // "+1" for header
   const rows = rowsConfig + 1;

@@ -40,6 +40,7 @@ export const SimpleView = () => {
           case "available-lang-from-csv": {
             const { langs } = pluginMessage;
             setCsvLangs(langs);
+            break;
           }
           default:
         }
@@ -86,7 +87,7 @@ export const SimpleView = () => {
     if (files.length && files[0] !== null) {
       const csv = files[0];
       setCsvFile(csv);
-      var reader = new FileReader();
+      const reader = new FileReader();
       reader.readAsText(csv, "UTF-8");
       reader.onload = function (evt) {
         const fileReadString = evt.target?.result as any;
@@ -101,7 +102,7 @@ export const SimpleView = () => {
           "*"
         );
       };
-      reader.onerror = function (evt) {
+      reader.onerror = function () {
         console.error("error reading file");
         setCsvFile(null);
       };
