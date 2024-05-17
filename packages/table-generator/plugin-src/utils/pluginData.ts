@@ -1,4 +1,4 @@
-import { TableConfig } from "../../shared-src";
+import { TableConfig } from "../../shared-src/messages";
 
 export const PLUGIN_SHARED_NAMESPACE = "TableGenerator";
 export const PLUGIN_DATA_KEY_CONFIG = "Table Config";

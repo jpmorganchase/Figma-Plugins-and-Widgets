@@ -1,4 +1,4 @@
-import { PostToUIMessage, UISetting } from "../../shared-src";
+import { PostToUIMessage, UISetting } from "../../shared-src/messages";
 
 const SYNC_CSV_HEADER_KEY = "SYNC_CSV_HEADER";
 const AUTO_POPULATE_CSV_COLUMNS_KEY = "AUTO_POPULATE_CSV_COLUMNS";

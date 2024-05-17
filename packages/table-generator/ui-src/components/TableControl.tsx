@@ -1,6 +1,5 @@
-import { Button, H3, Tooltip } from "@salt-ds/core";
+import { Button, H3, Tooltip, Input, Dropdown, Option } from "@salt-ds/core";
 import { AddIcon, CsvIcon, DeleteIcon } from "@salt-ds/icons";
-import { Dropdown, Input } from "@salt-ds/lab";
 import { ParseResult } from "papaparse";
 import React, { Dispatch } from "react";
 import {
@@ -28,17 +27,24 @@ const TableColumnCsvPicker = ({
   const source = [DEFAULT_CSV_CHOICE, ...csvHeaders];
   return (
     <Dropdown
-      // Use `key` as a workaround for Dropdown bug. It throws error when: 1. uncontrolled. 2. select something first. 3. update source. 4. expand dropdown (item on the button no longer available)
-      key={JSON.stringify(source)}
+      // // Use `key` as a workaround for Dropdown bug. It throws error when: 1. uncontrolled. 2. select something first. 3. update source. 4. expand dropdown (item on the button no longer available)
+      // key={JSON.stringify(source)}
+      variant="secondary"
       aria-label="CSV column to fill"
-      defaultSelected={source[0]}
+      defaultSelected={[source[0]]}
       onSelectionChange={(_, selected) => {
-        selected && onSelectionChange(columnIndex, selected);
+        selected && onSelectionChange(columnIndex, selected[0]);
       }}
-      source={source}
-      width="var(--table-cell-width)"
-      ListProps={{ displayedItemCount: 5 }}
-    />
+      // source={source}
+      style={{
+        width: "var(--table-cell-width)",
+      }}
+      // ListProps={{ displayedItemCount: 5 }}
+    >
+      {source.map((s) => (
+        <Option value={s} key={s} />
+      ))}
+    </Dropdown>
   );
 };
 
@@ -64,15 +70,18 @@ const TableCell = React.memo(function TableCell({
         data-row={row}
         data-column={column}
         value={value}
-        onChange={(_, value) => {
-          dispatch({
-            type: "UPDATE_VALUE_AT_CELL",
-            row,
-            column,
-            newValue: value,
-          });
+        inputProps={{
+          spellCheck: true,
+          onChange: (e) => {
+            const value = e.target.value;
+            dispatch({
+              type: "UPDATE_VALUE_AT_CELL",
+              row,
+              column,
+              newValue: value,
+            });
+          },
         }}
-        inputProps={{ spellCheck: true }}
         onPaste={(event) => {
           const pasteValue = event.clipboardData.getData("text");
           const selectStart = (event.target as HTMLInputElement).selectionStart;
@@ -160,15 +169,19 @@ const TableHeaderCell = React.memo(
         <th>
           <Input
             className="table-control-table-input"
+            variant="secondary"
             data-row={row}
             data-column={columnIndex}
             value={value}
-            onChange={(_, value) => {
-              dispatch({
-                type: "UPDATE_VALUE_AT_HEADER",
-                columnIndex,
-                newValue: value,
-              });
+            inputProps={{
+              onChange: (event) => {
+                const value = event.target.value;
+                dispatch({
+                  type: "UPDATE_VALUE_AT_HEADER",
+                  columnIndex,
+                  newValue: value,
+                });
+              },
             }}
             onKeyUp={(event) => {
               if (event.code === "Enter") {
@@ -217,12 +230,15 @@ const TableGroupHeaderCell = React.memo(
             data-row={row}
             data-column={columnIndex}
             value={value}
-            onChange={(_, value) => {
-              dispatch({
-                type: "UPDATE_VALUE_AT_GROUP_HEADER",
-                columnIndex,
-                newValue: value,
-              });
+            inputProps={{
+              onChange: (event) => {
+                const value = event.target.value;
+                dispatch({
+                  type: "UPDATE_VALUE_AT_GROUP_HEADER",
+                  columnIndex,
+                  newValue: value,
+                });
+              },
             }}
             onKeyUp={(event) => {
               if (event.code === "Enter") {
@@ -304,9 +320,9 @@ export const TableControl = ({
 
   return (
     <table className="table-control-table">
-      <thead>
+      <thead className="sticky-head">
         {tableState.groupHeaderValues ? (
-          <tr className="sticky-row">
+          <tr>
             {/* Empty column for buttons */}
             {disableRowEdit ? null : <th className="sticky-col"></th>}
 
@@ -321,7 +337,7 @@ export const TableControl = ({
             ))}
           </tr>
         ) : null}
-        <tr className="sticky-row">
+        <tr>
           {disableRowEdit ? null : (
             <th className="sticky-col">
               <Button
@@ -346,7 +362,7 @@ export const TableControl = ({
           ))}
         </tr>
         {csvImportResults?.meta.fields?.length ? (
-          <tr className="sticky-row">
+          <tr>
             {disableRowEdit ? null : (
               <th className="sticky-col button-icon-size">
                 <Tooltip content={csvFile?.name}>

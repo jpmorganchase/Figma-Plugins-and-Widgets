@@ -4,7 +4,7 @@
   height: 100%;
 }
 
-.cell-set-card.saltCard {
+.cell-set-card {
   --saltCard-padding: calc(var(--salt-spacing-100) * 2);
 
   text-align: center;

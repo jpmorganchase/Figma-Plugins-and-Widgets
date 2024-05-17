@@ -1,6 +1,7 @@
 /* Plugin runs in Quircks mode, need to submit a Figma bug. https://stackoverflow.com/a/24259068 */
 table {
   color: inherit;
+  text-align: left;
 }
 
 table,
@@ -21,6 +22,11 @@ th h3.saltText {
   height: 28px;
 }
 
+.table-control-table th,
+.table-control-table td {
+  padding: 0;
+}
+
 .table-control-table .csv-icon {
   margin: var(--salt-spacing-100);
 }
@@ -33,6 +39,12 @@ th h3.saltText {
 
 .table-control-table .sticky-col.button-icon-size {
   width: 28px;
+}
+
+.table-control-table .sticky-head {
+  position: sticky;
+  top: 0px;
+  z-index: 20;
 }
 
 .table-control-table .sticky-row {
@@ -54,8 +66,15 @@ th h3.saltText {
 .table-control-table .table-control-table-input.saltInput {
   width: var(--table-cell-width);
 }
+.table-control-table
+  .table-control-table-input.saltInput
+  .saltInput-activationIndicator {
+  border-bottom: none;
+}
+.table-control-table .saltDropdown {
+  border-bottom: none;
+}
 
-.salt-theme .table-control-table,
-.salt-theme .saltDropdown-popup .saltDropdown-popup-component {
+.salt-theme .table-control-table {
   --table-cell-width: calc(var(--salt-spacing-100) * 15);
 }
