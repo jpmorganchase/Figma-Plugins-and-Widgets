@@ -40,10 +40,16 @@ export const SettingMenuButton = ({
       </MenuTrigger>
       <MenuPanel>
         {settings.map((s) => (
-          <MenuItem onClick={() => onMenuClick(s.label)}>
+          <MenuItem onClick={() => onMenuClick(s.label)} key={s.label}>
             <SplitLayout
               startItem={s.label}
-              endItem={s.selected ? <SuccessTickIcon /> : <CloseSmallIcon />}
+              endItem={
+                s.selected ? (
+                  <SuccessTickIcon aria-label="enabled" />
+                ) : (
+                  <CloseSmallIcon aria-label="disabled" />
+                )
+              }
             />
           </MenuItem>
         ))}
