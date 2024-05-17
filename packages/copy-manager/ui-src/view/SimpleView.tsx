@@ -12,7 +12,7 @@ import {
   DEFAULT_LANG,
   PostToFigmaMessage,
   PostToUIMessage,
-} from "../../shared-src";
+} from "../../shared-src/messages";
 import { downloadDataUri } from "../components/utils";
 
 import "./SimpleView.css";

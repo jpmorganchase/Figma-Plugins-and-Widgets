@@ -1,5 +1,4 @@
-import { populateGlobal } from "vitest/environments";
-import { vi } from "vitest";
+import { vi, beforeAll } from "vitest";
 
 class ComponentNode {
   height: number;
@@ -20,8 +19,9 @@ class ComponentNode {
     this.height = height;
   }
 }
-populateGlobal(global, {
-  figma: {
+
+beforeAll(() => {
+  global.figma = {
     ui: {
       postMessage: vi.fn(),
     },
@@ -32,6 +32,5 @@ populateGlobal(global, {
     },
     createComponent: () => new ComponentNode(),
     createText: vi.fn(),
-  },
-  // Int32Array: vi.fn(),
+  };
 });

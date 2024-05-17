@@ -1,4 +1,4 @@
-import { SelectableTextNodeInfo } from "../../shared-src";
+import { SelectableTextNodeInfo } from "../../shared-src/messages";
 import { getNodeKey, getSelected } from "../pluginDataUtils";
 import { sortNodeByPosition } from "../utils";
 import { iterate } from "./iterate";
