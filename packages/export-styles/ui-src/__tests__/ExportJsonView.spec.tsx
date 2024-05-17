@@ -2,12 +2,12 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import userEvents from "@testing-library/user-event";
 import React from "react";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import { ExportCssView } from "../views/ExportCssView";
+import { ExportJsonView } from "../views/ExportJsonView";
 
-describe("ExportCssView", () => {
+describe("ExportJsonView", () => {
   beforeEach(() => {
     window.parent.postMessage = vi.fn<any>();
-    render(<ExportCssView />);
+    render(<ExportJsonView />);
   });
   test("renders export button", () => {
     expect(screen.getByText("Export")).toBeInTheDocument();
@@ -19,23 +19,15 @@ describe("ExportCssView", () => {
       expect.objectContaining({
         pluginMessage: {
           format: "RGB",
-          ignoreDefaultEnding: false,
-          ignoreFirstGroup: false,
-          prefix: "",
-          type: "export-css",
+          type: "export-json",
         },
       }),
       "*"
     );
   });
-  test("update format and prefix, sends updated export message to figma when clicking export", async () => {
+  test("update format and sends updated export message to figma when clicking export", async () => {
     await userEvents.click(screen.getByRole("combobox", { name: "Format" }));
     await userEvents.click(screen.getByRole("option", { name: "HEX" }));
-
-    await userEvents.type(
-      screen.getByRole("textbox", { name: "Prefix" }),
-      "some-prefix"
-    );
 
     await userEvents.click(screen.getByRole("button", { name: "Export" }));
     expect(window.parent.postMessage).toHaveBeenCalledTimes(1);
@@ -43,30 +35,10 @@ describe("ExportCssView", () => {
       expect.objectContaining({
         pluginMessage: {
           format: "HEX",
-          ignoreDefaultEnding: false,
-          ignoreFirstGroup: false,
-          prefix: "some-prefix",
-          type: "export-css",
+          type: "export-json",
         },
       }),
       "*"
     );
-  });
-  test("set value in textarea from message sent from Figma", async () => {
-    const expectedText = "text to be filled in";
-    fireEvent(
-      window,
-      new MessageEvent("message", {
-        data: {
-          pluginMessage: {
-            type: "generated",
-            data: expectedText,
-          },
-        },
-      })
-    );
-    const textarea = screen.getByLabelText("Code exported");
-    expect(textarea).toBeInTheDocument();
-    expect(textarea).toHaveValue(expectedText);
   });
 });
