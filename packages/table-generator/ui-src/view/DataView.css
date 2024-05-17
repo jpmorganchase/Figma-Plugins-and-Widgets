@@ -1,9 +1,9 @@
 .data-view {
-  margin-inline: calc(var(--salt-size-unit) * 2);
-  padding-block-end: calc(var(--salt-size-unit) * 2);
+  margin-inline: calc(var(--salt-spacing-100) * 2);
+  padding-block-end: calc(var(--salt-spacing-100) * 2);
   height: 100%;
 }
 
 .data-view .button-bar {
-  margin-block-start: calc(var(--salt-size-unit) * 2);
+  margin-block-start: calc(var(--salt-spacing-100) * 2);
 }

@@ -13,7 +13,7 @@ td {
 
 th h3.saltText {
   margin-block: 0;
-  padding: 0 var(--salt-size-unit);
+  padding: 0 var(--salt-spacing-100);
   text-align: left;
 }
 
@@ -22,7 +22,7 @@ th h3.saltText {
 }
 
 .table-control-table .csv-icon {
-  margin: var(--salt-size-unit);
+  margin: var(--salt-spacing-100);
 }
 
 .table-control-table .sticky-col {
@@ -57,5 +57,5 @@ th h3.saltText {
 
 .salt-theme .table-control-table,
 .salt-theme .saltDropdown-popup .saltDropdown-popup-component {
-  --table-cell-width: calc(var(--salt-size-unit) * 15);
+  --table-cell-width: calc(var(--salt-spacing-100) * 15);
 }

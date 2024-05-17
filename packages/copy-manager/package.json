@@ -32,13 +32,13 @@
   },
   "homepage": "https://github.com/jpmorganchase/Figma-Plugins-and-Widgets#readme",
   "dependencies": {
-    "@salt-ds/core": "^1.16.0",
-    "@salt-ds/icons": "^1.9.1",
-    "@salt-ds/lab": "^1.0.0-alpha.29",
-    "@salt-ds/theme": "^1.11.0",
+    "@salt-ds/core": "^1.27.1",
+    "@salt-ds/icons": "^1.11.2",
+    "@salt-ds/lab": "^1.0.0-alpha.44",
+    "@salt-ds/theme": "^1.15.0",
     "papaparse": "^5.4.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0"
   },
   "devDependencies": {
     "@types/papaparse": "^5.3.8"

@@ -1,5 +1,5 @@
 .advanced-view {
-  padding: var(--salt-size-unit);
+  padding: var(--salt-spacing-100);
   flex-grow: 1;
   min-height: 0;
 }
