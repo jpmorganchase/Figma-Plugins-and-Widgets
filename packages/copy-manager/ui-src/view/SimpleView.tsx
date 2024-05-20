@@ -4,9 +4,8 @@ import {
   FileDropZone,
   FileDropZoneIcon,
   FileDropZoneTrigger,
-  StackLayout,
-} from "@salt-ds/core";
-import { Dropdown, FormField } from "@salt-ds/lab";
+  StackLayout, FormFieldLabel } from "@salt-ds/core";
+import { Dropdown, FormField as FormField } from "@salt-ds/lab";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   DEFAULT_LANG,
@@ -132,20 +131,9 @@ export const SimpleView = () => {
         </StackLayout>
       )}
       {revisionsAvailable && (
-        <FormField
-          label="Version"
-          variant="secondary"
-          className="language-formField"
-          fullWidth={false}
-        >
-          <Dropdown
-            source={csvLangs}
-            selected={selectedLang}
-            onSelectionChange={(_, selected) =>
-              selected && setSelectedLang(selected)
-            }
-            ListProps={{ displayedItemCount: 3 }}
-          />
+        <FormField variant="secondary" className="language-formField" fullWidth={false}>
+          <FormFieldLabel>Version</FormFieldLabel>
+          <Dropdown source={csvLangs} selected={selectedLang} onSelectionChange={(_, selected) => selected && setSelectedLang(selected)} ListProps={{ displayedItemCount: 3 }}/>
         </FormField>
       )}
       <Button onClick={onUpdateCsv} disabled={!revisionsAvailable}>

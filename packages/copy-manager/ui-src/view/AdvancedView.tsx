@@ -3,10 +3,9 @@ import {
   Checkbox,
   FlexItem,
   FlexLayout,
-  StackLayout,
-} from "@salt-ds/core";
+  StackLayout, FormFieldLabel } from "@salt-ds/core";
 import { ExportIcon, RefreshIcon, TargetIcon } from "@salt-ds/icons";
-import { Dropdown, FormField, Input } from "@salt-ds/lab";
+import { Dropdown, FormField as FormField, Input } from "@salt-ds/lab";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   convertToCsvDataUri,
@@ -225,24 +224,17 @@ export const AdvancedView = () => {
         </FlexItem>
 
         <FlexLayout align="end" gap={1}>
-          <FormField label="Region" style={{ width: 52 }}>
-            <Input value={region} onChange={(_, value) => setRegion(value)} />
+          <FormField style={{ width: 52 }}>
+            <FormFieldLabel>Region</FormFieldLabel>
+            <Input value={region} onChange={(_, value) => setRegion(value)}/>
           </FormField>
-          <FormField label="Lang" style={{ width: 48 }}>
-            <Input
-              value={language}
-              onChange={(_, value) => setLanguage(value)}
-            />
+          <FormField style={{ width: 48 }}>
+            <FormFieldLabel>Lang</FormFieldLabel>
+            <Input value={language} onChange={(_, value) => setLanguage(value)}/>
           </FormField>
-          <FormField label="Format" style={{ width: 64 }}>
-            <Dropdown
-              source={EXPORT_FORMATS}
-              selected={selectedExportFormat}
-              onSelectionChange={(_, selected) =>
-                selected && setSelectedExportFormat(selected)
-              }
-              // width={64}
-            />
+          <FormField style={{ width: 64 }}>
+            <FormFieldLabel>Format</FormFieldLabel>
+            <Dropdown source={EXPORT_FORMATS} selected={selectedExportFormat} onSelectionChange={(_, selected) => selected && setSelectedExportFormat(selected)}/>
           </FormField>
           <Button
             disabled={exportButtonDisabled}
