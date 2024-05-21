@@ -1,11 +1,16 @@
 import {
   Button,
   Checkbox,
+  Dropdown,
   FlexItem,
   FlexLayout,
-  StackLayout, FormFieldLabel } from "@salt-ds/core";
+  FormField,
+  FormFieldLabel,
+  Input,
+  Option,
+  StackLayout,
+} from "@salt-ds/core";
 import { ExportIcon, RefreshIcon, TargetIcon } from "@salt-ds/icons";
-import { Dropdown, FormField as FormField, Input } from "@salt-ds/lab";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   convertToCsvDataUri,
@@ -226,15 +231,41 @@ export const AdvancedView = () => {
         <FlexLayout align="end" gap={1}>
           <FormField style={{ width: 52 }}>
             <FormFieldLabel>Region</FormFieldLabel>
-            <Input value={region} onChange={(_, value) => setRegion(value)}/>
+            <Input
+              value={region}
+              inputProps={{
+                onChange: (event) => {
+                  const value = event.target.value;
+                  setRegion(value);
+                },
+              }}
+            />
           </FormField>
           <FormField style={{ width: 48 }}>
             <FormFieldLabel>Lang</FormFieldLabel>
-            <Input value={language} onChange={(_, value) => setLanguage(value)}/>
+            <Input
+              value={language}
+              inputProps={{
+                onChange: (event) => {
+                  const value = event.target.value;
+                  setLanguage(value);
+                },
+              }}
+            />
           </FormField>
           <FormField style={{ width: 64 }}>
             <FormFieldLabel>Format</FormFieldLabel>
-            <Dropdown source={EXPORT_FORMATS} selected={selectedExportFormat} onSelectionChange={(_, selected) => selected && setSelectedExportFormat(selected)}/>
+            <Dropdown
+              selected={[selectedExportFormat]}
+              onSelectionChange={(_, items) => {
+                const selected = items[0];
+                selected && setSelectedExportFormat(selected);
+              }}
+            >
+              {EXPORT_FORMATS.map((f) => (
+                <Option value={f} key={f} />
+              ))}
+            </Dropdown>
           </FormField>
           <Button
             disabled={exportButtonDisabled}

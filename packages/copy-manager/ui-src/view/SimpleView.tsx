@@ -1,11 +1,15 @@
 import {
   Button,
   Checkbox,
+  Dropdown,
   FileDropZone,
   FileDropZoneIcon,
   FileDropZoneTrigger,
-  StackLayout, FormFieldLabel } from "@salt-ds/core";
-import { Dropdown, FormField as FormField } from "@salt-ds/lab";
+  FormField,
+  FormFieldLabel,
+  Option,
+  StackLayout,
+} from "@salt-ds/core";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   DEFAULT_LANG,
@@ -131,9 +135,20 @@ export const SimpleView = () => {
         </StackLayout>
       )}
       {revisionsAvailable && (
-        <FormField variant="secondary" className="language-formField" fullWidth={false}>
+        <FormField className="language-formField">
           <FormFieldLabel>Version</FormFieldLabel>
-          <Dropdown source={csvLangs} selected={selectedLang} onSelectionChange={(_, selected) => selected && setSelectedLang(selected)} ListProps={{ displayedItemCount: 3 }}/>
+          <Dropdown
+            variant="secondary"
+            selected={[selectedLang]}
+            onSelectionChange={(_, items) => {
+              const selected = items[0];
+              selected && setSelectedLang(selected);
+            }}
+          >
+            {csvLangs.map((l) => (
+              <Option value={l} key={l} />
+            ))}
+          </Dropdown>
         </FormField>
       )}
       <Button onClick={onUpdateCsv} disabled={!revisionsAvailable}>
