@@ -253,7 +253,7 @@ export const AdvancedView = () => {
               }}
             />
           </FormField>
-          <FormField style={{ width: 64 }}>
+          <FormField style={{ width: 68 }}>
             <FormFieldLabel>Format</FormFieldLabel>
             <Dropdown
               selected={[selectedExportFormat]}

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvents from "@testing-library/user-event";
 import React from "react";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -22,20 +22,58 @@ describe("SimpleView", () => {
       "*"
     );
   });
-  test.skip("reacts to failure message sent from Figma", async () => {
+  test("Adds drop file and change revision via dropdown", async () => {
+    const csvData = `id,page,name,characters,v2,listOption,headingLevel
+$2:1,Page 1,Page Title,Features,Features v2,NONE,1
+$2:1,Page 1,Heading,Body,,NONE,0
+    `;
+    const file = new File([csvData as BlobPart], "chucknorris.csv", {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    fireEvent.drop(screen.getByLabelText("File drop zone"), {
+      dataTransfer: { files: [file], types: ["Files"] },
+    });
+
+    await waitFor(() => {
+      expect(window.parent.postMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          pluginMessage: {
+            type: "detect-available-lang-from-csv",
+            csvString: csvData,
+          },
+        }),
+        "*"
+      );
+    });
+
     fireEvent(
       window,
       new MessageEvent("message", {
         data: {
           pluginMessage: {
-            type: "created-nodes-result",
-            success: false,
+            type: "available-lang-from-csv",
+            langs: ["v2"],
           },
         },
       })
     );
-    expect(
-      await screen.findByRole("button", { name: /❌/i })
-    ).toBeInTheDocument();
+
+    await userEvents.click(
+      await screen.findByRole("combobox", { name: "Version" })
+    );
+    await userEvents.click(screen.getByRole("option", { name: "v2" }));
+
+    await userEvents.click(screen.getByRole("button", { name: "Update" }));
+
+    expect(window.parent.postMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        pluginMessage: {
+          type: "update-content-with-lang",
+          lang: "v2", // selected 2 lines above
+          persistInFigma: true,
+        },
+      }),
+      "*"
+    );
   });
 });

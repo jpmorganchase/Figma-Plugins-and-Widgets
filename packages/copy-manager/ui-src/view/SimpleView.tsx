@@ -119,7 +119,11 @@ export const SimpleView = () => {
     <StackLayout className="simple-view" align="center">
       <Button onClick={onExportCsv}>Export CSV</Button>
       {csvFile === null ? (
-        <FileDropZone style={{ width: 300 }} onDrop={onFileDrop}>
+        <FileDropZone
+          style={{ width: 300 }}
+          onDrop={onFileDrop}
+          aria-label="File drop zone"
+        >
           <FileDropZoneIcon />
           <strong>Drop files here or</strong>
           <FileDropZoneTrigger accept=".csv" />
@@ -151,9 +155,7 @@ export const SimpleView = () => {
           </Dropdown>
         </FormField>
       )}
-      <Button onClick={onUpdateCsv} disabled={!revisionsAvailable}>
-        Update
-      </Button>
+      <Button onClick={onUpdateCsv}>Update</Button>
     </StackLayout>
   );
 };
