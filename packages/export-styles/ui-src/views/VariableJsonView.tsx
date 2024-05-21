@@ -1,6 +1,15 @@
-import { Button, FlexLayout, StackLayout, Text, Tooltip } from "@salt-ds/core";
+import {
+  Button,
+  FlexLayout,
+  StackLayout,
+  Text,
+  Tooltip,
+  Dropdown,
+  FormField,
+  FormFieldLabel,
+  Option,
+} from "@salt-ds/core";
 import { DownloadIcon } from "@salt-ds/icons";
-import { Dropdown, FormField } from "@salt-ds/lab";
 import React, { useEffect, useId, useRef, useState } from "react";
 import {
   FigmaVariableCollection,
@@ -95,12 +104,13 @@ export const VariableJsonView = () => {
 
   return (
     <StackLayout gap={1} className="viewRoot">
-      <FormField label="Collection">
+      <FormField>
+        <FormFieldLabel>Collection</FormFieldLabel>
         <Dropdown
-          source={collections}
-          selected={selectedCollection}
-          itemToString={(item) => item?.name}
-          onSelectionChange={(_, item) => {
+          selected={[selectedCollection]}
+          valueToString={(item) => item?.name || ""}
+          onSelectionChange={(_, items) => {
+            const item = items[0];
             setSelectedCollection(item);
             if (item) {
               setSelectedMode(null);
@@ -115,17 +125,26 @@ export const VariableJsonView = () => {
               );
             }
           }}
-        />
+        >
+          {collections.map((col) => (
+            <Option key={col.id} value={col} />
+          ))}
+        </Dropdown>
       </FormField>
-      <FormField label="Mode">
+      <FormField>
+        <FormFieldLabel>Mode</FormFieldLabel>
         <Dropdown
-          source={modes}
-          selected={selectedMode}
-          itemToString={(item) => item?.name}
-          onSelectionChange={(_, item) => {
+          selected={[selectedMode]}
+          onSelectionChange={(_, items) => {
+            const item = items[0];
             setSelectedMode(item);
           }}
-        />
+          valueToString={(item) => item?.name || ""}
+        >
+          {modes.map((m) => (
+            <Option key={m.modeId} value={m} />
+          ))}
+        </Dropdown>
       </FormField>
       <Button
         disabled={selectedCollection === null || selectedMode === null}

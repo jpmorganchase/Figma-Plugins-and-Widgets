@@ -1,4 +1,4 @@
-import { TableData } from "../../shared-src";
+import { TableData } from "../../shared-src/messages";
 
 const PREFERRED_TEXT_NODE_NAMES = ["Cell", "Value", "Label"];
 

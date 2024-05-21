@@ -7,9 +7,11 @@ import {
   StackLayout,
   Text,
   Tooltip,
+  FormField,
+  FormFieldLabel,
+  Input,
 } from "@salt-ds/core";
-import { FormField, Input } from "@salt-ds/lab";
-import { PostToFigmaMessage } from "../../shared-src";
+import { PostToFigmaMessage } from "../../shared-src/messages";
 import { ViewSharedProps } from "./types";
 
 import "./ConfigView.css";
@@ -79,6 +81,7 @@ export const ConfigView = ({
               disabled={validTableSelected}
               className="cell-set-card"
               onClick={onHeaderCellCardClick}
+              accent="bottom"
             >
               <Text styleAs="h4" maxRows={1}>
                 {tableConfig.headerCell?.name || "Click to set"}
@@ -93,6 +96,7 @@ export const ConfigView = ({
               disabled={validTableSelected}
               className="cell-set-card"
               onClick={onBodyCellCardClick}
+              accent="bottom"
             >
               <Text styleAs="h4" maxRows={1}>
                 {tableConfig.bodyCell?.name || "Click to set"}
@@ -104,30 +108,36 @@ export const ConfigView = ({
           </FlexItem>
         </FlexLayout>
         <FlexLayout>
-          <FormField
-            label="Columns"
-            // fullWidth={false}
-            variant="secondary"
-          >
+          <FormField>
+            <FormFieldLabel>Columns</FormFieldLabel>
             <Input
-              type="number"
-              inputProps={{ min: 1, max: 50 }}
-              value={tableConfig.columns as any}
-              onChange={(e) => {
-                const newColumns = Number.parseInt(e.target.value);
-                setTableConfig({ ...tableConfig, columns: newColumns });
+              variant="secondary"
+              inputProps={{
+                min: 1,
+                max: 50,
+                type: "number",
+                onChange: (e) => {
+                  const newColumns = Number.parseInt(e.target.value);
+                  setTableConfig({ ...tableConfig, columns: newColumns });
+                },
               }}
+              value={tableConfig.columns as any}
             />
           </FormField>
-          <FormField label="Rows" variant="secondary">
+          <FormField>
+            <FormFieldLabel>Rows</FormFieldLabel>
             <Input
-              type="number"
-              inputProps={{ min: 1, max: 50 }}
-              value={tableConfig.rows as any}
-              onChange={(e) => {
-                const newRows = Number.parseInt(e.target.value);
-                setTableConfig({ ...tableConfig, rows: newRows });
+              variant="secondary"
+              inputProps={{
+                min: 1,
+                max: 50,
+                type: "number",
+                onChange: (e) => {
+                  const newRows = Number.parseInt(e.target.value);
+                  setTableConfig({ ...tableConfig, rows: newRows });
+                },
               }}
+              value={tableConfig.rows as any}
             />
           </FormField>
         </FlexLayout>

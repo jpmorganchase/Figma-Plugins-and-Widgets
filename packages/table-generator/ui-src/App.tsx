@@ -5,7 +5,7 @@ import {
   PostToFigmaMessage,
   PostToUIMessage,
   TableConfig,
-} from "../shared-src";
+} from "../shared-src/messages";
 import { PLUGIN_RELAUNCH_KEY_EDIT_TABLE } from "../shared-src/constants";
 import { CornerResizer } from "./components/CornerResizer";
 import { useFigmaPluginTheme } from "./components/useFigmaPluginTheme";

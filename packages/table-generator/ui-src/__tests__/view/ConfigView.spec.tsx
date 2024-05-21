@@ -1,7 +1,7 @@
 import { RenderResult, render, screen } from "@testing-library/react";
 import userEvents from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { DEFAULT_TABLE_CONFIG } from "../../../shared-src";
+import { DEFAULT_TABLE_CONFIG } from "../../../shared-src/messages";
 import { ConfigView } from "../../view/ConfigView";
 
 describe("ConfigView", () => {

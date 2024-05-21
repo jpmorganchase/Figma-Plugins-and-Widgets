@@ -1,3 +1,8 @@
+@layer salt;
+
+@import url("@salt-ds/theme/css/theme.css") layer(salt);
+@import url("@salt-ds/theme/css/global.css") layer(salt);
+
 #root,
 .appRoot {
   height: 100%;

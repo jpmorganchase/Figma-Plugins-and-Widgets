@@ -2,8 +2,8 @@ import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvents from "@testing-library/user-event";
 import React from "react";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import { VariableJsonView } from "../views/VariableJsonView";
 import * as utilExports from "../components/utils";
+import { VariableJsonView } from "../views/VariableJsonView";
 
 // Mock out download, `URL.createObjectURL` not supported in test env
 vi.spyOn(utilExports, "downloadBlob").mockImplementation(() => {});
@@ -32,11 +32,13 @@ describe("VariableJsonView", () => {
       })
     );
 
-    await userEvents.click(screen.getByRole("listbox", { name: "Collection" }));
     await userEvents.click(
-      screen.getByRole("option", { name: "Collection 1" })
+      screen.getByRole("combobox", { name: "Collection" })
     );
-
+    const dropdownList = await screen.findByRole("listbox");
+    await userEvents.click(
+      within(dropdownList).getByRole("option", { name: "Collection 1" })
+    );
     expect(screen.getByRole("button", { name: "Export" })).toBeDisabled();
 
     expect(window.parent.postMessage).toHaveBeenCalledWith(
@@ -64,7 +66,7 @@ describe("VariableJsonView", () => {
       })
     );
 
-    await userEvents.click(screen.getByRole("listbox", { name: "Mode" }));
+    await userEvents.click(screen.getByRole("combobox", { name: "Mode" }));
     await userEvents.click(screen.getByRole("option", { name: "Light" }));
     expect(screen.getByRole("button", { name: "Export" })).not.toBeDisabled();
     await userEvents.click(screen.getByRole("button", { name: "Export" }));
@@ -115,7 +117,9 @@ describe("VariableJsonView", () => {
       })
     );
 
-    await userEvents.click(screen.getByRole("listbox", { name: "Collection" }));
+    await userEvents.click(
+      screen.getByRole("combobox", { name: "Collection" })
+    );
     await userEvents.click(
       screen.getByRole("option", { name: "Collection 1" })
     );
@@ -147,22 +151,22 @@ describe("VariableJsonView", () => {
       })
     );
 
-    await userEvents.click(screen.getByRole("listbox", { name: "Mode" }));
+    await userEvents.click(screen.getByRole("combobox", { name: "Mode" }));
     await userEvents.click(screen.getByRole("option", { name: "Light" }));
-    expect(
-      within(screen.getByRole("listbox", { name: "Mode" })).getByRole("option")
-        .innerHTML
-    ).toEqual("Light");
+    expect(screen.getByRole("combobox", { name: "Mode" })).toHaveTextContent(
+      "Light"
+    );
     expect(screen.getByRole("button", { name: "Export" })).not.toBeDisabled();
 
-    await userEvents.click(screen.getByRole("listbox", { name: "Collection" }));
+    await userEvents.click(
+      screen.getByRole("combobox", { name: "Collection" })
+    );
     await userEvents.click(
       screen.getByRole("option", { name: "Collection 2" })
     );
-    expect(
-      within(screen.getByRole("listbox", { name: "Mode" })).getByRole("option")
-        .innerHTML
-    ).toEqual("");
+    expect(screen.getByRole("combobox", { name: "Mode" })).toHaveTextContent(
+      ""
+    );
     expect(screen.getByRole("button", { name: "Export" })).toBeDisabled();
   });
   test("download JSON button is disabled until export text is available", async () => {

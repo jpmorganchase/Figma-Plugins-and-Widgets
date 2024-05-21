@@ -1,12 +1,15 @@
 import {
   Button,
   Checkbox,
+  Dropdown,
   FileDropZone,
   FileDropZoneIcon,
   FileDropZoneTrigger,
+  FormField,
+  FormFieldLabel,
+  Option,
   StackLayout,
 } from "@salt-ds/core";
-import { Dropdown, FormField } from "@salt-ds/lab";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   DEFAULT_LANG,
@@ -116,7 +119,11 @@ export const SimpleView = () => {
     <StackLayout className="simple-view" align="center">
       <Button onClick={onExportCsv}>Export CSV</Button>
       {csvFile === null ? (
-        <FileDropZone style={{ width: 300 }} onDrop={onFileDrop}>
+        <FileDropZone
+          style={{ width: 300 }}
+          onDrop={onFileDrop}
+          aria-label="File drop zone"
+        >
           <FileDropZoneIcon />
           <strong>Drop files here or</strong>
           <FileDropZoneTrigger accept=".csv" />
@@ -132,25 +139,23 @@ export const SimpleView = () => {
         </StackLayout>
       )}
       {revisionsAvailable && (
-        <FormField
-          label="Version"
-          variant="secondary"
-          className="language-formField"
-          fullWidth={false}
-        >
+        <FormField className="language-formField">
+          <FormFieldLabel>Version</FormFieldLabel>
           <Dropdown
-            source={csvLangs}
-            selected={selectedLang}
-            onSelectionChange={(_, selected) =>
-              selected && setSelectedLang(selected)
-            }
-            ListProps={{ displayedItemCount: 3 }}
-          />
+            variant="secondary"
+            selected={[selectedLang]}
+            onSelectionChange={(_, items) => {
+              const selected = items[0];
+              selected && setSelectedLang(selected);
+            }}
+          >
+            {csvLangs.map((l) => (
+              <Option value={l} key={l} />
+            ))}
+          </Dropdown>
         </FormField>
       )}
-      <Button onClick={onUpdateCsv} disabled={!revisionsAvailable}>
-        Update
-      </Button>
+      <Button onClick={onUpdateCsv}>Update</Button>
     </StackLayout>
   );
 };

@@ -1,4 +1,4 @@
-import { TableConfig } from "../../shared-src";
+import { TableConfig } from "../../shared-src/messages";
 import { getComponentByKey } from "./component";
 import { getValidTableFromSelection } from "./guard";
 import { writeConfigToPluginData } from "./pluginData";

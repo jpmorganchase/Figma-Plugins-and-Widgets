@@ -1,4 +1,4 @@
-import { PostToFigmaMessage, PostToUIMessage } from "../shared-src";
+import { PostToFigmaMessage, PostToUIMessage } from "../shared-src/messages";
 import {
   readUISetting,
   sendUISettingToUI,

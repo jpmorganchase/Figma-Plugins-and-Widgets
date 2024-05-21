@@ -1,4 +1,4 @@
-import { TableConfig } from "../../shared-src";
+import { TableConfig } from "../../shared-src/messages";
 
 export type ViewSharedProps = {
   onToggleView?: () => void;

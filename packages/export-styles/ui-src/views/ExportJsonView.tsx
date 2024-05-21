@@ -1,5 +1,11 @@
-import { Button, StackLayout } from "@salt-ds/core";
-import { Dropdown, FormField } from "@salt-ds/lab";
+import {
+  Button,
+  StackLayout,
+  FormField,
+  FormFieldLabel,
+  Dropdown,
+  Option,
+} from "@salt-ds/core";
 import React, { useEffect, useRef, useState } from "react";
 import {
   ExportColorAllFormats,
@@ -56,16 +62,21 @@ export const ExportJsonView = () => {
 
   return (
     <StackLayout gap={1} className="viewRoot">
-      <FormField label="Format" labelPlacement="left">
+      <FormField labelPlacement="left">
+        <FormFieldLabel>Format</FormFieldLabel>
         <Dropdown
-          source={ExportColorAllFormats}
-          selected={format}
-          onSelectionChange={(_, item) => {
+          selected={[format]}
+          onSelectionChange={(_, items) => {
+            const item = items[0];
             if (item) {
               setFormat(item);
             }
           }}
-        />
+        >
+          {ExportColorAllFormats.map((f) => (
+            <Option key={f} value={f} />
+          ))}
+        </Dropdown>
       </FormField>
       <Button onClick={onExport}>Export</Button>
       <textarea
