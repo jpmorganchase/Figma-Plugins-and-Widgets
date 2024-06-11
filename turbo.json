@@ -16,6 +16,7 @@
         "plugin-src/**/*.ts"
       ]
     },
-    "tsc": {}
+    "tsc": {},
+    "lint:plugin": {}
   }
 }
