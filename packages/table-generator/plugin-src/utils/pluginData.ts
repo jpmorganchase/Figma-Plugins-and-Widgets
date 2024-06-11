@@ -16,16 +16,16 @@ export const writeConfigToPluginData = (
 
 export const validateConfig = (config: unknown): boolean => {
   if (typeof config === "object" && config !== null) {
-    if (typeof (config as any).rows !== "number") {
+    if ("rows" in config && typeof config.rows !== "number") {
       return false;
     }
-    if (typeof (config as any).columns !== "number") {
+    if ("columns" in config && typeof config.columns !== "number") {
       return false;
     }
-    if (typeof (config as any).headerCell !== "object") {
+    if ("headerCell" in config && typeof config.headerCell !== "object") {
       return false;
     }
-    if (typeof (config as any).bodyCell !== "object") {
+    if ("bodyCell" in config && typeof config.bodyCell !== "object") {
       return false;
     }
     return true;

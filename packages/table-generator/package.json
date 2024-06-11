@@ -16,7 +16,8 @@
     "build:main": "esbuild plugin-src/code.ts --bundle --outfile=dist/code.js --target=es6",
     "build:ui": "npx vite build --minify esbuild --emptyOutDir=false",
     "build:watch": "concurrently -n widget,iframe \"npm run build:main -- --watch\" \"npm run build:ui -- --watch\"",
-    "dev": "concurrently -n tsc,build,vite 'npm:tsc:watch' 'npm:build:watch' 'vite'"
+    "dev": "concurrently -n tsc,build,vite 'npm:tsc:watch' 'npm:build:watch' 'vite'",
+    "lint:plugin": "eslint ./plugin-src"
   },
   "repository": {
     "type": "git",
