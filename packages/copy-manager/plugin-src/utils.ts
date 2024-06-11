@@ -3,7 +3,6 @@ import {
   SelectableTextNodeInfo,
 } from "../shared-src/messages";
 import { PLUGIN_RELAUNCH_KEY_REVIEW_REVISION } from "./pluginDataUtils";
-import { textNodeInfoProcessor } from "./processors/textNodeInfoProcessor";
 
 export type HeadingSettings = {
   h1: number;
@@ -19,8 +18,9 @@ export const DEFAULT_HEADING_SETTINGS: HeadingSettings = {
   h4: 18,
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isChildrenMixin = (node: any): node is ChildrenMixin => {
-  return !!(node as any).children;
+  return "children" in node;
 };
 
 export const isRectNodeImage = (node: RectangleNode): boolean => {
@@ -94,12 +94,13 @@ export function sendTextNodesInfoToUI(nodesInfo: SelectableTextNodeInfo[]) {
   } satisfies PostToUIMessage);
 }
 
-export function focusNode(id: string) {
-  const nodeToFocus = figma.root.findOne((x) => x.id === id);
+export async function focusNode(id: string) {
+  const nodeToFocus = figma.currentPage.findOne((x) => x.id === id);
   if (nodeToFocus !== null) {
-    // TODO: Switch current page first
-    figma.currentPage.selection = [nodeToFocus as any];
+    figma.currentPage.selection = [nodeToFocus];
   } else {
-    figma.notify(`Cannot find node with id "${id}"`, { error: true });
+    figma.notify(`Cannot find node with id "${id}" on this page`, {
+      error: true,
+    });
   }
 }

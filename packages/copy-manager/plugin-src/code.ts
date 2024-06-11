@@ -54,19 +54,19 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
       persistDataInFigma();
     }
   } else if (msg.type === "focus-node") {
-    focusNode(msg.id);
+    void focusNode(msg.id);
   } else if (msg.type === "scan-text-node-info") {
     const nodesInfo = await scanTextNodesInfo(msg.autoTrigger);
     // console.log({ nodesInfo });
     sendTextNodesInfoToUI(nodesInfo);
   } else if (msg.type === "update-node-key") {
-    updateNodeKey(msg.nodeId, msg.key);
+    await updateNodeKey(msg.nodeId, msg.key);
     figma.ui.postMessage({
       type: "partial-update-text-node-info-result",
       partialTextNodesInfo: [{ id: msg.nodeId, key: msg.key }],
     } satisfies PostToUIMessage);
   } else if (msg.type === "update-node-selected") {
-    updateNodeSelected(msg.nodeId, msg.checked);
+    await updateNodeSelected(msg.nodeId, msg.checked);
     figma.ui.postMessage({
       type: "partial-update-text-node-info-result",
       partialTextNodesInfo: [{ id: msg.nodeId, checked: msg.checked }],
@@ -133,7 +133,7 @@ async function updateWithLang(lang: string) {
 
   const totalTopLvlNodes = topLvlNodes.length;
 
-  const { data, meta } = parsedCsv;
+  const { data } = parsedCsv;
 
   let notificationHandle: NotificationHandler = figma.notify("Update start...");
 
@@ -141,7 +141,7 @@ async function updateWithLang(lang: string) {
 
   let updatedLayersCount = 0;
 
-  // We want to send figma.notify message between frame processing
+  // We want to send figma.notify message between frame processing, thus using Timeout between processing nodes
   async function processFirstNode(nodes: SceneNode[]) {
     const firstNode = nodes[0];
 
@@ -160,7 +160,7 @@ async function updateWithLang(lang: string) {
 
     if (nodes.length > 1) {
       setTimeout(() => {
-        processFirstNode(nodes.slice(1));
+        void processFirstNode(nodes.slice(1));
       }, 20);
     } else {
       notificationHandle?.cancel();
@@ -175,7 +175,7 @@ async function updateWithLang(lang: string) {
     }
   }
 
-  processFirstNode(topLvlNodes);
+  void processFirstNode(topLvlNodes);
 }
 
 async function parseCsvAndDetectRevision(csvString: string) {
@@ -220,7 +220,7 @@ async function exportCsvFile() {
     topLvlNode: SceneNode;
   }[] = [];
 
-  // We want to send figma.notify message between frame processing
+  // We want to send figma.notify message between frame processing, thus using Timeout between processing nodes
   async function processFirstNode(nodes: SceneNode[]) {
     const firstNode = nodes[0];
 
@@ -242,7 +242,7 @@ async function exportCsvFile() {
 
     if (nodes.length > 1) {
       setTimeout(() => {
-        processFirstNode(nodes.slice(1));
+        void processFirstNode(nodes.slice(1));
       }, 20);
     } else {
       notificationHandle?.cancel();
@@ -264,5 +264,5 @@ async function exportCsvFile() {
       }, 20);
     }
   }
-  processFirstNode(topLvlNodes);
+  void processFirstNode(topLvlNodes);
 }

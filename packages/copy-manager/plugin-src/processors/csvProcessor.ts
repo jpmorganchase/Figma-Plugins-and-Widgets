@@ -16,6 +16,8 @@ import {
 import {
   CsvExportSettings,
   CsvNodeInfoMap,
+  NodeProcessors,
+  NodeUpdater,
   UpdaterSettings,
   iterate,
   iterateUpdate,
@@ -73,7 +75,7 @@ export const csvTextNodeProcess = (
 export const csvChildrenNodeProcess = (
   node: SceneNode & ChildrenMixin,
   settings: CsvExportSettings,
-  processors: any
+  processors: NodeProcessors<CsvNodeInfo[]>
 ): CsvNodeInfo[] => {
   return node.children
     .slice()
@@ -125,7 +127,7 @@ export const parseCsvString = <T extends CsvNodeInfo>(input: string) => {
 export const getNodeInfoMap = <T extends CsvNodeInfo>(
   nodeInfos: T[]
 ): CsvNodeInfoMap => {
-  let map: CsvNodeInfoMap = {};
+  const map: CsvNodeInfoMap = {};
   nodeInfos.forEach((x) => {
     const nodeInfoWithNormalId = {
       ...x,
@@ -177,7 +179,7 @@ const updateListOption = async (
   if (["ORDERED", "UNORDERED", "NONE"].includes(nodeInfo.listOption)) {
     await loadAllFonts(node);
     node.setRangeListOptions(0, node.characters.length, {
-      type: nodeInfo.listOption as any,
+      type: nodeInfo.listOption as TextListOptions["type"],
     });
     return true;
   } else {
@@ -216,7 +218,7 @@ export const csvChildrenNodeUpdater = async (
   node: SceneNode & ChildrenMixin,
   nodeInfoMap: CsvNodeInfoMap,
   settings: UpdaterSettings,
-  processors: any
+  processors: NodeUpdater<string[]>
 ) => {
   const results = [];
   for (let index = 0; index < node.children.length; index++) {
