@@ -25,11 +25,11 @@ export const writeNodeKey = (node: TextNode, key: string) => {
   );
 };
 
-export const updateNodeKey = (id: string, key: string) => {
+export const updateNodeKey = async (id: string, key: string) => {
   //   console.log("updateNodeKey", { id, key });
-  const nodeToFind = figma.root.findOne((x) => x.id === id);
-  if (nodeToFind) {
-    writeNodeKey(nodeToFind as any, key);
+  const nodeToFind = figma.currentPage.findOne((x) => x.id === id);
+  if (nodeToFind && nodeToFind.type === "TEXT") {
+    writeNodeKey(nodeToFind, key);
   }
 };
 
@@ -57,11 +57,11 @@ export const writeSelected = (node: TextNode, selected: boolean) => {
   // console.log("after set plugin data", getSelected(node));
 };
 
-export const updateNodeSelected = (id: string, selected: boolean) => {
+export const updateNodeSelected = async (id: string, selected: boolean) => {
   //   console.log("updateNodeKey", { id, key });
-  const nodeToFind = figma.root.findOne((x) => x.id === id);
-  if (nodeToFind) {
-    writeSelected(nodeToFind as any, selected);
+  const nodeToFind = figma.currentPage.findOne((x) => x.id === id);
+  if (nodeToFind && nodeToFind.type === "TEXT") {
+    writeSelected(nodeToFind, selected);
   }
 };
 

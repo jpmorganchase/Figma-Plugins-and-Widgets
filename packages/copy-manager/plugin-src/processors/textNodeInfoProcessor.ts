@@ -1,7 +1,7 @@
 import { SelectableTextNodeInfo } from "../../shared-src/messages";
 import { getNodeKey, getSelected } from "../pluginDataUtils";
-import { sortNodeByPosition } from "../utils";
-import { iterate } from "./iterate";
+import { sortNodeByPosition, DEFAULT_HEADING_SETTINGS } from "../utils";
+import { CsvExportSettings, NodeProcessors, iterate } from "./iterate";
 
 export async function scanTextNodesInfo(autoTrigger: boolean) {
   if (figma.currentPage.selection.length === 0) {
@@ -14,7 +14,10 @@ export async function scanTextNodesInfo(autoTrigger: boolean) {
   const textNodesInfo: SelectableTextNodeInfo[] = [];
 
   for (const selectedNode of figma.currentPage.selection) {
-    const info = await textNodeInfoProcessor(selectedNode, {});
+    const info = await textNodeInfoProcessor(selectedNode, {
+      ...DEFAULT_HEADING_SETTINGS,
+      topLvlNodeName: figma.currentPage.name,
+    });
     textNodesInfo.push(...info);
   }
 
@@ -22,8 +25,7 @@ export async function scanTextNodesInfo(autoTrigger: boolean) {
 }
 
 export const textNodeInfoTextNodeProcess = (
-  node: TextNode,
-  settings: any
+  node: TextNode
 ): SelectableTextNodeInfo[] => {
   if (!node.visible || node.characters.length === 0) {
     return [];
@@ -45,8 +47,8 @@ export const textNodeInfoTextNodeProcess = (
 
 export const textNodeInfoChildrenNodeProcess = (
   node: SceneNode & ChildrenMixin,
-  settings: any,
-  processors: any
+  settings: CsvExportSettings,
+  processors: NodeProcessors<SelectableTextNodeInfo[]>
 ): SelectableTextNodeInfo[] => {
   return node.children
     .slice()
@@ -64,7 +66,7 @@ const emptyProcess = () => null;
 
 export const textNodeInfoProcessor = async (
   node: SceneNode,
-  settings: any
+  settings: CsvExportSettings
 ): Promise<SelectableTextNodeInfo[]> => {
   return (
     iterate<SelectableTextNodeInfo[]>(node, settings, {
