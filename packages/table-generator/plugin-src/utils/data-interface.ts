@@ -2,8 +2,9 @@ import { TableData } from "../../shared-src/messages";
 
 const PREFERRED_TEXT_NODE_NAMES = ["Cell", "Value", "Label"];
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isChildrenMixin(node: any): node is ChildrenMixin {
-  return !!(node as any).children;
+  return "children" in node;
 }
 export function getAllVisibleTextLayers(node: ChildrenMixin) {
   // Not using `findAllWithCriteria` so invisible ones can be filtered out

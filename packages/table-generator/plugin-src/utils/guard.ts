@@ -1,9 +1,9 @@
 import { TableConfig } from "../../shared-src/messages";
 import { readConfigFromPluginData } from "./pluginData";
 
-export const getComponentFromSelection = (
+export const getComponentFromSelection = async (
   notify?: (message: string, options?: NotificationOptions) => void
-): null | ComponentNode => {
+): Promise<null | ComponentNode> => {
   if (figma.currentPage.selection.length !== 1) {
     notify?.("Select one layer");
     return null;
@@ -12,7 +12,7 @@ export const getComponentFromSelection = (
   if (selected.type === "COMPONENT") {
     return selected;
   } else if (selected.type === "INSTANCE") {
-    const comp = selected.mainComponent;
+    const comp = await selected.getMainComponentAsync();
     if (comp) {
       return comp;
     } else {
