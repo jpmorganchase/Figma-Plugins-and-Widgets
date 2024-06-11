@@ -1,9 +1,7 @@
 {
   "name": "figma-plugins-and-widgets",
   "private": true,
-  "engines": {
-    "node": ">= 16.0.0"
-  },
+  "packageManager": "npm@10.5.2",
   "workspaces": [
     "packages/*"
   ],
@@ -15,8 +13,11 @@
     "prettier": "prettier --write . --ignore-path .gitignore",
     "prettier:ci": "prettier --check . --ignore-path .gitignore"
   },
+  "engines": {
+    "node": ">= 20.0.0"
+  },
   "dependencies": {
-    "turbo": "*"
+    "turbo": "^2.0.3"
   },
   "devDependencies": {
     "@figma/eslint-plugin-figma-plugins": "^0.15.0",
