@@ -57,7 +57,7 @@ export function getRgbStringFromFigmaColor(rgb: RGB, opacity?: number) {
 }
 
 function componentToHex(c: number) {
-  var hex = c.toString(16).toUpperCase();
+  const hex = c.toString(16).toUpperCase();
   return hex.length == 1 ? "0" + hex : hex;
 }
 
@@ -95,7 +95,7 @@ export function getColorConvertFn(format: ExportColorFormat) {
   }
 }
 
-export function exportVariables(
+export async function exportVariables(
   { name, modes, variableIds }: VariableCollection,
   modeId: string
 ) {
@@ -105,9 +105,9 @@ export function exportVariables(
   }
 
   const file = { fileName: `${name}.${mode.name}.tokens.json`, body: {} };
-  variableIds.forEach((variableId) => {
+  for (const variableId of variableIds) {
     const { name, resolvedType, valuesByMode } =
-      figma.variables.getVariableById(variableId)!;
+      (await figma.variables.getVariableByIdAsync(variableId))!;
     const value = valuesByMode[mode.modeId];
     if (value !== undefined && ["COLOR", "FLOAT"].includes(resolvedType)) {
       let obj = file.body as any;
@@ -121,14 +121,14 @@ export function exportVariables(
         "type" in value &&
         value.type === "VARIABLE_ALIAS"
       ) {
-        obj.$value = `{${figma.variables
-          .getVariableById(value.id)!
-          .name.replace(/\//g, ".")}}`;
+        obj.$value = `{${(await figma.variables.getVariableByIdAsync(
+          value.id
+        ))!.name.replace(/\//g, ".")}}`;
       } else {
         obj.$value = resolvedType === "COLOR" ? rgbToHex(value as RGBA) : value;
       }
     }
-  });
+  }
 
   return file;
 }
