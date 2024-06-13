@@ -82,10 +82,7 @@ export const SimpleView = () => {
     );
   };
 
-  const onFileDrop = (
-    _: React.DragEvent<HTMLDivElement>,
-    files: readonly File[]
-  ) => {
+  const onFileDrop = (_: any, files: readonly File[]) => {
     if (files.length && files[0] !== null) {
       const csv = files[0];
       setCsvFile(csv);
@@ -126,7 +123,7 @@ export const SimpleView = () => {
         >
           <FileDropZoneIcon />
           <strong>Drop files here or</strong>
-          <FileDropZoneTrigger accept=".csv" />
+          <FileDropZoneTrigger accept=".csv" onChange={onFileDrop} />
         </FileDropZone>
       ) : (
         <StackLayout gap={1}>
