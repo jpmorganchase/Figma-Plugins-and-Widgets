@@ -76,4 +76,59 @@ $2:1,Page 1,Heading,Body,,NONE,0
       "*"
     );
   });
+  test("Pick a file from button and change revision via dropdown", async () => {
+    const csvData = `id,page,name,characters,v2,listOption,headingLevel
+$2:1,Page 1,Page Title,Features,Features v2,NONE,1
+$2:1,Page 1,Heading,Body,,NONE,0
+    `;
+    const file = new File([csvData as BlobPart], "chucknorris.csv", {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    const fileInput = document.querySelector(`input[type='file']`);
+    fireEvent.change(fileInput!, {
+      target: { files: [file] },
+    });
+
+    await waitFor(() => {
+      expect(window.parent.postMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          pluginMessage: {
+            type: "detect-available-lang-from-csv",
+            csvString: csvData,
+          },
+        }),
+        "*"
+      );
+    });
+
+    fireEvent(
+      window,
+      new MessageEvent("message", {
+        data: {
+          pluginMessage: {
+            type: "available-lang-from-csv",
+            langs: ["v2"],
+          },
+        },
+      })
+    );
+
+    await userEvents.click(
+      await screen.findByRole("combobox", { name: "Version" })
+    );
+    await userEvents.click(screen.getByRole("option", { name: "v2" }));
+
+    await userEvents.click(screen.getByRole("button", { name: "Update" }));
+
+    expect(window.parent.postMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        pluginMessage: {
+          type: "update-content-with-lang",
+          lang: "v2", // selected 2 lines above
+          persistInFigma: true,
+        },
+      }),
+      "*"
+    );
+  });
 });
