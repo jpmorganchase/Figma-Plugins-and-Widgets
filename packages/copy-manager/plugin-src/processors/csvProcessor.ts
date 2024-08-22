@@ -24,6 +24,9 @@ import {
 } from "./iterate";
 
 const getListOption = (node: TextNode): string => {
+  if (node.characters.length === 0) {
+    return "NONE";
+  }
   const fullListOption = node.getRangeListOptions(0, node.characters.length);
   if (fullListOption === figma.mixed) {
     return "MIXED";
@@ -200,6 +203,11 @@ export const csvTextNodeUpdater = async (
   }
 
   const newChar = getCharToUse(nodeInfo, settings);
+
+  if (nodeInfo.characters.length === 0 && newChar.length === 0) {
+    // skip empty cells
+    return [];
+  }
 
   const updated = [
     await updateCharacters(node, newChar),
