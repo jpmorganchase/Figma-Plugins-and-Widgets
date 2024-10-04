@@ -1,6 +1,5 @@
-import { Button } from "@salt-ds/core";
+import { Button, Input } from "@salt-ds/core";
 import { CloseSmallIcon, WarningIcon } from "@salt-ds/icons";
-import { Input } from "@salt-ds/lab";
 import React from "react";
 import { SelectableTextNodeInfo } from "../../shared-src/messages";
 
@@ -17,7 +16,13 @@ export const NodeKeyInput = ({
       // Use `key` to force rerender a new Input when nodeInfo key changes
       key={`input-${nodeInfo.key}`}
       defaultValue={nodeInfo.key}
-      inputProps={{ placeholder: nodeInfo.name }}
+      inputProps={{
+        placeholder: nodeInfo.name,
+        onBlur: (e) => {
+          const updatedValue = e.target.value;
+          onUpdateNodeKey(nodeInfo.id, updatedValue);
+        },
+      }}
       endAdornment={
         nodeInfo.key ? (
           <Button onClick={() => onUpdateNodeKey(nodeInfo.id, "")}>
@@ -27,10 +32,6 @@ export const NodeKeyInput = ({
           <WarningIcon />
         )
       }
-      onBlur={(e) => {
-        const updatedValue = e.currentTarget.value;
-        onUpdateNodeKey(nodeInfo.id, updatedValue);
-      }}
     />
   );
 };
