@@ -34,7 +34,7 @@ export const SettingMenuButton = ({
   return (
     <Menu>
       <MenuTrigger>
-        <Button variant="primary" aria-label="Open setting menu">
+        <Button sentiment="neutral" aria-label="Open setting menu">
           <SettingsIcon aria-hidden />
         </Button>
       </MenuTrigger>

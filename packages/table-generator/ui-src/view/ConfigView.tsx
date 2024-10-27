@@ -148,7 +148,7 @@ export const ConfigView = ({
           disabled={hasCellValuesSet}
         >
           <Button
-            variant="primary"
+            sentiment="neutral"
             disabled={!hasCellValuesSet || !validTableSelected}
             focusableWhenDisabled
             onClick={onToggleView}
@@ -162,7 +162,7 @@ export const ConfigView = ({
           disabled={hasCellValuesSet}
         >
           <Button
-            variant="cta"
+            sentiment="accented"
             disabled={!hasCellValuesSet}
             focusableWhenDisabled
             onClick={validTableSelected ? updateTable : createTable}
