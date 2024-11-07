@@ -179,12 +179,12 @@ export const AdvancedView = () => {
         <table>
           <thead>
             <tr>
-              <th className="checkbox-col">
+              <td className="checkbox-col">
                 {/* <Checkbox className="tableCheckbox headerCheckbox" /> */}
-              </th>
+              </td>
               <th>Key</th>
               <th>Characters</th>
-              <th className="button-col">{/* Button column */}</th>
+              <td className="button-col">{/* Button column */}</td>
             </tr>
           </thead>
           <tbody>

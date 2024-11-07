@@ -7,7 +7,7 @@ import {
   Tooltip,
 } from "@salt-ds/core";
 import { CsvIcon, DownloadIcon } from "@salt-ds/icons";
-import { ContentStatus } from "@salt-ds/lab";
+import { ContentStatus } from "../components/ContentStatus";
 import { ParseResult, parse, unparse } from "papaparse";
 import { useCallback, useEffect, useReducer, useState } from "react";
 import { PostToFigmaMessage, PostToUIMessage } from "../../shared-src/messages";
