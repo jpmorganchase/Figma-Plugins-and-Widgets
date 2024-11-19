@@ -1,4 +1,5 @@
 import { ExportColorFormat } from "../shared-src/messages";
+import { kebabCase } from "change-case";
 
 /** Turns string into Camel case except full capital case */
 export function camelize(str: string) {
@@ -112,8 +113,12 @@ export async function exportVariables(
     if (value !== undefined && ["COLOR", "FLOAT"].includes(resolvedType)) {
       let obj = file.body as any;
       name.split("/").forEach((groupName) => {
-        obj[groupName] = obj[groupName] || {};
-        obj = obj[groupName];
+        const kebabGroupname = kebabCase(groupName);
+        if (name.includes("negative") && groupName.includes("strong")) {
+          console.log({ name, groupName });
+        }
+        obj[kebabGroupname] = obj[kebabGroupname] || {};
+        obj = obj[kebabGroupname];
       });
       obj.$type = resolvedType === "COLOR" ? "color" : "number";
       if (
@@ -134,15 +139,15 @@ export async function exportVariables(
 }
 
 function rgbToHex({ r, g, b, a }: RGBA) {
-  if (a !== 1) {
-    return `rgba(${[r, g, b]
-      .map((n) => Math.round(n * 255))
-      .join(", ")}, ${a.toFixed(4)})`;
-  }
   const toHex = (value: number) => {
     const hex = Math.round(value * 255).toString(16);
     return hex.length === 1 ? "0" + hex : hex;
   };
+
+  if (a !== 1) {
+    const hex = [toHex(r), toHex(g), toHex(b), toHex(a)].join("");
+    return `#${hex}`;
+  }
 
   const hex = [toHex(r), toHex(g), toHex(b)].join("");
   return `#${hex}`;
