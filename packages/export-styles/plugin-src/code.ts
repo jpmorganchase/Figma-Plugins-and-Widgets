@@ -184,12 +184,12 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
       figma.notify(`Cannot get collection with id: ${collectionId}`);
     }
   } else if (msg.type === "export-variable-to-json") {
-    const { collectionId, modeId } = msg;
+    const { collectionId, modeId, optionalRootKey } = msg;
 
     const variableCollection =
       await figma.variables.getVariableCollectionByIdAsync(collectionId);
     if (variableCollection) {
-      const exportResult = await exportVariables(variableCollection, modeId);
+      const exportResult = await exportVariables(variableCollection, modeId, optionalRootKey);
       if (exportResult) {
         figma.ui.postMessage({
           type: "export-variable-to-json-result",
