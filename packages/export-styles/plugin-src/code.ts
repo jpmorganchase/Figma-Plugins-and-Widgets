@@ -189,7 +189,11 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
     const variableCollection =
       await figma.variables.getVariableCollectionByIdAsync(collectionId);
     if (variableCollection) {
-      const exportResult = await exportVariables(variableCollection, modeId, optionalRootKey);
+      const exportResult = await exportVariables(
+        variableCollection,
+        modeId,
+        optionalRootKey
+      );
       if (exportResult) {
         figma.ui.postMessage({
           type: "export-variable-to-json-result",
