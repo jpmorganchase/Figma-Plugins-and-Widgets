@@ -11,6 +11,57 @@ export function camelize(str: string) {
   });
 }
 
+// Regexps involved with splitting words in various case formats.
+const SPLIT_LOWER_NON_DIGIT_UPPER_RE = /([\p{Ll}])(\p{Lu})/gu; // ( lower case  ) ( upper case )
+const SPLIT_UPPER_UPPER_RE = /(\p{Lu})([\p{Lu}][\p{Ll}])/gu; // ( upper case ) ( [ upper case ] [ lower case ] )
+// The replacement value for splits.
+const SPLIT_REPLACE_VALUE = "$1\0$2";
+
+// Regexp involved with stripping non-word characters from the result.
+const DEFAULT_STRIP_REGEXP = /[^\p{L}\d]+/giu;
+
+function modifiedSplit(value: string) {
+  let result = value.trim();
+
+  result = result
+    // `SPLIT_LOWER_NON_DIGIT_UPPER_RE` changed compare with 'change-case' original split
+    // Change to not split 30A -> 30-A
+    .replace(SPLIT_LOWER_NON_DIGIT_UPPER_RE, SPLIT_REPLACE_VALUE)
+    .replace(SPLIT_UPPER_UPPER_RE, SPLIT_REPLACE_VALUE);
+
+  result = result.replace(DEFAULT_STRIP_REGEXP, "\0");
+
+  let start = 0;
+  let end = result.length;
+
+  // Trim the delimiter from around the output string.
+  while (result.charAt(start) === "\0") start++;
+  if (start === end) return [];
+  while (result.charAt(end - 1) === "\0") end--;
+
+  return result.slice(start, end).split(/\0/g);
+}
+function splitPrefixSuffix(input: string) {
+  const splitFn = modifiedSplit;
+  const prefixIndex = 0;
+  const suffixIndex = input.length;
+
+  return [
+    input.slice(0, prefixIndex),
+    splitFn(input.slice(prefixIndex, suffixIndex)),
+    input.slice(suffixIndex),
+  ];
+}
+/** Modified version of kebabCase from 'change-case', where "10A" will not be split into "10-a" */
+function specialKebab(input: string) {
+  const [prefix, words, suffix] = splitPrefixSuffix(input);
+  return (
+    prefix +
+    (words as string[]).map((input) => input.toLowerCase()).join("-") +
+    suffix
+  );
+}
+
 /** Extract first part of the group name. e.g. `A/B/C` => `A` */
 export function extractFirstGroup(name: string) {
   return name.split("/").shift()?.trim() || "";
@@ -96,8 +147,13 @@ export function getColorConvertFn(format: ExportColorFormat) {
 }
 
 export async function exportVariables(
-  { name, modes, variableIds }: VariableCollection,
-  modeId: string
+  {
+    name,
+    modes,
+    variableIds,
+  }: Pick<VariableCollection, "name" | "modes" | "variableIds">,
+  modeId: string,
+  optionalRootKey: string
 ) {
   const mode = modes.find((m) => m.modeId === modeId);
   if (!mode) {
@@ -105,15 +161,24 @@ export async function exportVariables(
   }
 
   const file = { fileName: `${name}.${mode.name}.tokens.json`, body: {} };
+  let rootObj: Record<string, any> = file.body;
+  if (optionalRootKey) {
+    rootObj[optionalRootKey] = {};
+    rootObj = rootObj[optionalRootKey];
+  }
   for (const variableId of variableIds) {
     const { name, resolvedType, valuesByMode } =
       (await figma.variables.getVariableByIdAsync(variableId))!;
     const value = valuesByMode[mode.modeId];
     if (value !== undefined && ["COLOR", "FLOAT"].includes(resolvedType)) {
-      let obj = file.body as any;
+      let obj = rootObj;
       name.split("/").forEach((groupName) => {
-        obj[groupName] = obj[groupName] || {};
-        obj = obj[groupName];
+        const kebabGroupname = specialKebab(groupName);
+        if (name.includes("negative") && groupName.includes("strong")) {
+          console.log({ name, groupName });
+        }
+        obj[kebabGroupname] = obj[kebabGroupname] || {};
+        obj = obj[kebabGroupname];
       });
       obj.$type = resolvedType === "COLOR" ? "color" : "number";
       if (
@@ -123,7 +188,10 @@ export async function exportVariables(
       ) {
         obj.$value = `{${(await figma.variables.getVariableByIdAsync(
           value.id
-        ))!.name.replace(/\//g, ".")}}`;
+        ))!.name
+          .split("/")
+          .map((x) => specialKebab(x))
+          .join(".")}}`;
       } else {
         obj.$value = resolvedType === "COLOR" ? rgbToHex(value as RGBA) : value;
       }
@@ -134,15 +202,15 @@ export async function exportVariables(
 }
 
 function rgbToHex({ r, g, b, a }: RGBA) {
-  if (a !== 1) {
-    return `rgba(${[r, g, b]
-      .map((n) => Math.round(n * 255))
-      .join(", ")}, ${a.toFixed(4)})`;
-  }
   const toHex = (value: number) => {
     const hex = Math.round(value * 255).toString(16);
     return hex.length === 1 ? "0" + hex : hex;
   };
+
+  if (a !== 1) {
+    const hex = [toHex(r), toHex(g), toHex(b), toHex(a)].join("");
+    return `#${hex}`;
+  }
 
   const hex = [toHex(r), toHex(g), toHex(b)].join("");
   return `#${hex}`;
