@@ -147,7 +147,11 @@ export function getColorConvertFn(format: ExportColorFormat) {
 }
 
 export async function exportVariables(
-  { name, modes, variableIds }: VariableCollection,
+  {
+    name,
+    modes,
+    variableIds,
+  }: Pick<VariableCollection, "name" | "modes" | "variableIds">,
   modeId: string,
   optionalRootKey: string
 ) {
