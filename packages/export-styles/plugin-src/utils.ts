@@ -12,7 +12,6 @@ export function camelize(str: string) {
 }
 
 // Regexps involved with splitting words in various case formats.
-const SPLIT_LOWER_UPPER_RE = /([\p{Ll}\d])(\p{Lu})/gu; // ( lower case + digit ) ( upper case )
 const SPLIT_LOWER_NON_DIGIT_UPPER_RE = /([\p{Ll}])(\p{Lu})/gu; // ( lower case  ) ( upper case )
 const SPLIT_UPPER_UPPER_RE = /(\p{Lu})([\p{Lu}][\p{Ll}])/gu; // ( upper case ) ( [ upper case ] [ lower case ] )
 // The replacement value for splits.
@@ -53,6 +52,7 @@ function splitPrefixSuffix(input: string) {
     input.slice(suffixIndex),
   ];
 }
+/** Modified version of kebabCase from 'change-case', where "10A" will not be split into "10-a" */
 function specialKebab(input: string) {
   const [prefix, words, suffix] = splitPrefixSuffix(input);
   return (
