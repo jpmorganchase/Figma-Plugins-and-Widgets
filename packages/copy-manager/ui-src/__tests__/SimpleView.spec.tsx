@@ -14,7 +14,7 @@ describe("SimpleView", () => {
   });
   test("sends export message to figma when clicking export", async () => {
     await userEvents.click(screen.getByRole("button", { name: "Export CSV" }));
-    expect(window.parent.postMessage).toHaveBeenCalledTimes(1);
+    expect(window.parent.postMessage).toHaveBeenCalledTimes(2); // 1 for read-persisted-data, 1 for export-csv-file
     expect(window.parent.postMessage).toHaveBeenCalledWith(
       expect.objectContaining({
         pluginMessage: { type: "export-csv-file" },
@@ -40,6 +40,7 @@ $2:1,Page 1,Heading,Body,,NONE,0
           pluginMessage: {
             type: "detect-available-lang-from-csv",
             csvString: csvData,
+            persistInFigma: true, // default is true
           },
         }),
         "*"
@@ -70,7 +71,6 @@ $2:1,Page 1,Heading,Body,,NONE,0
         pluginMessage: {
           type: "update-content-with-lang",
           lang: "v2", // selected 2 lines above
-          persistInFigma: true,
         },
       }),
       "*"
@@ -95,6 +95,7 @@ $2:1,Page 1,Heading,Body,,NONE,0
           pluginMessage: {
             type: "detect-available-lang-from-csv",
             csvString: csvData,
+            persistInFigma: true, // default is true
           },
         }),
         "*"
@@ -125,7 +126,6 @@ $2:1,Page 1,Heading,Body,,NONE,0
         pluginMessage: {
           type: "update-content-with-lang",
           lang: "v2", // selected 2 lines above
-          persistInFigma: true,
         },
       }),
       "*"

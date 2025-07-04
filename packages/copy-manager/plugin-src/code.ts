@@ -8,7 +8,6 @@ import {
   PostToUIMessage,
 } from "../shared-src/messages";
 import {
-  PLUGIN_RELAUNCH_KEY_REVIEW_REVISION,
   persistInFigma,
   readPersistedData,
   updateNodeKey,
@@ -26,38 +25,43 @@ import {
   DEFAULT_HEADING_SETTINGS,
   focusNode,
   sendTextNodesInfoToUI,
+  setRelaunchButton,
   sortNodeByPosition,
 } from "./utils";
 
-let parsedCsv: ParseResult<CsvNodeInfoWithLang> | null = null;
+// let parsedCsv: ParseResult<CsvNodeInfoWithLang> | null = null;
 
 const MIN_WIDTH = 340;
-const MIN_HEIGHT = 340;
+const MIN_HEIGHT = 350;
 
-figma.showUI(__html__, {
-  themeColors: true,
-  height: MIN_HEIGHT,
-  width: MIN_WIDTH,
-});
+figma.showUI(
+  `${__html__}<script>const __FIGMA_COMMAND__='${
+    // This is used by the UI to toggle default view on load
+    typeof figma.command === "undefined" ? "" : figma.command
+  }';</script>`,
+  {
+    themeColors: true,
+    width: MIN_WIDTH,
+    height: MIN_HEIGHT,
+  }
+);
 
 figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
-  if (msg.type === "export-csv-file") {
+  if (msg.type === "read-persisted-data") {
+    detectPersistedData();
+  } else if (msg.type === "export-csv-file") {
     await exportCsvFile();
   } else if (msg.type === "resize-window") {
     const { width, height } = msg;
     figma.ui.resize(Math.max(width, MIN_WIDTH), Math.max(height, MIN_HEIGHT));
   } else if (msg.type === "detect-available-lang-from-csv") {
-    await parseCsvAndDetectRevision(msg.csvString);
+    await parseCsvAndDetectRevision(msg.csvString, msg.persistInFigma);
   } else if (msg.type === "update-content-with-lang") {
     await updateWithLang(msg.lang);
-    if (msg.persistInFigma) {
-      persistDataInFigma();
-    }
   } else if (msg.type === "focus-node") {
     void focusNode(msg.id);
   } else if (msg.type === "scan-text-node-info") {
     const nodesInfo = await scanTextNodesInfo(msg.autoTrigger);
-    // console.log({ nodesInfo });
     sendTextNodesInfoToUI(nodesInfo);
   } else if (msg.type === "update-node-key") {
     await updateNodeKey(msg.nodeId, msg.key);
@@ -71,32 +75,38 @@ figma.ui.onmessage = async (msg: PostToFigmaMessage) => {
       type: "partial-update-text-node-info-result",
       partialTextNodesInfo: [{ id: msg.nodeId, checked: msg.checked }],
     } satisfies PostToUIMessage);
+  } else if (msg.type === "clear-persisted-data") {
+    clearPersistedData();
   }
 };
 
-if (figma.command) {
-  // Relaunching from relaunch button
-  switch (figma.command) {
-    case PLUGIN_RELAUNCH_KEY_REVIEW_REVISION: {
-      const persistedData = readPersistedData();
-      if (persistedData) {
-        parsedCsv = JSON.parse(persistedData);
-        sendAvailableRevisionToUI();
-      }
-      break;
-    }
-    default:
-      console.error("Unknown figma command", figma.command);
+function detectPersistedData() {
+  const persistedData = readPersistedData();
+  if (persistedData) {
+    sendAvailableRevisionToUI(persistedData);
   }
 }
 
-function persistDataInFigma() {
+function persistDataInFigma(
+  parsedCsv: ParseResult<CsvNodeInfoWithLang> | null
+) {
   if (parsedCsv !== null) {
     persistInFigma(JSON.stringify(parsedCsv));
+    for (const selectedNode of figma.currentPage.selection) {
+      setRelaunchButton(selectedNode);
+    }
   }
 }
 
-function sendAvailableRevisionToUI() {
+function clearPersistedData() {
+  persistInFigma("");
+}
+
+function sendAvailableRevisionToUI(
+  parsedCsv: ParseResult<CsvNodeInfoWithLang> | null
+) {
+  console.log("sendAvailableRevisionToUI", parsedCsv);
+
   if (parsedCsv === null) {
     console.error("sendUIAvailableRevision parsedCsv is null");
     return;
@@ -120,7 +130,8 @@ async function updateWithLang(lang: string) {
     return;
   }
 
-  if (parsedCsv === null) {
+  const persistedData = readPersistedData();
+  if (persistedData === null) {
     figma.notify("Parsed CSV cannot be found, please report a bug", {
       error: true,
     });
@@ -133,7 +144,7 @@ async function updateWithLang(lang: string) {
 
   const totalTopLvlNodes = topLvlNodes.length;
 
-  const { data } = parsedCsv;
+  const { data } = persistedData;
 
   let notificationHandle: NotificationHandler = figma.notify("Update start...");
 
@@ -169,6 +180,10 @@ async function updateWithLang(lang: string) {
           `Updated ${updatedLayersCount} layer` +
             (updatedLayersCount > 1 ? "s" : "" + " 🌟")
         );
+
+        figma.ui.postMessage({
+          type: "update-finished",
+        } satisfies PostToUIMessage);
       } else {
         notificationHandle = figma.notify("Nothing updated");
       }
@@ -178,7 +193,10 @@ async function updateWithLang(lang: string) {
   void processFirstNode(topLvlNodes);
 }
 
-async function parseCsvAndDetectRevision(csvString: string) {
+async function parseCsvAndDetectRevision(
+  csvString: string,
+  persistInFigma: boolean
+) {
   const parsed = parseCsvString<CsvNodeInfoWithLang>(csvString);
   if (parsed === null) {
     figma.notify("Can not parse CSV, check your file and try again?", {
@@ -196,9 +214,11 @@ async function parseCsvAndDetectRevision(csvString: string) {
     return;
   }
 
-  parsedCsv = parsed;
+  if (persistInFigma) {
+    persistDataInFigma(parsed);
+  }
 
-  sendAvailableRevisionToUI();
+  sendAvailableRevisionToUI(parsed);
 }
 
 async function exportCsvFile() {

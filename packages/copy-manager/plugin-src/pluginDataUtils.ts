@@ -1,6 +1,8 @@
+import { ParseResult } from "papaparse";
+import { CsvNodeInfoWithLang } from "../shared-src/messages";
+
 export const PLUGIN_DATA_SHARED_NAMESPACE = "CONTENT_COPY";
 export const PLUGIN_DATA_KEY_PERSISTED_DATA = "PERSISTED_DATA";
-export const PLUGIN_RELAUNCH_KEY_REVIEW_REVISION = "review-revision";
 
 export const PLUGIN_DATA_NODE_KEY_KEY = "NODE_KEY";
 export const PLUGIN_DATA_SELECTED_KEY = "SELECTED";
@@ -74,11 +76,16 @@ export const persistInFigma = (data: string) => {
   );
 };
 
-export const readPersistedData = () => {
-  const persistedData = figma.root.getSharedPluginData(
-    PLUGIN_DATA_SHARED_NAMESPACE,
-    PLUGIN_DATA_KEY_PERSISTED_DATA
-  );
-  console.log("readPersistedData", persistedData);
-  return persistedData;
-};
+export const readPersistedData =
+  (): ParseResult<CsvNodeInfoWithLang> | null => {
+    const persistedData = figma.root.getSharedPluginData(
+      PLUGIN_DATA_SHARED_NAMESPACE,
+      PLUGIN_DATA_KEY_PERSISTED_DATA
+    );
+    console.log("readPersistedData", persistedData);
+    if (persistedData) {
+      return JSON.parse(persistedData);
+    } else {
+      return null;
+    }
+  };

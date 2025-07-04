@@ -1,3 +1,5 @@
+export const PLUGIN_RELAUNCH_KEY_REVIEW_REVISION = "review-revision";
+
 type Id = string;
 
 type StoredCopyVersion = {
@@ -74,11 +76,16 @@ export type PartialUpdateTextNodeInfoResultToUIMessage = {
   partialTextNodesInfo: Partial<SelectableTextNodeInfo>[];
 };
 
+export type UpdateFinishedToUIMessage = {
+  type: "update-finished";
+};
+
 export type PostToUIMessage =
   | FileGeneratedToUIMessage
   | AvailableLangFromCsvToUIMessage
   | ScanTextNodeInfoResultToUIMessage
-  | PartialUpdateTextNodeInfoResultToUIMessage;
+  | PartialUpdateTextNodeInfoResultToUIMessage
+  | UpdateFinishedToUIMessage;
 
 // This is useful to run some code when react is finished to get new information from Figma
 export type UiFinishLoadingToFigmaMessage = {
@@ -98,12 +105,12 @@ export type ExportCsvFileToFigmaMessage = {
 export type DetectAvailableLangFromCSVToFigmaMessage = {
   type: "detect-available-lang-from-csv";
   csvString: string;
+  persistInFigma: boolean;
 };
 
 export type UpdateContentWithLangToFigmaMessage = {
   type: "update-content-with-lang";
   lang: string;
-  persistInFigma: boolean;
 };
 
 export type ScanTextNodeInfoToFigmaMessage = {
@@ -128,6 +135,14 @@ export type UpdateNodeCheckedToFigmaMessage = {
   checked: boolean;
 };
 
+export type ReadPersistedDataToFigmaMessage = {
+  type: "read-persisted-data";
+};
+
+export type ClearPersistedDataToFigmaMessage = {
+  type: "clear-persisted-data";
+};
+
 export type PostToFigmaMessage =
   | UiFinishLoadingToFigmaMessage
   | ResizeWindowToFigmaMessage
@@ -137,4 +152,6 @@ export type PostToFigmaMessage =
   | ScanTextNodeInfoToFigmaMessage
   | FocusNodeToFigmaMessage
   | UpdateNodeKeyToFigmaMessage
-  | UpdateNodeCheckedToFigmaMessage;
+  | UpdateNodeCheckedToFigmaMessage
+  | ReadPersistedDataToFigmaMessage
+  | ClearPersistedDataToFigmaMessage;
