@@ -226,7 +226,7 @@ export const DataView = ({
 
       <FlexLayout justify="space-between" className="button-bar">
         <FlexLayout gap={1} align="center">
-          <Button variant="primary" onClick={onToggleView}>
+          <Button sentiment="neutral" onClick={onToggleView}>
             Back
           </Button>
 
@@ -277,7 +277,7 @@ export const DataView = ({
           disabled={validTableSelected}
         >
           <Button
-            variant="cta"
+            sentiment="accented"
             disabled={!validTableSelected}
             focusableWhenDisabled
             onClick={updateDataInFigma}

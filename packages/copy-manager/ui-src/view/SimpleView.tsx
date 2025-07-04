@@ -184,10 +184,10 @@ export const SimpleView = () => {
               <Button onClick={onClearCsv}>Clear</Button>
               <Button
                 onClick={onUpdateCsv}
-                variant="cta"
-                disabled={uploadInProgress}
+                sentiment="accented"
+                loading={uploadInProgress}
               >
-                {uploadInProgress ? <Spinner size="small" /> : "Update"}
+                Update
               </Button>
             </StackLayout>
           </>
