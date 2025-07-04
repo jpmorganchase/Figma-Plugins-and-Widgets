@@ -3,21 +3,17 @@ import { FlexItem, StackLayout } from "@salt-ds/core";
 import { Tab, Tabstrip } from "@salt-ds/lab";
 import { SimpleView } from "./SimpleView";
 import { AdvancedView } from "./AdvancedView";
+import { PLUGIN_RELAUNCH_KEY_REVIEW_REVISION } from "../../shared-src/messages";
+
+declare const __FIGMA_COMMAND__: string;
 
 export const TabsView = () => {
-  const [selectedTabIndex, setSelectedTabIndex] = useState(1);
+  const [selectedTabIndex, setSelectedTabIndex] = useState(
+    __FIGMA_COMMAND__ === PLUGIN_RELAUNCH_KEY_REVIEW_REVISION ? 0 : 1
+  );
 
   const handleTabSelection = (index: number) => {
     setSelectedTabIndex(index);
-    // parent.postMessage(
-    //   {
-    //     pluginMessage: {
-    //       type: "ui-view-changed",
-    //       view: index === 0 ? "select" : index === 1 ? "simple" : "advanced",
-    //     } satisfies PostToFigmaMessage,
-    //   },
-    //   "*"
-    // );
   };
 
   const renderView = () => {

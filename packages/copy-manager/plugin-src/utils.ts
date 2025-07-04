@@ -1,8 +1,8 @@
 import {
+  PLUGIN_RELAUNCH_KEY_REVIEW_REVISION,
   PostToUIMessage,
   SelectableTextNodeInfo,
 } from "../shared-src/messages";
-import { PLUGIN_RELAUNCH_KEY_REVIEW_REVISION } from "./pluginDataUtils";
 
 export type HeadingSettings = {
   h1: number;
