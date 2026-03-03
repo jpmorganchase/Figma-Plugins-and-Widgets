@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import {
   camelize,
   color1To255,
@@ -6,6 +6,7 @@ import {
   getHexStringFromFigmaColor,
   getRgbStringFromFigmaColor,
   trimDefaultEnding,
+  exportVariables,
 } from "../utils";
 
 describe("camelize", () => {
@@ -108,5 +109,89 @@ describe("getHexStringFromFigmaColor", () => {
     expect(
       getHexStringFromFigmaColor({ r: 0.5, g: 0.5, b: 0.5 } as RGB, 0.5)
     ).toEqual("#80808080");
+  });
+});
+
+describe("exportVariables", () => {
+  const testMode = { name: "Color", modeId: "1:1" };
+  const testVariableCollection = {
+    id: "VariableCollectionId:1:1",
+    defaultModeId: "1:1",
+    hiddenFromPublishing: false,
+    key: "1234567890",
+    modes: [testMode],
+    name: "Colors",
+    remote: false,
+    variableIds: ["VariableId:1:1", "VariableId:1:2", "VariableId:1:3"],
+  };
+  test("returns null if modeId is not in collection", async () => {
+    expect(
+      await exportVariables(testVariableCollection, "invalid-mode", "")
+    ).toBeNull();
+  });
+
+  // very simple test for now
+  test("exports a nested JSON structure", async () => {
+    const mockVariable1 = {
+      id: "VariableId:1:1",
+      name: "red/1000",
+      resolvedType: "COLOR",
+      valuesByMode: {
+        "1:1": { r: 1, g: 0, b: 0, a: 1 },
+      },
+    } as any;
+    const mockVariable2 = {
+      id: "VariableId:1:2",
+      name: "red/500",
+      resolvedType: "COLOR",
+      valuesByMode: {
+        "1:1": { r: 0.5, g: 0, b: 0, a: 1 },
+      },
+    } as any;
+    const mockVariable3 = {
+      id: "VariableId:1:3",
+      name: "alpha/red/500/50A",
+      resolvedType: "COLOR",
+      valuesByMode: {
+        "1:1": { r: 0.5, g: 0, b: 0, a: 0.5 },
+      },
+    } as any;
+
+    vi.spyOn(figma.variables, "getVariableByIdAsync").mockImplementation((id) =>
+      Promise.resolve(
+        id.endsWith("1")
+          ? mockVariable1
+          : id.endsWith("2")
+          ? mockVariable2
+          : mockVariable3
+      )
+    );
+    const output = await exportVariables(testVariableCollection, "1:1", "");
+    expect(output).toMatchObject({
+      fileName: "Colors.Color.tokens.json",
+      body: {
+        red: {
+          500: {
+            $value: "#800000",
+            $type: "color",
+          },
+          1000: {
+            $value: "#ff0000",
+            $type: "color",
+          },
+        },
+        alpha: {
+          red: {
+            500: {
+              // here is important, not 50-a
+              "50a": {
+                $value: "#80000080",
+                $type: "color",
+              },
+            },
+          },
+        },
+      },
+    });
   });
 });

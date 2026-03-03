@@ -32,5 +32,8 @@ beforeAll(() => {
     },
     createComponent: () => new ComponentNode(),
     createText: vi.fn(),
+    variables: {
+      getVariableByIdAsync: vi.fn(),
+    },
   };
 });

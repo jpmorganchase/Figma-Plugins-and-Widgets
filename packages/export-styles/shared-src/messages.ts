@@ -76,6 +76,7 @@ export type ExportVariableToJsonToFigmaMessage = {
   type: "export-variable-to-json";
   collectionId: string;
   modeId: string;
+  optionalRootKey: string;
 };
 
 export type UIRedayToFigmaMessage = {

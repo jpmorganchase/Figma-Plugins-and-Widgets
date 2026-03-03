@@ -8,6 +8,7 @@ import {
   FormField,
   FormFieldLabel,
   Option,
+  Input,
 } from "@salt-ds/core";
 import { DownloadIcon } from "@salt-ds/icons";
 import React, { useEffect, useId, useRef, useState } from "react";
@@ -34,6 +35,8 @@ export const VariableJsonView = () => {
     null
   );
 
+  const [rootKey, setRootKey] = useState("");
+
   const exportLabel = useId();
 
   useEffect(() => {
@@ -55,6 +58,7 @@ export const VariableJsonView = () => {
             type: "export-variable-to-json",
             collectionId: selectedCollection.id,
             modeId: selectedMode.modeId,
+            optionalRootKey: rootKey,
           } satisfies PostToFigmaMessage,
         },
         "*"
@@ -145,6 +149,13 @@ export const VariableJsonView = () => {
             <Option key={m.modeId} value={m} />
           ))}
         </Dropdown>
+      </FormField>
+      <FormField>
+        <FormFieldLabel>Additional Root Key (Optional)</FormFieldLabel>
+        <Input
+          value={rootKey}
+          inputProps={{ onChange: (e) => setRootKey(e.target.value) }}
+        />
       </FormField>
       <Button
         disabled={selectedCollection === null || selectedMode === null}

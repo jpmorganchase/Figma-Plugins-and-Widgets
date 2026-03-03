@@ -77,6 +77,7 @@ describe("VariableJsonView", () => {
           type: "export-variable-to-json",
           collectionId: "collection1",
           modeId: "light",
+          optionalRootKey: "",
         },
       }),
       "*"
